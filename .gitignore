@@ -1,0 +1,134 @@
+# =========================
+# Environment
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Go
+# =========================
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+coverage.out
+coverage.html
+
+# Go workspace
+go.work
+go.work.sum
+
+# Vendor (optional)
+vendor/
+
+# =========================
+# Build artifacts
+# =========================
+bin/
+dist/
+build/
+tmp/
+out/
+
+# =========================
+# Logs
+# =========================
+*.log
+logs/
+
+# =========================
+# IDEs / Editors
+# =========================
+
+# VSCode
+.vscode/
+
+# JetBrains
+.idea/
+
+# Vim
+*.swp
+*.swo
+
+# Emacs
+*~
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# Docker
+# =========================
+docker-data/
+postgres-data/
+
+# =========================
+# Testing / profiling
+# =========================
+*.prof
+*.pprof
+
+# =========================
+# Node (if frontend later)
+# =========================
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# =========================
+# Generated files
+# =========================
+generated/
+*.generated.go
+
+# =========================
+# Temporary files
+# =========================
+tmp/
+temp/
+.cache/
+
+# =========================
+# Air live reload
+# =========================
+.air/
+air.toml
+
+# =========================
+# Delve debugger
+# =========================
+__debug_bin
+
+# =========================
+# SQLite
+# =========================
+*.db
+*.sqlite
+*.sqlite3
+
+# =========================
+# Terraform (if infra later)
+# =========================
+.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
+
+# =========================
+# Kubernetes
+# =========================
+*.kubeconfig
+
+# =========================
+# MCP / local runtime
+# =========================
+storage/
