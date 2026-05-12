@@ -1,0 +1,87 @@
+services:
+  bureau:
+    build:
+      context: ./bureau-mcp-server
+      dockerfile: Dockerfile
+      target: api
+    ports:
+      - "8080:8080"
+    networks:
+      - interservice-network
+      - redis-network
+      - postgres-network
+    env_file:
+      - ./bureau-mcp-server/.env
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  bureau-mcp:
+    build:
+      context: ./bureau-mcp-server
+      dockerfile: Dockerfile
+      target: mcp
+    ports:
+      - "8081:8080"
+    networks:
+      - interservice-network
+      - redis-network
+      - postgres-network
+    env_file:
+      - ./bureau-mcp-server/.env
+    depends_on:
+      redis:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    container_name: postgres
+    image: postgres:16
+    ports:
+      - "127.0.0.1:5433:5432"
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: postgres
+      POSTGRES_USER: ${DB_USERNAME}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - postgres-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U root -d bureau"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    env_file:
+      - .env
+    
+  redis:
+    container_name: redis
+    image: redis:7
+    command: ["redis-server", "--requirepass", "${REDIS_PASSWORD}"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    ports:
+      - "127.0.0.1:6379:6379"
+    networks:
+      - redis-network
+    env_file:
+      - .env
+
+networks:
+  interservice-network:
+    driver: bridge
+  redis-network:
+    driver: bridge
+  postgres-network:
+    driver: bridge
+
+volumes:
+  postgres-data:
