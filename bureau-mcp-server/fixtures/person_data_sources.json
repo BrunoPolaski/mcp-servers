@@ -1,0 +1,42 @@
+[
+  {
+    "person_id": 1,
+    "data_source_id": 1
+  },
+  {
+    "person_id": 2,
+    "data_source_id": 2
+  },
+  {
+    "person_id": 3,
+    "data_source_id": 3
+  },
+  {
+    "person_id": 4,
+    "data_source_id": 4
+  },
+  {
+    "person_id": 5,
+    "data_source_id": 5
+  },
+  {
+    "person_id": 6,
+    "data_source_id": 6
+  },
+  {
+    "person_id": 7,
+    "data_source_id": 7
+  },
+  {
+    "person_id": 8,
+    "data_source_id": 8
+  },
+  {
+    "person_id": 9,
+    "data_source_id": 9
+  },
+  {
+    "person_id": 10,
+    "data_source_id": 10
+  }
+]

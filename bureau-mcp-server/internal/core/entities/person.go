@@ -51,3 +51,7 @@ type Person struct {
 	ConsentStatus    string `gorm:"size:50;not null;default:'pending'"` // LGPD compliance
 	ConsentGrantedAt *time.Time
 }
+
+func (Person) TableName() string {
+	return "persons"
+}
