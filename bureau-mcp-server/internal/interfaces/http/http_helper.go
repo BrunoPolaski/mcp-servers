@@ -55,11 +55,11 @@ func IntQueryParam(r *http.Request, options IntQueryParamOptions) (int, *rest_er
 			return intValue, nil
 		}
 
-		return 0, rest_err.NewBadRequestError("invalid " + options.Key + " parameter")
+		return 0, rest_err.NewBadRequestError("invalid %s parameter", options.Key)
 	}
 
 	if options.Required {
-		return 0, rest_err.NewBadRequestError(options.Key + " parameter is required")
+		return 0, rest_err.NewBadRequestError("%s parameter is required", options.Key)
 	}
 
 	return options.DefaultValue, nil
@@ -69,7 +69,7 @@ func PathParam(r *http.Request, key string) (string, *rest_err.RestErr) {
 	param := r.PathValue(key)
 
 	if param == "" {
-		return "", rest_err.NewBadRequestError(key + " parameter is required")
+		return "", rest_err.NewBadRequestError("%s parameter is required", key)
 	}
 
 	return param, nil
@@ -79,12 +79,12 @@ func IntPathParam(r *http.Request, key string) (uint, *rest_err.RestErr) {
 	param := r.PathValue(key)
 
 	if param == "" {
-		return 0, rest_err.NewBadRequestError(key + " parameter is required")
+		return 0, rest_err.NewBadRequestError("%s parameter is required", key)
 	}
 
 	intParam, err := strconv.Atoi(param)
 	if err != nil {
-		return 0, rest_err.NewBadRequestError("invalid " + key + " parameter")
+		return 0, rest_err.NewBadRequestError("invalid %s parameter", key)
 	}
 
 	return uint(intParam), nil

@@ -24,12 +24,12 @@ func NewRedisSessionRepository(rdb *redis.Client) interfaces.SessionRepository {
 func (r *redisSessionRepository) Create(ctx context.Context, session *entities.Session) *rest_err.RestErr {
 	data, err := json.Marshal(session)
 	if err != nil {
-		return rest_err.NewInternalServerError("malformed session data")
+		return rest_err.NewInternalServerError("malformed session data").WithCause(err)
 	}
 
 	err = r.rdb.Set(ctx, session.UUID, data, sessions.AbsoluteTimeout).Err()
 	if err != nil {
-		return rest_err.NewInternalServerError("error while creating session")
+		return rest_err.NewInternalServerError("error while creating session").WithCause(err)
 	}
 
 	return nil
@@ -40,12 +40,12 @@ func (r *redisSessionRepository) GetById(ctx context.Context, id string) (*entit
 	if err == redis.Nil {
 		return nil, rest_err.NewNotFoundError("session not found")
 	} else if err != nil {
-		return nil, rest_err.NewInternalServerError("error while fetching session")
+		return nil, rest_err.NewInternalServerError("error while fetching session").WithCause(err)
 	}
 
 	var sess entities.Session
 	if err := json.Unmarshal(data, &sess); err != nil {
-		return nil, rest_err.NewInternalServerError("error while unmarshalling session")
+		return nil, rest_err.NewInternalServerError("error while unmarshalling session").WithCause(err)
 	}
 
 	return &sess, nil
@@ -54,7 +54,7 @@ func (r *redisSessionRepository) GetById(ctx context.Context, id string) (*entit
 func (r *redisSessionRepository) Delete(ctx context.Context, id string) *rest_err.RestErr {
 	err := r.rdb.Del(ctx, id).Err()
 	if err != nil {
-		return rest_err.NewInternalServerError("error while deleting session")
+		return rest_err.NewInternalServerError("error while deleting session").WithCause(err)
 	}
 	return nil
 }

@@ -23,7 +23,7 @@ func NewGormApiKeyRepository(db *gorm.DB) interfaces.ApiKeyRepository {
 func (g *gormApiKeyRepository) Create(ctx context.Context, a *entities.ApiKey) *rest_err.RestErr {
 	err := gorm.G[entities.ApiKey](g.db).Create(ctx, a)
 	if err != nil {
-		return rest_err.NewInternalServerError("error while creating api key")
+		return rest_err.NewInternalServerError("error while creating api key").WithCause(err)
 	}
 	return nil
 }
@@ -34,7 +34,7 @@ func (g *gormApiKeyRepository) GetById(ctx context.Context, uuid string) (*entit
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, rest_err.NewNotFoundError("api key not found")
 		}
-		return nil, rest_err.NewInternalServerError("error while fetching api key")
+		return nil, rest_err.NewInternalServerError("error while fetching api key").WithCause(err)
 	}
 	return &res, nil
 }
@@ -44,7 +44,7 @@ func (g *gormApiKeyRepository) GetAll(ctx context.Context, limit, offset int, pa
 	if len(apiKeys) == 0 {
 		return nil, 0, rest_err.NewNotFoundError("no api keys found")
 	} else if err != nil {
-		return nil, 0, rest_err.NewInternalServerError("error while fetching api keys")
+		return nil, 0, rest_err.NewInternalServerError("error while fetching api keys").WithCause(err)
 	}
 	return apiKeys, len(apiKeys), nil
 }
@@ -54,7 +54,7 @@ func (g *gormApiKeyRepository) Delete(ctx context.Context, uuid string) *rest_er
 	if affected == 0 {
 		return rest_err.NewNotFoundError("api key not found")
 	} else if err != nil {
-		return rest_err.NewInternalServerError("error while deleting api key")
+		return rest_err.NewInternalServerError("error while deleting api key").WithCause(err)
 	}
 	return nil
 }

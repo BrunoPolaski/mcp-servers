@@ -1,7 +1,6 @@
 package jwt
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"strings"
@@ -41,7 +40,7 @@ func (ja *jwtAdapter) GenerateToken(tid, sub string) (string, *rest_err.RestErr)
 
 	tokenWithSignature, err := token.SignedString([]byte(secret))
 	if err != nil {
-		return "", rest_err.NewInternalServerError(fmt.Sprintf("failed to sign JWT: %s", err.Error()))
+		return "", rest_err.NewInternalServerError("failed to sign JWT: %s", err.Error()).WithCause(err)
 	}
 
 	return tokenWithSignature, nil

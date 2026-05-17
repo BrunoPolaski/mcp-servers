@@ -23,7 +23,7 @@ func NewGormUserRepository(db *gorm.DB) interfaces.UserRepository {
 func (g *gormUserRepository) Register(ctx context.Context, user *entities.User) (*entities.User, *rest_err.RestErr) {
 	err := gorm.G[entities.User](g.db).Create(ctx, user)
 	if err != nil {
-		return nil, rest_err.NewInternalServerError("error while creating user")
+		return nil, rest_err.NewInternalServerError("error while creating user").WithCause(err)
 	}
 	return user, nil
 }
@@ -39,7 +39,7 @@ func (g *gormUserRepository) GetById(ctx context.Context, id uint) (*entities.Us
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, rest_err.NewNotFoundError("user not found")
 		}
-		return nil, rest_err.NewInternalServerError("user not found")
+		return nil, rest_err.NewInternalServerError("user not found").WithCause(err)
 	}
 	return res, nil
 }
@@ -50,7 +50,7 @@ func (g *gormUserRepository) GetByDocument(ctx context.Context, document string)
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, rest_err.NewNotFoundError("user not found")
 		}
-		return nil, rest_err.NewInternalServerError("internal server error while fetching user")
+		return nil, rest_err.NewInternalServerError("internal server error while fetching user").WithCause(err)
 	}
 	return personalInformation, nil
 }
@@ -65,7 +65,7 @@ func (g *gormUserRepository) GetByEmail(ctx context.Context, email string) (*ent
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, rest_err.NewNotFoundError("user not found")
 		}
-		return nil, rest_err.NewInternalServerError("internal server error while fetching user")
+		return nil, rest_err.NewInternalServerError("internal server error while fetching user").WithCause(err)
 	}
 	return usr, nil
 }
@@ -73,14 +73,14 @@ func (g *gormUserRepository) GetByEmail(ctx context.Context, email string) (*ent
 func (g *gormUserRepository) GetAll(ctx context.Context, limit, offset int, params map[string]interface{}) ([]entities.User, int64, *rest_err.RestErr) {
 	count, err := gorm.G[entities.User](g.db).Where(params).Count(ctx, "id")
 	if err != nil {
-		return nil, 0, rest_err.NewInternalServerError("error while counting users")
+		return nil, 0, rest_err.NewInternalServerError("error while counting users").WithCause(err)
 	}
 
 	users, err := gorm.G[entities.User](g.db).Find(ctx)
 	if len(users) == 0 {
 		return nil, 0, rest_err.NewNotFoundError("no users found")
 	} else if err != nil {
-		return nil, 0, rest_err.NewInternalServerError("error while fetching users")
+		return nil, 0, rest_err.NewInternalServerError("error while fetching users").WithCause(err)
 	}
 	return users, count, nil
 }
@@ -90,7 +90,7 @@ func (g *gormUserRepository) Delete(ctx context.Context, id uint) *rest_err.Rest
 	if affected == 0 {
 		return rest_err.NewNotFoundError("user not found")
 	} else if err != nil {
-		return rest_err.NewInternalServerError("error while deleting user")
+		return rest_err.NewInternalServerError("error while deleting user").WithCause(err)
 	}
 	return nil
 }
@@ -107,7 +107,7 @@ func (g *gormUserRepository) Update(ctx context.Context, user *entities.User) (*
 		if errors.Is(err, gorm.ErrCheckConstraintViolated) {
 			return nil, rest_err.NewBadRequestError("email already exists")
 		}
-		return nil, rest_err.NewInternalServerError("error while updating user")
+		return nil, rest_err.NewInternalServerError("error while updating user").WithCause(err)
 	}
 	if affected == 0 {
 		return nil, rest_err.NewNotFoundError("user not found")

@@ -29,7 +29,7 @@ func (g *gormAdminRepository) GetById(ctx context.Context, id uint) (*entities.A
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, rest_err.NewNotFoundError("admin not found")
 		}
-		return nil, rest_err.NewInternalServerError("error while fetching admin")
+		return nil, rest_err.NewInternalServerError("error while fetching admin").WithCause(err)
 	}
 	return &res, nil
 }
@@ -37,14 +37,14 @@ func (g *gormAdminRepository) GetById(ctx context.Context, id uint) (*entities.A
 func (g *gormAdminRepository) GetAll(ctx context.Context, limit, offset int, params map[string]any) ([]entities.Admin, int64, *rest_err.RestErr) {
 	total, err := gorm.G[entities.Admin](g.db).Where(params).Count(ctx, "id")
 	if err != nil {
-		return nil, 0, rest_err.NewInternalServerError("error while counting admins")
+		return nil, 0, rest_err.NewInternalServerError("error while counting admins").WithCause(err)
 	}
 
 	admins, err := gorm.G[entities.Admin](g.db).Where(params).Limit(limit).Offset(offset).Find(ctx)
 	if len(admins) == 0 {
 		return nil, 0, rest_err.NewNotFoundError("no admins found")
 	} else if err != nil {
-		return nil, 0, rest_err.NewInternalServerError("error while fetching admins")
+		return nil, 0, rest_err.NewInternalServerError("error while fetching admins").WithCause(err)
 	}
 	return admins, total, nil
 }
@@ -54,7 +54,7 @@ func (g *gormAdminRepository) Delete(ctx context.Context, id uint) *rest_err.Res
 	if affected == 0 {
 		return rest_err.NewNotFoundError("admin not found")
 	} else if err != nil {
-		return rest_err.NewInternalServerError("error while deleting admin")
+		return rest_err.NewInternalServerError("error while deleting admin").WithCause(err)
 	}
 	return nil
 }

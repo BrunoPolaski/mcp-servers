@@ -1,62 +1,109 @@
 package request
 
 import (
+	"time"
+
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/core/entities"
 	valueobjects "github.com/BrunoPolaski/bureau-mcp-server/internal/core/entities/value_objects"
 )
 
 type PersonalInformationRequest struct {
-	ID       uint            `json:"id"`
-	Name     string          `json:"name" validate:"required" example:"João da Silva"`             // Full name
-	Phone    string          `json:"phone" validate:"required,phone_number" example:"11999999999"` // Phone in brazilian format, without country code
-	Document string          `json:"document" validate:"required,document" example:"12345678909"`  // Brazilian CPF
-	Address  *AddressRequest `json:"address" validate:"required"`
-	File     *FileRequest    `json:"file"`
+	ID                   uint                    `json:"id"`
+	FullName             string                  `json:"full_name" validate:"required" example:"João da Silva"`
+	MotherName           string                  `json:"mother_name"`
+	BirthDate            time.Time               `json:"birth_date" validate:"required"`
+	Gender               *string                 `json:"gender,omitempty"`
+	Nationality          string                  `json:"nationality" validate:"required"`
+	MaritalStatus        *string                 `json:"marital_status,omitempty"`
+	Document             string                  `json:"document" validate:"required,document" example:"12345678909"`
+	RG                   *string                 `json:"rg,omitempty"`
+	RGIssuer             *string                 `json:"rg_issuer,omitempty"`
+	RGIssueDate          *time.Time              `json:"rg_issue_date,omitempty"`
+	VoterID              *string                 `json:"voter_id,omitempty"`
+	WorkCard             *string                 `json:"work_card,omitempty"`
+	PrimaryPhone         string                  `json:"primary_phone" validate:"required,phone_number" example:"11999999999"`
+	SecondaryPhone       *string                 `json:"secondary_phone,omitempty"`
+	Email                string                  `json:"email" validate:"required,email"`
+	AlternativeEmail     *string                 `json:"alternative_email,omitempty"`
+	Addresses            []PersonAddressRequest  `json:"addresses,omitempty"`
+	ProfilePhoto         *FileRequest            `json:"profile_photo,omitempty"`
+	Documents            []PersonDocumentRequest `json:"documents,omitempty"`
+	DocumentValidated    bool                    `json:"document_validated"`
+	EmailVerified        bool                    `json:"email_verified"`
+	PhoneVerified        bool                    `json:"phone_verified"`
+	BiometricValidated   bool                    `json:"biometric_validated"`
+	ReceitaFederalStatus string                  `json:"receita_federal_status"`
 }
 
 func (p PersonalInformationRequest) ToEntity() *entities.PersonalInformation {
-	phone, err := valueobjects.NewPhoneNumber(p.Phone)
+	primaryPhone, err := valueobjects.NewPhoneNumber(p.PrimaryPhone)
 	if err != nil {
 		return nil
 	}
 
+	var secondaryPhone *valueobjects.PhoneNumber
+	if p.SecondaryPhone != nil {
+		phone, err := valueobjects.NewPhoneNumber(*p.SecondaryPhone)
+		if err != nil {
+			return nil
+		}
+		secondaryPhone = &phone
+	}
+
 	pi := &entities.PersonalInformation{
-		Name:     p.Name,
-		Phone:    phone,
-		Document: valueobjects.NewDocument(p.Document),
+		FullName:             p.FullName,
+		MotherName:           p.MotherName,
+		BirthDate:            p.BirthDate,
+		Gender:               p.Gender,
+		Nationality:          p.Nationality,
+		MaritalStatus:        p.MaritalStatus,
+		Document:             valueobjects.NewDocument(p.Document),
+		RG:                   p.RG,
+		RGIssuer:             p.RGIssuer,
+		RGIssueDate:          p.RGIssueDate,
+		VoterID:              p.VoterID,
+		WorkCard:             p.WorkCard,
+		PrimaryPhone:         primaryPhone,
+		SecondaryPhone:       secondaryPhone,
+		Email:                p.Email,
+		AlternativeEmail:     p.AlternativeEmail,
+		DocumentValidated:    p.DocumentValidated,
+		EmailVerified:        p.EmailVerified,
+		PhoneVerified:        p.PhoneVerified,
+		BiometricValidated:   p.BiometricValidated,
+		ReceitaFederalStatus: p.ReceitaFederalStatus,
 	}
 
-	if p.Address != nil {
-		pi.Address = p.Address.ToEntity()
+	if len(p.Addresses) > 0 {
+		pi.Addresses = make([]entities.PersonAddress, 0, len(p.Addresses))
+		for _, address := range p.Addresses {
+			pi.Addresses = append(pi.Addresses, address.ToEntity())
+		}
 	}
 
-	if p.File != nil {
-		pi.File = p.File.ToEntity()
+	if p.ProfilePhoto != nil {
+		pi.ProfilePhoto = p.ProfilePhoto.ToEntity()
+	}
+
+	if len(p.Documents) > 0 {
+		pi.Documents = make([]entities.PersonDocument, 0, len(p.Documents))
+		for _, doc := range p.Documents {
+			if entityDoc := doc.ToEntity(); entityDoc != nil {
+				pi.Documents = append(pi.Documents, *entityDoc)
+			}
+		}
 	}
 
 	return pi
 }
 
-type AddressRequest struct {
-	Id         uint    `json:"id"`
-	Street     string  `json:"street" validate:"required"`
-	Number     string  `json:"number" validate:"required" example:"1234 | S/N"`
-	City       string  `json:"city" validate:"required"`
-	State      string  `json:"state" validate:"required" example:"SC"`
-	ZipCode    string  `json:"zip_code" validate:"required" example:"12345-678"`
-	Complement *string `json:"complement"`
-	CreatedAt  string  `json:"created_at"`
-	UpdatedAt  string  `json:"updated_at"`
+type PersonAddressRequest struct {
+	AddressID uint `json:"address_id" validate:"required"`
 }
 
-func (a AddressRequest) ToEntity() *entities.Address {
-	return &entities.Address{
-		Street:     a.Street,
-		Number:     a.Number,
-		City:       a.City,
-		State:      a.State,
-		ZipCode:    a.ZipCode,
-		Complement: a.Complement,
+func (p PersonAddressRequest) ToEntity() entities.PersonAddress {
+	return entities.PersonAddress{
+		AddressID: p.AddressID,
 	}
 }
 
@@ -76,5 +123,31 @@ func (f FileRequest) ToEntity() *entities.File {
 		Name:         f.Name,
 		URL:          f.URL,
 		MimeType:     f.MimeType,
+	}
+}
+
+type PersonDocumentRequest struct {
+	ID             uint         `json:"id"`
+	File           *FileRequest `json:"file"`
+	DocumentType   string       `json:"document_type" validate:"required"`
+	IsVerified     bool         `json:"is_verified"`
+	VerifiedAt     *time.Time   `json:"verified_at,omitempty"`
+	VerifiedBy     *string      `json:"verified_by,omitempty"`
+	ExpirationDate *time.Time   `json:"expiration_date,omitempty"`
+}
+
+func (p PersonDocumentRequest) ToEntity() *entities.PersonDocument {
+	var file *entities.File
+	if p.File != nil {
+		file = p.File.ToEntity()
+	}
+
+	return &entities.PersonDocument{
+		File:           file,
+		DocumentType:   p.DocumentType,
+		IsVerified:     p.IsVerified,
+		VerifiedAt:     p.VerifiedAt,
+		VerifiedBy:     p.VerifiedBy,
+		ExpirationDate: p.ExpirationDate,
 	}
 }

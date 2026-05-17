@@ -55,7 +55,7 @@ func registerValidation(tag string, fn func(string) bool, errorMsg string) {
 
 func ShouldBindJSON(r *http.Request, s any) *rest_err.RestErr {
 	if err := json.NewDecoder(r.Body).Decode(s); err != nil {
-		return rest_err.NewBadRequestError(err.Error())
+		return rest_err.NewBadRequestError("%s", err.Error()).WithCause(err)
 	}
 
 	err := Validate(s)
@@ -68,7 +68,7 @@ func ShouldBindJSON(r *http.Request, s any) *rest_err.RestErr {
 
 func ShouldBindBytes(bytes []byte, s any) *rest_err.RestErr {
 	if err := json.Unmarshal(bytes, s); err != nil {
-		return rest_err.NewBadRequestError(err.Error())
+		return rest_err.NewBadRequestError("%s", err.Error()).WithCause(err)
 	}
 
 	err := Validate(s)
@@ -120,7 +120,7 @@ func Validate(s any) *rest_err.RestErr {
 			)
 		}
 
-		return rest_err.NewBadRequestError(err.Error())
+		return rest_err.NewBadRequestError("%s", err.Error()).WithCause(err)
 	}
 	return nil
 }

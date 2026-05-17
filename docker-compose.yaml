@@ -41,7 +41,7 @@ services:
     container_name: postgres
     image: postgres:16
     ports:
-      - "127.0.0.1:5433:5432"
+      - "5433:5432"
     environment:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: postgres
@@ -56,6 +56,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    env_file:
+      - .env
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:latest
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_PASSWORD}
+    ports:
+      - "5050:80"
+    networks:
+      - postgres-network
+    depends_on:
+      postgres:
+        condition: service_healthy
     env_file:
       - .env
     

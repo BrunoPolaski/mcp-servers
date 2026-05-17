@@ -89,7 +89,7 @@ func (s *goMailAdapter) Send(ctx context.Context, message *entities.Mail) *rest_
 
 	err := s.dialer.DialAndSend(m)
 	if err != nil {
-		return rest_err.NewInternalServerError("Error sending email: " + err.Error())
+		return rest_err.NewInternalServerError("Error sending email: %s", err.Error()).WithCause(err)
 	}
 
 	return nil

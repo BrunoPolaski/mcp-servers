@@ -41,13 +41,13 @@ func SessionAuthMiddleware(rdb *redis.Client) Middleware {
 				httphelper.ErrorResponse(rest_err.NewUnauthorizedError("invalid session"), w)
 				return
 			} else if err != nil {
-				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error"), w)
+				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error").WithCause(err), w)
 				return
 			}
 
 			var sess entities.Session
 			if err := json.Unmarshal(data, &sess); err != nil {
-				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error"), w)
+				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error").WithCause(err), w)
 				return
 			}
 
@@ -62,12 +62,12 @@ func SessionAuthMiddleware(rdb *redis.Client) Middleware {
 			sess.LastActivity = now
 			updated, err := json.Marshal(sess)
 			if err != nil {
-				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error"), w)
+				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error").WithCause(err), w)
 				return
 			}
 
 			if err := rdb.Set(ctx, cookie.Value, updated, sessions.AbsoluteTimeout).Err(); err != nil {
-				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error"), w)
+				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error").WithCause(err), w)
 				return
 			}
 

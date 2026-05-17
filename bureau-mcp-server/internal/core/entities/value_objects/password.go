@@ -26,7 +26,7 @@ func (p Password) String() string {
 func (p Password) Hash() (Password, *rest_err.RestErr) {
 	pwd, err := bcrypt.GenerateFromPassword([]byte(p), bcrypt.DefaultCost)
 	if err != nil {
-		return "", rest_err.NewInternalServerError("failed to hash password")
+		return "", rest_err.NewInternalServerError("failed to hash password").WithCause(err)
 	}
 	return Password(pwd), nil
 }

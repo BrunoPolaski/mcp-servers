@@ -16,17 +16,17 @@ func EncryptSecret(s string) (string, *rest_err.RestErr) {
 
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
-		return "", rest_err.NewInternalServerError(err.Error())
+		return "", rest_err.NewInternalServerError("%s", err.Error()).WithCause(err)
 	}
 
 	nonce := make([]byte, 12)
 	if _, err := io.ReadFull(rand.Reader, nonce); err != nil {
-		return "", rest_err.NewInternalServerError(err.Error())
+		return "", rest_err.NewInternalServerError("%s", err.Error()).WithCause(err)
 	}
 
 	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		return "", rest_err.NewInternalServerError(err.Error())
+		return "", rest_err.NewInternalServerError("%s", err.Error()).WithCause(err)
 	}
 
 	ciphertext := aesGCM.Seal(nonce, nonce, []byte(s), nil)
@@ -41,17 +41,17 @@ func DecryptSecret(secret string) (string, *rest_err.RestErr) {
 
 	data, err := base64.URLEncoding.DecodeString(secret)
 	if err != nil {
-		return "", rest_err.NewInternalServerError(err.Error())
+		return "", rest_err.NewInternalServerError("%s", err.Error()).WithCause(err)
 	}
 
 	block, err := aes.NewCipher([]byte(key))
 	if err != nil {
-		return "", rest_err.NewInternalServerError(err.Error())
+		return "", rest_err.NewInternalServerError("%s", err.Error()).WithCause(err)
 	}
 
 	aesGCM, err := cipher.NewGCM(block)
 	if err != nil {
-		return "", rest_err.NewInternalServerError(err.Error())
+		return "", rest_err.NewInternalServerError("%s", err.Error()).WithCause(err)
 	}
 
 	nonceSize := aesGCM.NonceSize()
@@ -64,7 +64,7 @@ func DecryptSecret(secret string) (string, *rest_err.RestErr) {
 
 	plaintext, err := aesGCM.Open(nil, nonce, ciphertext, nil)
 	if err != nil {
-		return "", rest_err.NewInternalServerError(err.Error())
+		return "", rest_err.NewInternalServerError("%s", err.Error()).WithCause(err)
 	}
 
 	return string(plaintext), nil

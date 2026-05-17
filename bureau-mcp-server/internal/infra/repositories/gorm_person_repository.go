@@ -29,7 +29,7 @@ func (g *gormPersonRepository) GetById(ctx context.Context, id uint) (*entities.
 		if errors.Is(err, gorm.ErrRecordNotFound) {
 			return nil, rest_err.NewNotFoundError("person not found")
 		}
-		return nil, rest_err.NewInternalServerError("error while fetching person")
+		return nil, rest_err.NewInternalServerError("error while fetching person").WithCause(err)
 	}
 	return res, nil
 }
@@ -37,14 +37,14 @@ func (g *gormPersonRepository) GetById(ctx context.Context, id uint) (*entities.
 func (g *gormPersonRepository) GetAll(ctx context.Context, limit, offset int, params map[string]any) ([]entities.Person, int64, *rest_err.RestErr) {
 	total, err := gorm.G[entities.Person](g.db).Where(params).Count(ctx, "id")
 	if err != nil {
-		return nil, 0, rest_err.NewInternalServerError("error while counting persons")
+		return nil, 0, rest_err.NewInternalServerError("error while counting persons").WithCause(err)
 	}
 
 	persons, err := gorm.G[entities.Person](g.db).Where(params).Limit(limit).Offset(offset).Find(ctx)
 	if len(persons) == 0 {
 		return nil, 0, rest_err.NewNotFoundError("no persons found")
 	} else if err != nil {
-		return nil, 0, rest_err.NewInternalServerError("error while fetching persons")
+		return nil, 0, rest_err.NewInternalServerError("error while fetching persons").WithCause(err)
 	}
 	return persons, total, nil
 }
@@ -54,7 +54,7 @@ func (g *gormPersonRepository) Delete(ctx context.Context, id uint) *rest_err.Re
 	if affected == 0 {
 		return rest_err.NewNotFoundError("person not found")
 	} else if err != nil {
-		return rest_err.NewInternalServerError("error while deleting person")
+		return rest_err.NewInternalServerError("error while deleting person").WithCause(err)
 	}
 	return nil
 }
