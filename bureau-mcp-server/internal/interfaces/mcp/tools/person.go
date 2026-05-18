@@ -56,3 +56,40 @@ func (s *Server) HandleGetPersonByID(ctx context.Context, request mcp.CallToolRe
 
 	return dto.NewPersonDTO(person), nil
 }
+
+func (s *Server) GetPersonByDocumentTool() mcp.Tool {
+	return mcp.NewTool(
+		"get_person_by_document",
+		mcp.WithDescription(
+			`
+			Get a person by their document number
+			This returns a persons's bureau information, including their name, date of birth, and associated addresses.
+			Example usage:
+			{
+				"document": "12345678900"
+			}
+			`,
+		),
+		mcp.WithOutputSchema[dto.PersonDTO](),
+		mcp.WithString(
+			"document",
+			mcp.Description("The document number of the person to retrieve"),
+		),
+	)
+}
+
+func (s *Server) HandleGetPersonByDocument(ctx context.Context, request mcp.CallToolRequest, args mcp.CallToolParams) (*dto.PersonDTO, error) {
+	document, err := request.RequireString("document")
+	if err != nil {
+		return nil, err
+	} else if document == "" {
+		return nil, fmt.Errorf("invalid document: cannot be empty")
+	}
+
+	person, restErr := s.personService.GetByDocument(ctx, document)
+	if restErr != nil {
+		return nil, restErr
+	}
+
+	return dto.NewPersonDTO(person), nil
+}

@@ -23,7 +23,51 @@ func NewGormPersonRepository(db *gorm.DB) interfaces.PersonRepository {
 func (g *gormPersonRepository) GetById(ctx context.Context, id uint) (*entities.Person, *rest_err.RestErr) {
 	res, err := gorm.G[*entities.Person](g.db).
 		Preload("PersonalInformation", nil).
+		Preload("CreditScore", nil).
+		Preload("FinancialProfile", nil).
+		Preload("EmploymentRecords", nil).
+		Preload("IncomeDeclarations", nil).
+		Preload("CreditAccounts", nil).
+		Preload("CreditInquiries", nil).
+		Preload("PaymentHistories", nil).
+		Preload("Debts", nil).
+		Preload("NegativeRecords", nil).
+		Preload("LegalRecords", nil).
+		Preload("ComplianceChecks", nil).
+		Preload("FraudAlerts", nil).
+		Preload("RiskAssessments", nil).
+		Preload("RelatedPersons", nil).
+		Preload("DataSources", nil).
 		Where("id = ?", id).
+		First(ctx)
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, rest_err.NewNotFoundError("person not found")
+		}
+		return nil, rest_err.NewInternalServerError("error while fetching person").WithCause(err)
+	}
+	return res, nil
+}
+
+func (g *gormPersonRepository) GetByDocument(ctx context.Context, document string) (*entities.Person, *rest_err.RestErr) {
+	res, err := gorm.G[*entities.Person](g.db).
+		Preload("PersonalInformation", nil).
+		Preload("CreditScore", nil).
+		Preload("FinancialProfile", nil).
+		Preload("EmploymentRecords", nil).
+		Preload("IncomeDeclarations", nil).
+		Preload("CreditAccounts", nil).
+		Preload("CreditInquiries", nil).
+		Preload("PaymentHistories", nil).
+		Preload("Debts", nil).
+		Preload("NegativeRecords", nil).
+		Preload("LegalRecords", nil).
+		Preload("ComplianceChecks", nil).
+		Preload("FraudAlerts", nil).
+		Preload("RiskAssessments", nil).
+		Preload("RelatedPersons", nil).
+		Preload("DataSources", nil).
+		Where("personal_information.document = ?", document).
 		First(ctx)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {

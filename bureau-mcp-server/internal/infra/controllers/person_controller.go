@@ -77,6 +77,33 @@ func (ac *PersonController) GetById(w http.ResponseWriter, r *http.Request) {
 	httphelper.JSON(dto.NewPersonDTO(addr), w)
 }
 
+// @Summary Get an person by document
+// @Description Get an person by document.
+// @Tags /person
+// @Produce json
+// @Security CookieAuth
+// @Param document path string true "Document"
+// @Success 200 {object} dto.PersonDTO
+// @Failure 400 {object} rest_err.RestErr
+// @Failure 401 {object} rest_err.RestErr
+// @Failure 404 {object} rest_err.RestErr
+// @Router /person/{document} [get]
+func (ac *PersonController) GetByDocument(w http.ResponseWriter, r *http.Request) {
+	document, err := httphelper.PathParam(r, "document")
+	if err != nil {
+		httphelper.ErrorResponse(err, w)
+		return
+	}
+
+	person, err := ac.PersonService.GetByDocument(r.Context(), document)
+	if err != nil {
+		httphelper.ErrorResponse(err, w)
+		return
+	}
+
+	httphelper.JSON(dto.NewPersonDTO(person), w)
+}
+
 // @Summary List all persons
 // @Description Get a list of all persons.
 // @Tags /person

@@ -67,6 +67,15 @@ func (as *PersonService) GetById(ctx context.Context, id uint) (*entities.Person
 	return person, nil
 }
 
+func (as *PersonService) GetByDocument(ctx context.Context, document string) (*entities.Person, *rest_err.RestErr) {
+	person, err := as.personRepository.GetByDocument(ctx, document)
+	if err != nil {
+		return nil, err
+	}
+
+	return person, nil
+}
+
 func (as *PersonService) GetAll(ctx context.Context, limit, offset int, params map[string]any) (*dto.PaginatedResponse[dto.PersonDTO], *rest_err.RestErr) {
 	persons, count, err := as.personRepository.GetAll(ctx, limit, offset, params)
 	if err != nil {
