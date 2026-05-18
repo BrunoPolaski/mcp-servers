@@ -28,7 +28,7 @@ func RegisterPersonRoutes(s *http.ServeMux, tpf *thirdparty.ThirdPartyFactory, r
 		middlewares.SessionAuthMiddleware(tpf.Redis()),
 	))
 
-	s.Handle("GET /person/{document}", middlewares.HandlerChain(
+	s.Handle("GET /person/document/{document}", middlewares.HandlerChain(
 		personController.GetByDocument,
 		middlewares.SessionAuthMiddleware(tpf.Redis()),
 	))
