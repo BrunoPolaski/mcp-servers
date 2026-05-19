@@ -5,9 +5,11 @@ import (
 	"errors"
 
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/core/entities"
+	valueobjects "github.com/BrunoPolaski/bureau-mcp-server/internal/core/entities/value_objects"
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/repositories/interfaces"
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type gormPersonRepository struct {
@@ -51,7 +53,13 @@ func (g *gormPersonRepository) GetById(ctx context.Context, id uint) (*entities.
 
 func (g *gormPersonRepository) GetByDocument(ctx context.Context, document string) (*entities.Person, *rest_err.RestErr) {
 	res, err := gorm.G[*entities.Person](g.db).
-		Preload("PersonalInformation", nil).
+		Joins(
+			clause.JoinTarget{Association: "PersonalInformation"},
+			func(db gorm.JoinBuilder, joinTable, curTable clause.Table) error {
+				db.Where(&entities.PersonalInformation{Document: valueobjects.Document(document)})
+				return nil
+			},
+		).
 		Preload("CreditScore", nil).
 		Preload("FinancialProfile", nil).
 		Preload("EmploymentRecords", nil).
@@ -67,7 +75,6 @@ func (g *gormPersonRepository) GetByDocument(ctx context.Context, document strin
 		Preload("RiskAssessments", nil).
 		Preload("RelatedPersons", nil).
 		Preload("DataSources", nil).
-		Where("personal_information.document = ?", document).
 		First(ctx)
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -86,12 +93,16 @@ func (g *gormPersonRepository) GetAll(ctx context.Context, limit, offset int, pa
 		return nil, 0, rest_err.NewInternalServerError("error while counting persons").WithCause(err)
 	}
 
-	persons, err := gorm.G[entities.Person](g.db).
+	query := gorm.G[entities.Person](g.db).
 		Preload("PersonalInformation", nil).
-		Where(params).
-		Limit(limit).
-		Offset(offset).
-		Find(ctx)
+		Where(params)
+	if limit > 0 {
+		query = query.Limit(limit)
+	}
+	if offset > 0 {
+		query = query.Offset(offset)
+	}
+	persons, err := query.Find(ctx)
 	if len(persons) == 0 {
 		return nil, 0, rest_err.NewNotFoundError("no persons found")
 	} else if err != nil {

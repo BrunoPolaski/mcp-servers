@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/controllers/dto"
@@ -93,6 +94,8 @@ func (s *Server) GetAllPersonsTool() mcp.Tool {
 				"limit": 10,
 				"offset": 0
 			}
+
+			To fetch all persons, set "limit" to 0.
 			`,
 		),
 		mcp.WithOutputSchema[dto.PaginatedResponse[dto.PersonDTO]](),
@@ -100,7 +103,7 @@ func (s *Server) GetAllPersonsTool() mcp.Tool {
 			"limit",
 			mcp.Description("Limit the number of results"),
 			mcp.DefaultNumber(10),
-			mcp.Min(1),
+			mcp.Min(0),
 		),
 		mcp.WithInteger(
 			"offset",
@@ -108,21 +111,34 @@ func (s *Server) GetAllPersonsTool() mcp.Tool {
 			mcp.DefaultNumber(0),
 			mcp.Min(0),
 		),
+		mcp.WithObject(
+			"params",
+			mcp.Description("Additional filters for querying persons. e.g. {\"name\": \"John Doe\"}"),
+		),
 	)
 }
 
 func (s *Server) HandleGetAllPersons(ctx context.Context, request mcp.CallToolRequest, args mcp.CallToolParams) (*dto.PaginatedResponse[dto.PersonDTO], error) {
+	arguments := map[string]any{}
+	if request.Params.Arguments != nil {
+		var ok bool
+		arguments, ok = request.Params.Arguments.(map[string]any)
+		if !ok {
+			return nil, errors.New("invalid arguments")
+		}
+	}
+
+	params, _ := arguments["params"].(map[string]any)
 	limit := request.GetInt("limit", 10)
 	offset := request.GetInt("offset", 0)
-
-	if limit <= 0 {
-		return nil, fmt.Errorf("invalid limit: must be a positive integer")
+	if limit < 0 {
+		return nil, fmt.Errorf("invalid limit: must be a non-negative integer")
 	}
 	if offset < 0 {
 		return nil, fmt.Errorf("invalid offset: must be a non-negative integer")
 	}
 
-	persons, restErr := s.personService.GetAll(ctx, limit, offset, map[string]any{})
+	persons, restErr := s.personService.GetAll(ctx, limit, offset, params)
 	if restErr != nil {
 		return nil, restErr
 	}
