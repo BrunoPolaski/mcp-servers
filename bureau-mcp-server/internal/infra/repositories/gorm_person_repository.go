@@ -79,12 +79,19 @@ func (g *gormPersonRepository) GetByDocument(ctx context.Context, document strin
 }
 
 func (g *gormPersonRepository) GetAll(ctx context.Context, limit, offset int, params map[string]any) ([]entities.Person, int64, *rest_err.RestErr) {
-	total, err := gorm.G[entities.Person](g.db).Where(params).Count(ctx, "id")
+	total, err := gorm.G[entities.Person](g.db).
+		Where(params).
+		Count(ctx, "id")
 	if err != nil {
 		return nil, 0, rest_err.NewInternalServerError("error while counting persons").WithCause(err)
 	}
 
-	persons, err := gorm.G[entities.Person](g.db).Where(params).Limit(limit).Offset(offset).Find(ctx)
+	persons, err := gorm.G[entities.Person](g.db).
+		Preload("PersonalInformation", nil).
+		Where(params).
+		Limit(limit).
+		Offset(offset).
+		Find(ctx)
 	if len(persons) == 0 {
 		return nil, 0, rest_err.NewNotFoundError("no persons found")
 	} else if err != nil {

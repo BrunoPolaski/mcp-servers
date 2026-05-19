@@ -1,15 +1,3 @@
-/*
-	 	s.Handle("GET /person/{id}", middlewares.HandlerChain(
-			personController.GetById,
-			middlewares.SessionAuthMiddleware(tpf.Redis()),
-		))
-
-		s.Handle("GET /person", middlewares.HandlerChain(
-			personController.GetAll,
-			middlewares.SessionAuthMiddleware(tpf.Redis()),
-			middlewares.UserTypeMiddleware(valueobjects.UserTypeAnalyst),
-		))
-*/
 package tools
 
 import (
@@ -92,4 +80,52 @@ func (s *Server) HandleGetPersonByDocument(ctx context.Context, request mcp.Call
 	}
 
 	return dto.NewPersonDTO(person), nil
+}
+
+func (s *Server) GetAllPersonsTool() mcp.Tool {
+	return mcp.NewTool(
+		"get_all_persons",
+		mcp.WithDescription(
+			`
+			List persons with pagination
+			Example usage:
+			{
+				"limit": 10,
+				"offset": 0
+			}
+			`,
+		),
+		mcp.WithOutputSchema[dto.PaginatedResponse[dto.PersonDTO]](),
+		mcp.WithInteger(
+			"limit",
+			mcp.Description("Limit the number of results"),
+			mcp.DefaultNumber(10),
+			mcp.Min(1),
+		),
+		mcp.WithInteger(
+			"offset",
+			mcp.Description("Offset for pagination"),
+			mcp.DefaultNumber(0),
+			mcp.Min(0),
+		),
+	)
+}
+
+func (s *Server) HandleGetAllPersons(ctx context.Context, request mcp.CallToolRequest, args mcp.CallToolParams) (*dto.PaginatedResponse[dto.PersonDTO], error) {
+	limit := request.GetInt("limit", 10)
+	offset := request.GetInt("offset", 0)
+
+	if limit <= 0 {
+		return nil, fmt.Errorf("invalid limit: must be a positive integer")
+	}
+	if offset < 0 {
+		return nil, fmt.Errorf("invalid offset: must be a non-negative integer")
+	}
+
+	persons, restErr := s.personService.GetAll(ctx, limit, offset, map[string]any{})
+	if restErr != nil {
+		return nil, restErr
+	}
+
+	return persons, nil
 }
