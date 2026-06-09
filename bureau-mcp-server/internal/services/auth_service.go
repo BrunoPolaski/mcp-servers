@@ -2,6 +2,7 @@ package services
 
 import (
 	"context"
+	"crypto/sha256"
 	"time"
 
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/core/entities"
@@ -10,19 +11,21 @@ import (
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/repositories"
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/repositories/interfaces"
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/thirdparty"
+	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/thirdparty/jwt"
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/google/uuid"
 )
 
 type AuthService struct {
 	userRepository    interfaces.UserRepository
 	sessionRepository interfaces.SessionRepository
+	jwtAdapter        jwt.JWT
 }
 
 func NewAuthService(rf *repositories.RepositoryFactory, tpf *thirdparty.ThirdPartyFactory) *AuthService {
 	return &AuthService{
 		userRepository:    rf.UserRepository(),
 		sessionRepository: rf.SessionRepository(),
+		jwtAdapter:        tpf.JWT(),
 	}
 }
 
@@ -44,7 +47,7 @@ func (as *AuthService) Register(ctx context.Context, user *dto.UserDTO) (*entiti
 	return domain, nil
 }
 
-func (as *AuthService) SignIn(ctx context.Context, email, pwd string) (*entities.User, *entities.Session, *rest_err.RestErr) {
+func (as *AuthService) SignIn(ctx context.Context, email, pwd string) (*entities.User, *string, *rest_err.RestErr) {
 	password := valueobjects.NewPassword(pwd)
 
 	domainEmail := valueobjects.NewEmail(email)
@@ -58,17 +61,21 @@ func (as *AuthService) SignIn(ctx context.Context, email, pwd string) (*entities
 		return nil, nil, rest_err.NewUnauthorizedError("invalid credentials")
 	}
 
-	session := &entities.Session{
-		UserID:       user.ID,
-		UUID:         uuid.NewString(),
-		LastActivity: time.Now(),
-		CreatedAt:    time.Now(),
-		UserType:     user.UserType,
+	token := as.jwtAdapter.GenerateToken()
+	hash := sha256.Sum256([]byte(token))
+	expiresAt := time.Now().Add(24 * time.Hour)
+	createdAt := time.Now()
+
+	tokenStruct := &entities.Token{
+		TokenHash:  string(hash[:]),
+		CreatedAt:  createdAt,
+		ExpiresAt:  &expiresAt,
+		LastUsedAt: &createdAt,
 	}
 
-	if err := as.sessionRepository.Create(ctx, session); err != nil {
+	if err := as.sessionRepository.Create(ctx, tokenStruct); err != nil {
 		return nil, nil, err
 	}
 
-	return user, session, nil
+	return user, &token, nil
 }

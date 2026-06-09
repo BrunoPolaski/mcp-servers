@@ -1,0 +1,74 @@
+name: Deploy bureau-mcp to Cloud Run
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bureau-mcp-server/**"   # só dispara se houver mudança no serviço MCP
+      - ".github/workflows/deploy-mcp.yml"
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: us-central1
+  REPO: bureau-mcp
+  SERVICE: bureau-mcp
+  IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  build-and-deploy:
+    name: Build, Push & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write   # necessário para Workload Identity Federation
+
+    steps:
+      # ── 1. Checkout ──────────────────────────────────────────────
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── 2. Autenticação no GCP via Workload Identity (sem chave JSON!) ──
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      # ── 3. Configura gcloud ──────────────────────────────────────
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      # ── 4. Configura Docker para o Artifact Registry ─────────────
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # ── 5. Build da imagem (apenas o target mcp) ─────────────────
+      - name: Build Docker image
+        run: |
+          docker build \
+            --target mcp \
+            --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ env.IMAGE_TAG }} \
+            --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:latest \
+            --cache-from ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:latest \
+            ./bureau-mcp-server
+
+      # ── 6. Push para o Artifact Registry ─────────────────────────
+      - name: Push image
+        run: |
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ env.IMAGE_TAG }}
+          docker push ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:latest
+
+      # ── 7. Deploy no Cloud Run com a imagem nova ──────────────────
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run services update ${{ env.SERVICE }} \
+            --region=${{ env.REGION }} \
+            --image=${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ env.IMAGE_TAG }} \
+            --quiet
+
+      # ── 8. Exibe a URL do serviço ─────────────────────────────────
+      - name: Show service URL
+        run: |
+          gcloud run services describe ${{ env.SERVICE }} \
+            --region=${{ env.REGION }} \
+            --format='value(status.url)'
