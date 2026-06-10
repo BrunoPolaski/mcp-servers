@@ -2,19 +2,20 @@ package middlewares
 
 import (
 	"context"
-	"encoding/json"
-	"errors"
+	"crypto/sha256"
+	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/BrunoPolaski/bureau-mcp-server/internal/core/entities"
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/helper/sessions"
+	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/repositories/interfaces"
+	internaljwt "github.com/BrunoPolaski/bureau-mcp-server/internal/infra/thirdparty/jwt"
 	httphelper "github.com/BrunoPolaski/bureau-mcp-server/internal/interfaces/http"
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/redis/go-redis/v9"
+	"github.com/golang-jwt/jwt/v5"
 )
 
-func SessionAuthMiddleware(rdb *redis.Client) Middleware {
+func SessionAuthMiddleware(sessionRepo interfaces.SessionRepository) Middleware {
 	return func(next http.Handler) http.Handler {
 		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 			ctx := r.Context()
@@ -24,10 +25,7 @@ func SessionAuthMiddleware(rdb *redis.Client) Middleware {
 
 			cookieAsHeader := r.Header.Get(sessions.CookieName)
 			if cookieAsHeader != "" {
-				cookie = &http.Cookie{
-					Name:  sessions.CookieName,
-					Value: cookieAsHeader,
-				}
+				cookie = &http.Cookie{Name: sessions.CookieName, Value: cookieAsHeader}
 			} else {
 				cookie, err = r.Cookie(sessions.CookieName)
 				if err != nil {
@@ -36,43 +34,60 @@ func SessionAuthMiddleware(rdb *redis.Client) Middleware {
 				}
 			}
 
-			data, err := rdb.Get(ctx, cookie.Value).Bytes()
-			if errors.Is(err, redis.Nil) {
+			jwtAdapter := internaljwt.NewJWTAdapter()
+
+			parsedToken, restErr := jwtAdapter.ParseToken(cookie.Value)
+			if restErr != nil {
+				httphelper.ErrorResponse(restErr, w)
+				return
+			}
+
+			claims, ok := parsedToken.Claims.(jwt.MapClaims)
+			if !ok || !parsedToken.Valid {
+				httphelper.ErrorResponse(rest_err.NewUnauthorizedError("invalid token: %v", parsedToken.Claims), w)
+				return
+			}
+
+			exp, err := claims.GetExpirationTime()
+			if err != nil || exp.Before(time.Now()) {
+				httphelper.ErrorResponse(rest_err.NewUnauthorizedError("token expired"), w)
+				return
+			}
+
+			tidRaw, exists := claims["tid"]
+			if !exists {
+				httphelper.ErrorResponse(rest_err.NewUnauthorizedError("invalid token"), w)
+				return
+			}
+			tokenID, ok := tidRaw.(string)
+			if !ok {
+				httphelper.ErrorResponse(rest_err.NewUnauthorizedError("invalid token"), w)
+				return
+			}
+
+			data, repoErr := sessionRepo.GetById(ctx, tokenID)
+			if repoErr != nil {
+				if repoErr.Code == http.StatusNotFound {
+					httphelper.ErrorResponse(rest_err.NewUnauthorizedError("invalid session"), w)
+				} else {
+					httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error"), w)
+				}
+				return
+			}
+
+			hash := sha256.Sum256([]byte(cookie.Value))
+			if fmt.Sprintf("%x", hash[:]) != data.TokenHash {
 				httphelper.ErrorResponse(rest_err.NewUnauthorizedError("invalid session"), w)
 				return
-			} else if err != nil {
-				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error").WithCause(err), w)
+			}
+
+			if data.IsRevoked {
+				httphelper.ErrorResponse(rest_err.NewUnauthorizedError("session revoked"), w)
 				return
 			}
 
-			var sess entities.Session
-			if err := json.Unmarshal(data, &sess); err != nil {
-				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error").WithCause(err), w)
-				return
-			}
-
-			now := time.Now()
-
-			if now.Sub(sess.LastActivity) > sessions.IdleTimeout {
-				rdb.Del(ctx, cookie.Value)
-				httphelper.ErrorResponse(rest_err.NewUnauthorizedError("session expired"), w)
-				return
-			}
-
-			sess.LastActivity = now
-			updated, err := json.Marshal(sess)
-			if err != nil {
-				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error").WithCause(err), w)
-				return
-			}
-
-			if err := rdb.Set(ctx, cookie.Value, updated, sessions.AbsoluteTimeout).Err(); err != nil {
-				httphelper.ErrorResponse(rest_err.NewInternalServerError("internal server error").WithCause(err), w)
-				return
-			}
-
-			ctx = context.WithValue(ctx, "user_id", sess.UserID)
-			ctx = context.WithValue(ctx, "user_type", sess.UserType)
+			userID, _ := claims.GetSubject()
+			ctx = context.WithValue(ctx, "user_id", userID)
 
 			next.ServeHTTP(w, r.WithContext(ctx))
 		})

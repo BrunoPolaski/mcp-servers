@@ -23,8 +23,7 @@ run:
 
 run-db:
 	docker compose up -d pgadmin && \
-	docker compose up -d postgres && \
-	docker compose up -d redis
+	docker compose up -d postgres
 
 migration-status:
 	@echo -e "$(BG_BLUE) $(FG_WHITE) Checking database migration status... $(BG_RESET)"

@@ -26,7 +26,7 @@ func NewRepositoryFactory(tpf *thirdparty.ThirdPartyFactory) *RepositoryFactory 
 		personRepository:  NewGormPersonRepository(tpf.DB()),
 		analystRepository: NewGormAnalystRepository(tpf.DB()),
 		userRepository:    NewGormUserRepository(tpf.DB()),
-		sessionRepository: NewRedisSessionRepository(tpf.Redis()),
+		sessionRepository: NewGormSessionRepository(tpf.DB()),
 	}
 }
 

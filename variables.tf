@@ -6,7 +6,7 @@ variable "project_id" {
 variable "region" {
   description = "Região do GCP"
   type        = string
-  default     = "us-central1"
+  default     = "southamerica-east1"
 }
 
 variable "database_url" {

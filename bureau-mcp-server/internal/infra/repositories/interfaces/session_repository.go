@@ -9,6 +9,6 @@ import (
 
 type SessionRepository interface {
 	Create(ctx context.Context, token *entities.Token) *rest_err.RestErr
-	GetById(ctx context.Context, id string) (*entities.Session, *rest_err.RestErr)
+	GetById(ctx context.Context, id string) (*entities.Token, *rest_err.RestErr)
 	Delete(ctx context.Context, id string) *rest_err.RestErr
 }

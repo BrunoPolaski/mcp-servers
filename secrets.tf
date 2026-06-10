@@ -6,7 +6,9 @@
 
 resource "google_secret_manager_secret" "database_url" {
   secret_id = "bureau-mcp-database-url"
-  replication { auto {} }
+  replication {
+    auto {}
+  }
   depends_on = [google_project_service.services]
 }
 
@@ -17,7 +19,9 @@ resource "google_secret_manager_secret_version" "database_url" {
 
 resource "google_secret_manager_secret" "mcp_auth_token" {
   secret_id = "bureau-mcp-auth-token"
-  replication { auto {} }
+  replication {
+    auto {}
+  }
   depends_on = [google_project_service.services]
 }
 
