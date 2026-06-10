@@ -7,11 +7,9 @@ terraform {
       version = "~> 5.0"
     }
   }
-
-  # Guarda o state no GCS — crie o bucket manualmente antes do primeiro apply
-  # ou remova este bloco e use state local inicialmente
+  
   backend "gcs" {
-    bucket = "tfstate-bureau-mcp" # troque pelo nome do seu bucket
+    bucket = "tfstate-bureau-mc"
     prefix = "cloud-run"
   }
 }

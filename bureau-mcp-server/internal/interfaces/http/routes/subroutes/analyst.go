@@ -20,22 +20,22 @@ func RegisterAnalystRoutes(s *http.ServeMux, tpf *thirdparty.ThirdPartyFactory, 
 
 	s.Handle("POST /analyst", middlewares.HandlerChain(
 		analystController.Create,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("GET /analyst/{id}", middlewares.HandlerChain(
 		analystController.GetById,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("GET /analyst", middlewares.HandlerChain(
 		analystController.GetAll,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("DELETE /analyst/{id}", middlewares.HandlerChain(
 		analystController.Delete,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 		middlewares.UserTypeMiddleware(valueobjects.UserTypeAdmin),
 	))
 }

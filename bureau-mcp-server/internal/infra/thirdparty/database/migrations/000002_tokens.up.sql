@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS mcp_tokens (
+CREATE TABLE IF NOT EXISTS tokens (
     id          UUID        PRIMARY KEY DEFAULT gen_random_uuid(),
     token_hash  TEXT        NOT NULL UNIQUE,
     description TEXT,
@@ -8,4 +8,4 @@ CREATE TABLE IF NOT EXISTS mcp_tokens (
     is_revoked  BOOLEAN     NOT NULL DEFAULT FALSE
 );
 
-CREATE INDEX IF NOT EXISTS idx_mcp_tokens_hash ON mcp_tokens (token_hash);
+CREATE INDEX IF NOT EXISTS idx_tokens_hash ON tokens (token_hash);

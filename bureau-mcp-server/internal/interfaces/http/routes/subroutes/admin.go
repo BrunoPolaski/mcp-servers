@@ -20,25 +20,25 @@ func RegisterAdminRoutes(s *http.ServeMux, tpf *thirdparty.ThirdPartyFactory, rf
 
 	s.Handle("POST /admin", middlewares.HandlerChain(
 		adminController.Create,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 		middlewares.UserTypeMiddleware(valueobjects.UserTypeAdmin),
 	))
 
 	s.Handle("GET /admin/{id}", middlewares.HandlerChain(
 		adminController.GetById,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 		middlewares.UserTypeMiddleware(valueobjects.UserTypeAdmin),
 	))
 
 	s.Handle("GET /admin", middlewares.HandlerChain(
 		adminController.GetAll,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 		middlewares.UserTypeMiddleware(valueobjects.UserTypeAdmin),
 	))
 
 	s.Handle("DELETE /admin/{id}", middlewares.HandlerChain(
 		adminController.Delete,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 		middlewares.UserTypeMiddleware(valueobjects.UserTypeAdmin),
 	))
 }

@@ -27,7 +27,7 @@ func InitRoutes(mux *http.ServeMux) http.Handler {
 	validator.InitValidator()
 
 	// Create health controller
-	healthController := controllers.NewHealthController(tpf.DB(), tpf.Redis())
+	healthController := controllers.NewHealthController(tpf.DB())
 
 	// Register all subroutes with the factory
 	subroutes.RegisterAuthRoutes(mux, tpf, rf)

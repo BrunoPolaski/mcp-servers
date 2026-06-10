@@ -20,28 +20,28 @@ func RegisterPersonRoutes(s *http.ServeMux, tpf *thirdparty.ThirdPartyFactory, r
 
 	s.Handle("POST /person", middlewares.HandlerChain(
 		personController.Create,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("GET /person/{id}", middlewares.HandlerChain(
 		personController.GetById,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("GET /person/document/{document}", middlewares.HandlerChain(
 		personController.GetByDocument,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("GET /person", middlewares.HandlerChain(
 		personController.GetAll,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 		middlewares.UserTypeMiddleware(valueobjects.UserTypeAnalyst),
 	))
 
 	s.Handle("DELETE /person/{id}", middlewares.HandlerChain(
 		personController.Delete,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 		middlewares.UserTypeMiddleware(valueobjects.UserTypeAdmin),
 	))
 }

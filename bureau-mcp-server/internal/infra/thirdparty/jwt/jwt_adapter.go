@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"os"
-	"strconv"
 	"strings"
 	"time"
 
@@ -16,15 +15,10 @@ func NewJWTAdapter() *jwtAdapter {
 	return &jwtAdapter{}
 }
 
-func (ja *jwtAdapter) GenerateToken(tid, sub string) (string, *rest_err.RestErr) {
+func (ja *jwtAdapter) GenerateToken(tid, sub string, expiresAt time.Time) (string, *rest_err.RestErr) {
 	secret := os.Getenv("TOKEN_SECRET")
 	if secret == "" {
 		return "", rest_err.NewInternalServerError("token secret is not set")
-	}
-
-	expTime, err := strconv.Atoi(os.Getenv("JWT_EXPIRATION_TIME"))
-	if err != nil {
-		expTime = 3600
 	}
 
 	token := jwt.NewWithClaims(
@@ -33,7 +27,7 @@ func (ja *jwtAdapter) GenerateToken(tid, sub string) (string, *rest_err.RestErr)
 			"tid": tid,
 			"sub": sub,
 			"iss": os.Getenv("APP_URL"),
-			"exp": time.Now().Add(time.Second * time.Duration(expTime)).Unix(),
+			"exp": expiresAt.Unix(),
 			"iat": time.Now().Unix(),
 		},
 	)
@@ -54,11 +48,11 @@ func (ja *jwtAdapter) ParseToken(token string) (*jwt.Token, *rest_err.RestErr) {
 			return []byte(secret), nil
 		}
 
-		return nil, rest_err.NewBadRequestError("invalid token")
+		return nil, rest_err.NewBadRequestError("invalid token signing method")
 	})
 
 	if err != nil {
-		return nil, rest_err.NewBadRequestError("invalid token")
+		return nil, rest_err.NewBadRequestError("invalid token format: %s", err.Error()).WithCause(err)
 	}
 
 	return parsedToken, nil

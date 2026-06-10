@@ -70,23 +70,24 @@ func (ac *AuthController) SignIn(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	usr, session, err := ac.AuthService.SignIn(r.Context(), email, pwd)
+	accessToken, refreshToken, err := ac.AuthService.SignIn(r.Context(), email, pwd)
 	if err != nil {
 		httphelper.ErrorResponse(err, w)
 		return
 	}
 
-	// Set secure session cookie
 	cookie := &http.Cookie{
 		Name:     sessions.CookieName,
-		Value:    session.UUID,
+		Value:    *refreshToken,
 		Path:     "/",
 		HttpOnly: true,
-		Secure:   true,                    // Only send over HTTPS
-		SameSite: http.SameSiteStrictMode, // CSRF protection
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
 	}
 	http.SetCookie(w, cookie)
-	w.Header().Set("sid", session.UUID)
+	w.Header().Set("sid", *refreshToken)
 
-	httphelper.JSON(dto.NewUserDTO(usr), w)
+	httphelper.JSON(map[string]string{
+		"access_token": *accessToken,
+	}, w)
 }

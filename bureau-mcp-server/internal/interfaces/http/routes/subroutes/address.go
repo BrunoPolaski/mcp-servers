@@ -19,21 +19,21 @@ func RegisterAddressRoutes(s *http.ServeMux, tpf *thirdparty.ThirdPartyFactory, 
 
 	s.Handle("POST /address", middlewares.HandlerChain(
 		addressController.Create,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("GET /address/{id}", middlewares.HandlerChain(
 		addressController.GetById,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("GET /address", middlewares.HandlerChain(
 		addressController.GetAll,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 
 	s.Handle("DELETE /address/{id}", middlewares.HandlerChain(
 		addressController.Delete,
-		middlewares.SessionAuthMiddleware(tpf.Redis()),
+		middlewares.SessionAuthMiddleware(rf.SessionRepository()),
 	))
 }
