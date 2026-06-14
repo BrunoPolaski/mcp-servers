@@ -6,7 +6,7 @@ variable "project_id" {
 variable "region" {
   description = "Região do GCP"
   type        = string
-  default     = "southamerica-east1"
+  default     = "us-central1"
 }
 
 variable "database_url" {
@@ -16,7 +16,13 @@ variable "database_url" {
 }
 
 variable "image" {
-  description = "Imagem inicial. O CI/CD sobrescreve a cada deploy."
+  description = "Imagem Docker completa com tag. Ex: southamerica-east1-docker.pkg.dev/proj/bureau-mcp/bureau-mcp:abc1234"
   type        = string
-  default     = "us-docker.pkg.dev/cloudrun/container/hello:latest" # placeholder público do GCP
+  default     = "us-docker.pkg.dev/cloudrun/container/hello:latest" # placeholder para o primeiro apply
+}
+
+variable "mcp_auth_token" {
+  description = "Bearer token para autenticar clientes no MCP server"
+  type        = string
+  sensitive   = true
 }
