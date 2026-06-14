@@ -1,11 +1,12 @@
 package main
 
 import (
-	"log"
+	"net/http"
 	"os"
 	"time"
 
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/thirdparty/logger"
+	"github.com/BrunoPolaski/bureau-mcp-server/internal/interfaces/http/middlewares"
 	internal_mcp "github.com/BrunoPolaski/bureau-mcp-server/internal/interfaces/mcp"
 	"github.com/joho/godotenv"
 	"github.com/mark3labs/mcp-go/server"
@@ -60,7 +61,5 @@ func main() {
 		zap.String("endpoint", "/mcp"),
 	)
 
-	if err := httpServer.Start(":" + port); err != nil {
-		log.Fatal(err)
-	}
+	http.ListenAndServe(":8080", middlewares.MCPBearerMiddleware(httpServer))
 }
