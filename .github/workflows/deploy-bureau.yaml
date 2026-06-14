@@ -6,7 +6,7 @@ on:
     paths:
       - "bureau-mcp-server/**"
       - "infra/**"
-      - ".github/workflows/deploy-mcp.yml"
+      - ".github/workflows/deploy-bureau.yml"
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
