@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - "bureau-mcp-server/**"
+      - "infra/**"
       - ".github/workflows/deploy-mcp.yml"
 
 env:
@@ -18,13 +19,13 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      id-token: write # Workload Identity Federation
+      id-token: write
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ── Auth via Workload Identity (sem chave JSON) ───────────────
+      # ── Auth via Workload Identity ────────────────────────────────
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
@@ -34,12 +35,10 @@ jobs:
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      # ── Configura Docker pro Artifact Registry ────────────────────
+      # ── Docker ───────────────────────────────────────────────────
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
-      # ── Build ─────────────────────────────────────────────────────
-      # Usa cache da imagem :latest anterior para builds mais rápidos
       - name: Build
         run: |
           docker build \
@@ -50,24 +49,25 @@ jobs:
             --tag ${{ env.IMAGE }}:latest \
             ./bureau-mcp-server
 
-      # ── Push ──────────────────────────────────────────────────────
       - name: Push
         run: |
           docker push ${{ env.IMAGE }}:${{ github.sha }}
           docker push ${{ env.IMAGE }}:latest
 
-      # ── Deploy ───────────────────────────────────────────────────
-      # Usa a tag do commit (não :latest) — garante rastreabilidade
-      # Cloud Run faz rollout zero-downtime automaticamente
-      - name: Deploy to Cloud Run
-        run: |
-          gcloud run services update bureau-mcp \
-            --region=${{ env.REGION }} \
-            --image=${{ env.IMAGE }}:${{ github.sha }} \
-            --quiet
+      # ── Terraform ────────────────────────────────────────────────
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
 
-      - name: Service URL
+      - name: Terraform Init
+        working-directory: infra/
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: infra/
         run: |
-          gcloud run services describe bureau-mcp \
-            --region=${{ env.REGION }} \
-            --format='value(status.url)'
+          terraform apply -auto-approve \
+            -var="project_id=${{ env.PROJECT_ID }}" \
+            -var="region=${{ env.REGION }}" \
+            -var="image=${{ env.IMAGE }}:${{ github.sha }}" \
+            -var="database_url=${{ secrets.DATABASE_URL }}" \
+            -var="mcp_auth_token=${{ secrets.MCP_AUTH_TOKEN }}"
