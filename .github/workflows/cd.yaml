@@ -1,0 +1,73 @@
+name: Deploy bureau-mcp
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "bureau-mcp-server/**"
+      - ".github/workflows/deploy-mcp.yml"
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: southamerica-east1
+  IMAGE: southamerica-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bureau-mcp/bureau-mcp
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # Workload Identity Federation
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # ── Auth via Workload Identity (sem chave JSON) ───────────────
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      # ── Configura Docker pro Artifact Registry ────────────────────
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      # ── Build ─────────────────────────────────────────────────────
+      # Usa cache da imagem :latest anterior para builds mais rápidos
+      - name: Build
+        run: |
+          docker build \
+            --target mcp \
+            --cache-from ${{ env.IMAGE }}:latest \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --tag ${{ env.IMAGE }}:${{ github.sha }} \
+            --tag ${{ env.IMAGE }}:latest \
+            ./bureau-mcp-server
+
+      # ── Push ──────────────────────────────────────────────────────
+      - name: Push
+        run: |
+          docker push ${{ env.IMAGE }}:${{ github.sha }}
+          docker push ${{ env.IMAGE }}:latest
+
+      # ── Deploy ───────────────────────────────────────────────────
+      # Usa a tag do commit (não :latest) — garante rastreabilidade
+      # Cloud Run faz rollout zero-downtime automaticamente
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run services update bureau-mcp \
+            --region=${{ env.REGION }} \
+            --image=${{ env.IMAGE }}:${{ github.sha }} \
+            --quiet
+
+      - name: Service URL
+        run: |
+          gcloud run services describe bureau-mcp \
+            --region=${{ env.REGION }} \
+            --format='value(status.url)'

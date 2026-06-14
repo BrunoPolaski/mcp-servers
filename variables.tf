@@ -15,8 +15,8 @@ variable "database_url" {
   sensitive   = true
 }
 
-variable "mcp_auth_token" {
-  description = "Bearer token para autenticar clientes no MCP server"
+variable "image" {
+  description = "Imagem inicial. O CI/CD sobrescreve a cada deploy."
   type        = string
-  sensitive   = true
+  default     = "us-docker.pkg.dev/cloudrun/container/hello:latest" # placeholder público do GCP
 }
