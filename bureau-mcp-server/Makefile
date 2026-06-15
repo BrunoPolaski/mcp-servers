@@ -8,8 +8,14 @@ BG_RESET = \033[0m
 FG_WHITE = \033[97m
 BG_GREY = \033[100m
 
-DB_CONN_HOST = 127.0.0.1
-DB_CONN_PORT = 5433
+ifeq ($(ENV),production)
+	DB_CONN_HOST = $(DB_HOST)
+	DB_CONN_PORT = $(DB_PORT)
+else
+		DB_CONN_HOST = 127.0.0.1
+		DB_CONN_PORT = 5433
+endif
+
 DB_PASSWORD_ENC := $(shell python3 -c 'import urllib.parse; print(urllib.parse.quote("$(DB_PASSWORD)", safe=""))')
 
 documentation:
