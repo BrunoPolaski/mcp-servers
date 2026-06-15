@@ -64,7 +64,7 @@ func main() {
 	}
 	time.Local = location
 
-	err = godotenv.Overload(".env")
+	err = godotenv.Load("../../.env")
 	if err != nil {
 		logger.Error("Error loading .env file", err)
 	}
@@ -73,8 +73,13 @@ func main() {
 		logger.Info("Running inside Docker container")
 	} else {
 		logger.Info("Running outside Docker container")
-		os.Setenv("DB_HOST", "127.0.0.1")
-		os.Setenv("DB_PORT", "5433")
+		if os.Getenv("ENV") == "production" {
+			logger.Info("Using production database configuration")
+		} else if os.Getenv("ENV") == "dev" {
+			logger.Info("Using development database configuration")
+		} else {
+			os.Setenv("DATABASE_URL", "postgres://postgres:123456@127.0.0.1:5433/bureau-mcp?sslmode=disable")
+		}
 	}
 
 	db := database.NewGormAdapter().Connect()

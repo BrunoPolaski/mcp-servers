@@ -181,12 +181,6 @@ CREATE TABLE users (
     admin_id BIGINT REFERENCES admins(id)
 );
 
-CREATE TABLE tokens (
-    uuid CHAR(36) PRIMARY KEY,
-    api_key CHAR(36),
-    created_at TIMESTAMP NOT NULL DEFAULT NOW()
-);
-
 CREATE TABLE sessions (
     uuid CHAR(36) PRIMARY KEY,
     api_key CHAR(36),
