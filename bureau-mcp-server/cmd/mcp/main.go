@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/BrunoPolaski/bureau-mcp-server/internal/infra/thirdparty/logger"
-	"github.com/BrunoPolaski/bureau-mcp-server/internal/interfaces/http/middlewares"
 	internal_mcp "github.com/BrunoPolaski/bureau-mcp-server/internal/interfaces/mcp"
 	"github.com/joho/godotenv"
 	"github.com/mark3labs/mcp-go/server"
@@ -61,5 +60,5 @@ func main() {
 		zap.String("endpoint", "/mcp"),
 	)
 
-	http.ListenAndServe(":8080", middlewares.MCPBearerMiddleware(httpServer))
+	http.ListenAndServe(":8080", httpServer)
 }
