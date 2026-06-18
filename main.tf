@@ -100,18 +100,6 @@ resource "google_cloud_run_v2_service" "bureau_mcp" {
           }
         }
       }
-
-      env {
-        name = "MCP_AUTH_TOKEN"
-        value_source {
-          secret_key_ref {
-            secret  = google_secret_manager_secret.mcp_auth_token.secret_id
-            version = "latest"
-          }
-        }
-      }
-
-      # Adicione outras env vars do seu .env aqui seguindo o mesmo padrão
     }
   }
 
@@ -121,7 +109,6 @@ resource "google_cloud_run_v2_service" "bureau_mcp" {
   ]
 }
 
-# Acesso público — autenticação feita pelo MCP_AUTH_TOKEN na aplicação
 resource "google_cloud_run_v2_service_iam_member" "public_invoker" {
   project  = var.project_id
   location = var.region
