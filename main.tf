@@ -75,7 +75,7 @@ resource "google_cloud_run_v2_service" "bureau_mcp" {
 
     containers {
       # A tag :latest é substituída pelo GitHub Actions a cada deploy
-      image = "${var.region}-docker.pkg.dev/${var.project_id}/bureau-mcp/bureau-mcp:latest"
+      image = var.image
 
       ports {
         container_port = 8080
