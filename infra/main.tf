@@ -100,7 +100,6 @@ resource "google_cloud_run_v2_service" "bureau_mcp" {
           }
         }
       }
-      # Adicione outras env vars do seu .env aqui seguindo o mesmo padrão
     }
   }
 
