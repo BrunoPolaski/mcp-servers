@@ -14,9 +14,3 @@ variable "database_url" {
   type        = string
   sensitive   = true
 }
-
-variable "mcp_auth_token" {
-  description = "Bearer token para autenticar clientes no MCP server"
-  type        = string
-  sensitive   = true
-}
