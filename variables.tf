@@ -14,3 +14,9 @@ variable "database_url" {
   type        = string
   sensitive   = true
 }
+
+variable "image" {
+  description = "Imagem inicial. O CI/CD sobrescreve a cada deploy."
+  type        = string
+  default     = "us-docker.pkg.dev/cloudrun/container/hello:latest" # placeholder público do GCP
+}
