@@ -6,12 +6,12 @@ import (
 
 type AddressDTO struct {
 	Id         uint    `json:"id"`
-	Street     string  `json:"street" validate:"required"`
-	Number     string  `json:"number" validate:"required" example:"1234 | S/N"`
-	City       string  `json:"city" validate:"required"`
-	State      string  `json:"state" validate:"required" example:"SC"`
-	ZipCode    string  `json:"zip_code" validate:"required" example:"12345-678"`
-	Complement *string `json:"complement"`
+	Street     *string `json:"street,omitempty"`
+	Number     *string `json:"number,omitempty" example:"1234 | S/N"`
+	City       *string `json:"city,omitempty"`
+	State      *string `json:"state,omitempty" example:"SC"`
+	ZipCode    *string `json:"zip_code,omitempty" example:"12345-678"`
+	Complement *string `json:"complement,omitempty"`
 	CreatedAt  string  `json:"created_at"`
 	UpdatedAt  string  `json:"updated_at"`
 }

@@ -12,10 +12,10 @@ type FraudAlertDTO struct {
 	UpdatedAt    string     `json:"updated_at"`
 	PersonID     uint       `json:"person_id"`
 	AlertType    string     `json:"alert_type"`
-	Severity     string     `json:"severity"`
-	Description  string     `json:"description"`
-	DetectedDate time.Time  `json:"detected_date"`
-	Status       string     `json:"status"`
+	Severity     *string    `json:"severity,omitempty"`
+	Description  *string    `json:"description,omitempty"`
+	DetectedDate *time.Time `json:"detected_date,omitempty"`
+	Status       *string    `json:"status,omitempty"`
 	ResolvedDate *time.Time `json:"resolved_date,omitempty"`
 	ResolvedBy   *string    `json:"resolved_by,omitempty"`
 	Notes        *string    `json:"notes,omitempty"`
@@ -59,11 +59,11 @@ type RiskAssessmentDTO struct {
 	PersonID       uint      `json:"person_id"`
 	AssessmentDate time.Time `json:"assessment_date"`
 	AssessmentType string    `json:"assessment_type"`
-	RiskScore      int       `json:"risk_score"`
-	RiskLevel      string    `json:"risk_level"`
-	RiskFactors    string    `json:"risk_factors"`
-	Recommendation string    `json:"recommendation"`
-	ModelVersion   string    `json:"model_version"`
+	RiskScore      *int      `json:"risk_score,omitempty"`
+	RiskLevel      *string   `json:"risk_level,omitempty"`
+	RiskFactors    *string   `json:"risk_factors,omitempty"`
+	Recommendation *string   `json:"recommendation,omitempty"`
+	ModelVersion   *string   `json:"model_version,omitempty"`
 }
 
 func NewRiskAssessmentDTO(entity *entities.RiskAssessment) *RiskAssessmentDTO {

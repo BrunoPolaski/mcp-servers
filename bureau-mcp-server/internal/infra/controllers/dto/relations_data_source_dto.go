@@ -52,7 +52,7 @@ type DataSourceDTO struct {
 	UpdatedAt        string     `json:"updated_at"`
 	SourceName       string     `json:"source_name"`
 	SourceType       string     `json:"source_type"`
-	Description      string     `json:"description"`
+	Description      *string    `json:"description,omitempty"`
 	IsActive         bool       `json:"is_active"`
 	LastSyncDate     *time.Time `json:"last_sync_date,omitempty"`
 	ReliabilityScore *int       `json:"reliability_score,omitempty"`

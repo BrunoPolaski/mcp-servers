@@ -8,57 +8,51 @@ import (
 )
 
 type PersonalInformationDTO struct {
-	ID                   uint                `json:"id"`
-	FullName             string              `json:"full_name" validate:"required" example:"João da Silva"`
-	MotherName           string              `json:"mother_name"`
-	BirthDate            time.Time           `json:"birth_date"`
-	Gender               *string             `json:"gender,omitempty"`
-	Nationality          string              `json:"nationality"`
-	MaritalStatus        *string             `json:"marital_status,omitempty"`
-	Document             string              `json:"document" example:"12345678909"`
-	RG                   *string             `json:"rg,omitempty"`
-	RGIssuer             *string             `json:"rg_issuer,omitempty"`
-	RGIssueDate          *time.Time          `json:"rg_issue_date,omitempty"`
-	VoterID              *string             `json:"voter_id,omitempty"`
-	WorkCard             *string             `json:"work_card,omitempty"`
-	PrimaryPhone         string              `json:"primary_phone" validate:"required" example:"11999999999"`
-	SecondaryPhone       *string             `json:"secondary_phone,omitempty"`
-	Email                string              `json:"email"`
-	AlternativeEmail     *string             `json:"alternative_email,omitempty"`
-	Addresses            []PersonAddressDTO  `json:"addresses,omitempty"`
-	ProfilePhoto         *FileDTO            `json:"profile_photo,omitempty"`
-	Documents            []PersonDocumentDTO `json:"documents,omitempty"`
-	DocumentValidated    bool                `json:"document_validated"`
-	EmailVerified        bool                `json:"email_verified"`
-	PhoneVerified        bool                `json:"phone_verified"`
-	BiometricValidated   bool                `json:"biometric_validated"`
-	ReceitaFederalStatus string              `json:"receita_federal_status"`
+	ID               uint                `json:"id"`
+	FullName         string              `json:"full_name" validate:"required" example:"João da Silva"`
+	MotherName       *string             `json:"mother_name,omitempty"`
+	BirthDate        *time.Time          `json:"birth_date,omitempty"`
+	Gender           *string             `json:"gender,omitempty"`
+	Nationality      *string             `json:"nationality,omitempty"`
+	MaritalStatus    *string             `json:"marital_status,omitempty"`
+	Document         string              `json:"document" example:"12345678909"`
+	RG               *string             `json:"rg,omitempty"`
+	RGIssuer         *string             `json:"rg_issuer,omitempty"`
+	RGIssueDate      *time.Time          `json:"rg_issue_date,omitempty"`
+	VoterID          *string             `json:"voter_id,omitempty"`
+	WorkCard         *string             `json:"work_card,omitempty"`
+	PrimaryPhone     *string             `json:"primary_phone,omitempty" example:"11999999999"`
+	SecondaryPhone   *string             `json:"secondary_phone,omitempty"`
+	Email            *string             `json:"email,omitempty"`
+	AlternativeEmail *string             `json:"alternative_email,omitempty"`
+	Addresses        []PersonAddressDTO  `json:"addresses,omitempty"`
+	ProfilePhoto     *FileDTO            `json:"profile_photo,omitempty"`
+	Documents        []PersonDocumentDTO `json:"documents,omitempty"`
+	EmailVerified    bool                `json:"email_verified"`
+	PhoneVerified    bool                `json:"phone_verified"`
 }
 
 func NewPersonalInformationDTO(entity *entities.PersonalInformation) *PersonalInformationDTO {
 	piDTO := &PersonalInformationDTO{
-		ID:                   entity.ID,
-		FullName:             entity.FullName,
-		MotherName:           entity.MotherName,
-		BirthDate:            entity.BirthDate,
-		Gender:               entity.Gender,
-		Nationality:          entity.Nationality,
-		MaritalStatus:        entity.MaritalStatus,
-		Document:             entity.Document.String(),
-		RG:                   entity.RG,
-		RGIssuer:             entity.RGIssuer,
-		RGIssueDate:          entity.RGIssueDate,
-		VoterID:              entity.VoterID,
-		WorkCard:             entity.WorkCard,
-		PrimaryPhone:         entity.PrimaryPhone.String(),
-		SecondaryPhone:       phoneToStringPtr(entity.SecondaryPhone),
-		Email:                entity.Email,
-		AlternativeEmail:     entity.AlternativeEmail,
-		DocumentValidated:    entity.DocumentValidated,
-		EmailVerified:        entity.EmailVerified,
-		PhoneVerified:        entity.PhoneVerified,
-		BiometricValidated:   entity.BiometricValidated,
-		ReceitaFederalStatus: entity.ReceitaFederalStatus,
+		ID:               entity.ID,
+		FullName:         entity.FullName,
+		MotherName:       entity.MotherName,
+		BirthDate:        entity.BirthDate,
+		Gender:           entity.Gender,
+		Nationality:      entity.Nationality,
+		MaritalStatus:    entity.MaritalStatus,
+		Document:         entity.Document.String(),
+		RG:               entity.RG,
+		RGIssuer:         entity.RGIssuer,
+		RGIssueDate:      entity.RGIssueDate,
+		VoterID:          entity.VoterID,
+		WorkCard:         entity.WorkCard,
+		PrimaryPhone:     phoneToStringPtr(entity.PrimaryPhone),
+		SecondaryPhone:   phoneToStringPtr(entity.SecondaryPhone),
+		Email:            entity.Email,
+		AlternativeEmail: entity.AlternativeEmail,
+		EmailVerified:    entity.EmailVerified,
+		PhoneVerified:    entity.PhoneVerified,
 	}
 
 	if len(entity.Addresses) > 0 {
@@ -83,9 +77,13 @@ func NewPersonalInformationDTO(entity *entities.PersonalInformation) *PersonalIn
 }
 
 func (p PersonalInformationDTO) ToEntity() *entities.PersonalInformation {
-	primaryPhone, err := valueobjects.NewPhoneNumber(p.PrimaryPhone)
-	if err != nil {
-		return nil
+	var primaryPhone *valueobjects.PhoneNumber
+	if p.PrimaryPhone != nil {
+		phone, err := valueobjects.NewPhoneNumber(*p.PrimaryPhone)
+		if err != nil {
+			return nil
+		}
+		primaryPhone = &phone
 	}
 
 	var secondaryPhone *valueobjects.PhoneNumber
@@ -98,27 +96,24 @@ func (p PersonalInformationDTO) ToEntity() *entities.PersonalInformation {
 	}
 
 	pi := &entities.PersonalInformation{
-		FullName:             p.FullName,
-		MotherName:           p.MotherName,
-		BirthDate:            p.BirthDate,
-		Gender:               p.Gender,
-		Nationality:          p.Nationality,
-		MaritalStatus:        p.MaritalStatus,
-		Document:             valueobjects.NewDocument(p.Document),
-		RG:                   p.RG,
-		RGIssuer:             p.RGIssuer,
-		RGIssueDate:          p.RGIssueDate,
-		VoterID:              p.VoterID,
-		WorkCard:             p.WorkCard,
-		PrimaryPhone:         primaryPhone,
-		SecondaryPhone:       secondaryPhone,
-		Email:                p.Email,
-		AlternativeEmail:     p.AlternativeEmail,
-		DocumentValidated:    p.DocumentValidated,
-		EmailVerified:        p.EmailVerified,
-		PhoneVerified:        p.PhoneVerified,
-		BiometricValidated:   p.BiometricValidated,
-		ReceitaFederalStatus: p.ReceitaFederalStatus,
+		FullName:         p.FullName,
+		MotherName:       p.MotherName,
+		BirthDate:        p.BirthDate,
+		Gender:           p.Gender,
+		Nationality:      p.Nationality,
+		MaritalStatus:    p.MaritalStatus,
+		Document:         valueobjects.NewDocument(p.Document),
+		RG:               p.RG,
+		RGIssuer:         p.RGIssuer,
+		RGIssueDate:      p.RGIssueDate,
+		VoterID:          p.VoterID,
+		WorkCard:         p.WorkCard,
+		PrimaryPhone:     primaryPhone,
+		SecondaryPhone:   secondaryPhone,
+		Email:            p.Email,
+		AlternativeEmail: p.AlternativeEmail,
+		EmailVerified:    p.EmailVerified,
+		PhoneVerified:    p.PhoneVerified,
 	}
 
 	if len(p.Addresses) > 0 {

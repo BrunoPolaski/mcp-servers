@@ -18,21 +18,17 @@ type PersonDTO struct {
 	FinancialProfileID    *uint                   `json:"financial_profile_id,omitempty"`
 	FinancialProfile      *FinancialProfileDTO    `json:"financial_profile,omitempty"`
 	EmploymentRecords     []EmploymentRecordDTO   `json:"employment_records,omitempty"`
-	IncomeDeclarations    []IncomeDeclarationDTO  `json:"income_declarations,omitempty"`
 	CreditAccounts        []CreditAccountDTO      `json:"credit_accounts,omitempty"`
 	CreditInquiries       []CreditInquiryDTO      `json:"credit_inquiries,omitempty"`
 	PaymentHistories      []PaymentHistoryDTO     `json:"payment_histories,omitempty"`
 	Debts                 []DebtDTO               `json:"debts,omitempty"`
 	NegativeRecords       []NegativeRecordDTO     `json:"negative_records,omitempty"`
 	LegalRecords          []LegalRecordDTO        `json:"legal_records,omitempty"`
-	ComplianceChecks      []ComplianceCheckDTO    `json:"compliance_checks,omitempty"`
 	FraudAlerts           []FraudAlertDTO         `json:"fraud_alerts,omitempty"`
 	RiskAssessments       []RiskAssessmentDTO     `json:"risk_assessments,omitempty"`
 	RelatedPersons        []PersonRelationshipDTO `json:"related_persons,omitempty"`
 	DataSources           []DataSourceDTO         `json:"data_sources,omitempty"`
 	LastVerifiedAt        *time.Time              `json:"last_verified_at,omitempty"`
-	ConsentStatus         string                  `json:"consent_status"`
-	ConsentGrantedAt      *time.Time              `json:"consent_granted_at,omitempty"`
 }
 
 func NewPersonDTO(entity *entities.Person) *PersonDTO {
@@ -61,13 +57,6 @@ func NewPersonDTO(entity *entities.Person) *PersonDTO {
 		dto.EmploymentRecords = make([]EmploymentRecordDTO, 0, len(entity.EmploymentRecords))
 		for _, record := range entity.EmploymentRecords {
 			dto.EmploymentRecords = append(dto.EmploymentRecords, *NewEmploymentRecordDTO(&record))
-		}
-	}
-
-	if len(entity.IncomeDeclarations) > 0 {
-		dto.IncomeDeclarations = make([]IncomeDeclarationDTO, 0, len(entity.IncomeDeclarations))
-		for _, declaration := range entity.IncomeDeclarations {
-			dto.IncomeDeclarations = append(dto.IncomeDeclarations, *NewIncomeDeclarationDTO(&declaration))
 		}
 	}
 
@@ -113,13 +102,6 @@ func NewPersonDTO(entity *entities.Person) *PersonDTO {
 		}
 	}
 
-	if len(entity.ComplianceChecks) > 0 {
-		dto.ComplianceChecks = make([]ComplianceCheckDTO, 0, len(entity.ComplianceChecks))
-		for _, check := range entity.ComplianceChecks {
-			dto.ComplianceChecks = append(dto.ComplianceChecks, *NewComplianceCheckDTO(&check))
-		}
-	}
-
 	if len(entity.FraudAlerts) > 0 {
 		dto.FraudAlerts = make([]FraudAlertDTO, 0, len(entity.FraudAlerts))
 		for _, alert := range entity.FraudAlerts {
@@ -148,8 +130,6 @@ func NewPersonDTO(entity *entities.Person) *PersonDTO {
 		}
 	}
 	dto.LastVerifiedAt = entity.LastVerifiedAt
-	dto.ConsentStatus = entity.ConsentStatus
-	dto.ConsentGrantedAt = entity.ConsentGrantedAt
 
 	return dto
 }
@@ -175,14 +155,6 @@ func (c PersonDTO) ToEntity() *entities.Person {
 		employmentRecords = make([]entities.EmploymentRecord, 0, len(c.EmploymentRecords))
 		for _, record := range c.EmploymentRecords {
 			employmentRecords = append(employmentRecords, *record.ToEntity())
-		}
-	}
-
-	var incomeDeclarations []entities.IncomeDeclaration
-	if len(c.IncomeDeclarations) > 0 {
-		incomeDeclarations = make([]entities.IncomeDeclaration, 0, len(c.IncomeDeclarations))
-		for _, declaration := range c.IncomeDeclarations {
-			incomeDeclarations = append(incomeDeclarations, *declaration.ToEntity())
 		}
 	}
 
@@ -234,14 +206,6 @@ func (c PersonDTO) ToEntity() *entities.Person {
 		}
 	}
 
-	var complianceChecks []entities.ComplianceCheck
-	if len(c.ComplianceChecks) > 0 {
-		complianceChecks = make([]entities.ComplianceCheck, 0, len(c.ComplianceChecks))
-		for _, check := range c.ComplianceChecks {
-			complianceChecks = append(complianceChecks, *check.ToEntity())
-		}
-	}
-
 	var fraudAlerts []entities.FraudAlert
 	if len(c.FraudAlerts) > 0 {
 		fraudAlerts = make([]entities.FraudAlert, 0, len(c.FraudAlerts))
@@ -282,21 +246,17 @@ func (c PersonDTO) ToEntity() *entities.Person {
 		FinancialProfileID:    c.FinancialProfileID,
 		FinancialProfile:      financialProfile,
 		EmploymentRecords:     employmentRecords,
-		IncomeDeclarations:    incomeDeclarations,
 		CreditAccounts:        creditAccounts,
 		CreditInquiries:       creditInquiries,
 		PaymentHistories:      paymentHistories,
 		Debts:                 debts,
 		NegativeRecords:       negativeRecords,
 		LegalRecords:          legalRecords,
-		ComplianceChecks:      complianceChecks,
 		FraudAlerts:           fraudAlerts,
 		RiskAssessments:       riskAssessments,
 		RelatedPersons:        relatedPersons,
 		DataSources:           dataSources,
 		LastVerifiedAt:        c.LastVerifiedAt,
-		ConsentStatus:         c.ConsentStatus,
-		ConsentGrantedAt:      c.ConsentGrantedAt,
 	}
 }
 

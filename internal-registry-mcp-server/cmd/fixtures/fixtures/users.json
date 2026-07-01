@@ -1,0 +1,122 @@
+[
+  {
+    "id": 1,
+    "created_at": "2024-01-02T00:00:00Z",
+    "updated_at": "2024-01-02T00:00:00Z",
+    "deleted_at": null,
+    "email": "user1@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "person",
+    "person_id": 1,
+    "admin_id": null,
+    "analyst_id": null
+  },
+  {
+    "id": 2,
+    "created_at": "2024-01-03T00:00:00Z",
+    "updated_at": "2024-01-03T00:00:00Z",
+    "deleted_at": null,
+    "email": "user2@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "admin",
+    "person_id": null,
+    "admin_id": 2,
+    "analyst_id": null
+  },
+  {
+    "id": 3,
+    "created_at": "2024-01-04T00:00:00Z",
+    "updated_at": "2024-01-04T00:00:00Z",
+    "deleted_at": null,
+    "email": "user3@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "analyst",
+    "person_id": null,
+    "admin_id": null,
+    "analyst_id": 3
+  },
+  {
+    "id": 4,
+    "created_at": "2024-01-05T00:00:00Z",
+    "updated_at": "2024-01-05T00:00:00Z",
+    "deleted_at": null,
+    "email": "user4@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "person",
+    "person_id": 4,
+    "admin_id": null,
+    "analyst_id": null
+  },
+  {
+    "id": 5,
+    "created_at": "2024-01-06T00:00:00Z",
+    "updated_at": "2024-01-06T00:00:00Z",
+    "deleted_at": null,
+    "email": "user5@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "admin",
+    "person_id": null,
+    "admin_id": 5,
+    "analyst_id": null
+  },
+  {
+    "id": 6,
+    "created_at": "2024-01-07T00:00:00Z",
+    "updated_at": "2024-01-07T00:00:00Z",
+    "deleted_at": null,
+    "email": "user6@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "analyst",
+    "person_id": null,
+    "admin_id": null,
+    "analyst_id": 6
+  },
+  {
+    "id": 7,
+    "created_at": "2024-01-08T00:00:00Z",
+    "updated_at": "2024-01-08T00:00:00Z",
+    "deleted_at": null,
+    "email": "user7@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "person",
+    "person_id": 7,
+    "admin_id": null,
+    "analyst_id": null
+  },
+  {
+    "id": 8,
+    "created_at": "2024-01-09T00:00:00Z",
+    "updated_at": "2024-01-09T00:00:00Z",
+    "deleted_at": null,
+    "email": "user8@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "admin",
+    "person_id": null,
+    "admin_id": 8,
+    "analyst_id": null
+  },
+  {
+    "id": 9,
+    "created_at": "2024-01-10T00:00:00Z",
+    "updated_at": "2024-01-10T00:00:00Z",
+    "deleted_at": null,
+    "email": "user9@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "analyst",
+    "person_id": null,
+    "admin_id": null,
+    "analyst_id": 9
+  },
+  {
+    "id": 10,
+    "created_at": "2024-01-11T00:00:00Z",
+    "updated_at": "2024-01-11T00:00:00Z",
+    "deleted_at": null,
+    "email": "user10@example.com",
+    "password": "$2a$10$7EqJtq98hPqEX7fNZaFWoO5bKkXuX4nHCqB6f0GO6zkRgZNpmjQe2",
+    "user_type": "person",
+    "person_id": 10,
+    "admin_id": null,
+    "analyst_id": null
+  }
+]

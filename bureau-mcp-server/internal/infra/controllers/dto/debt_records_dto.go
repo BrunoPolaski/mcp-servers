@@ -12,15 +12,15 @@ type DebtDTO struct {
 	UpdatedAt        string     `json:"updated_at"`
 	PersonID         uint       `json:"person_id"`
 	DebtType         string     `json:"debt_type"`
-	Creditor         string     `json:"creditor"`
-	CreditorDocument string     `json:"creditor_document"`
-	OriginalAmount   float64    `json:"original_amount"`
+	Creditor         *string    `json:"creditor,omitempty"`
+	CreditorDocument *string    `json:"creditor_document,omitempty"`
+	OriginalAmount   *float64   `json:"original_amount,omitempty"`
 	CurrentAmount    float64    `json:"current_amount"`
 	InterestRate     *float64   `json:"interest_rate,omitempty"`
 	Fees             *float64   `json:"fees,omitempty"`
-	OriginDate       time.Time  `json:"origin_date"`
-	DueDate          time.Time  `json:"due_date"`
-	Status           string     `json:"status"`
+	OriginDate       *time.Time `json:"origin_date,omitempty"`
+	DueDate          *time.Time `json:"due_date,omitempty"`
+	Status           *string    `json:"status,omitempty"`
 	InCollection     bool       `json:"in_collection"`
 	CollectionDate   *time.Time `json:"collection_date,omitempty"`
 	CollectionAgency *string    `json:"collection_agency,omitempty"`
@@ -79,12 +79,12 @@ type NegativeRecordDTO struct {
 	UpdatedAt        string     `json:"updated_at"`
 	PersonID         uint       `json:"person_id"`
 	RecordType       string     `json:"record_type"`
-	Creditor         string     `json:"creditor"`
-	CreditorDocument string     `json:"creditor_document"`
+	Creditor         *string    `json:"creditor,omitempty"`
+	CreditorDocument *string    `json:"creditor_document,omitempty"`
 	Amount           float64    `json:"amount"`
 	InclusionDate    time.Time  `json:"inclusion_date"`
 	ContractNumber   *string    `json:"contract_number,omitempty"`
-	Status           string     `json:"status"`
+	Status           *string    `json:"status,omitempty"`
 	RemovalDate      *time.Time `json:"removal_date,omitempty"`
 	RemovalReason    *string    `json:"removal_reason,omitempty"`
 	ProcessNumber    *string    `json:"process_number,omitempty"`

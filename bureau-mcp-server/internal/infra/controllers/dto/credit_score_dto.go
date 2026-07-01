@@ -13,15 +13,15 @@ type CreditScoreDTO struct {
 	PersonID           uint      `json:"person_id"`
 	Score              int       `json:"score"`
 	ScoreDate          time.Time `json:"score_date"`
-	ScoreModel         string    `json:"score_model"`
-	ScoreReason        string    `json:"score_reason"`
-	PaymentHistory     int       `json:"payment_history"`
-	CreditUsage        int       `json:"credit_usage"`
-	CreditAge          int       `json:"credit_age"`
-	CreditMix          int       `json:"credit_mix"`
-	RecentInquiries    int       `json:"recent_inquiries"`
-	RiskLevel          string    `json:"risk_level"`
-	DefaultProbability float64   `json:"default_probability"`
+	ScoreModel         *string   `json:"score_model,omitempty"`
+	ScoreReason        *string   `json:"score_reason,omitempty"`
+	PaymentHistory     *int      `json:"payment_history,omitempty"`
+	CreditUsage        *int      `json:"credit_usage,omitempty"`
+	CreditAge          *int      `json:"credit_age,omitempty"`
+	CreditMix          *int      `json:"credit_mix,omitempty"`
+	RecentInquiries    *int      `json:"recent_inquiries,omitempty"`
+	RiskLevel          *string   `json:"risk_level,omitempty"`
+	DefaultProbability *float64  `json:"default_probability,omitempty"`
 }
 
 func NewCreditScoreDTO(entity *entities.CreditScore) *CreditScoreDTO {
