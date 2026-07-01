@@ -18,17 +18,11 @@ type FinancialProfileDTO struct {
 	TotalAssets            *float64  `json:"total_assets,omitempty"`
 	RealEstateValue        *float64  `json:"real_estate_value,omitempty"`
 	VehiclesValue          *float64  `json:"vehicles_value,omitempty"`
-	InvestmentsValue       *float64  `json:"investments_value,omitempty"`
 	TotalLiabilities       *float64  `json:"total_liabilities,omitempty"`
 	TotalMonthlyPayments   *float64  `json:"total_monthly_payments,omitempty"`
 	DebtToIncomeRatio      *float64  `json:"debt_to_income_ratio,omitempty"`
 	AvailableCredit        *float64  `json:"available_credit,omitempty"`
 	CreditUtilization      *float64  `json:"credit_utilization,omitempty"`
-	BankingRelationships   int       `json:"banking_relationships"`
-	AccountAgeAverage      *int      `json:"account_age_average,omitempty"`
-	HasCheckingAccount     bool      `json:"has_checking_account"`
-	HasSavingsAccount      bool      `json:"has_savings_account"`
-	HasInvestmentAccount   bool      `json:"has_investment_account"`
 }
 
 func NewFinancialProfileDTO(entity *entities.FinancialProfile) *FinancialProfileDTO {
@@ -44,17 +38,11 @@ func NewFinancialProfileDTO(entity *entities.FinancialProfile) *FinancialProfile
 		TotalAssets:            entity.TotalAssets,
 		RealEstateValue:        entity.RealEstateValue,
 		VehiclesValue:          entity.VehiclesValue,
-		InvestmentsValue:       entity.InvestmentsValue,
 		TotalLiabilities:       entity.TotalLiabilities,
 		TotalMonthlyPayments:   entity.TotalMonthlyPayments,
 		DebtToIncomeRatio:      entity.DebtToIncomeRatio,
 		AvailableCredit:        entity.AvailableCredit,
 		CreditUtilization:      entity.CreditUtilization,
-		BankingRelationships:   entity.BankingRelationships,
-		AccountAgeAverage:      entity.AccountAgeAverage,
-		HasCheckingAccount:     entity.HasCheckingAccount,
-		HasSavingsAccount:      entity.HasSavingsAccount,
-		HasInvestmentAccount:   entity.HasInvestmentAccount,
 	}
 }
 
@@ -68,16 +56,10 @@ func (f FinancialProfileDTO) ToEntity() *entities.FinancialProfile {
 		TotalAssets:            f.TotalAssets,
 		RealEstateValue:        f.RealEstateValue,
 		VehiclesValue:          f.VehiclesValue,
-		InvestmentsValue:       f.InvestmentsValue,
 		TotalLiabilities:       f.TotalLiabilities,
 		TotalMonthlyPayments:   f.TotalMonthlyPayments,
 		DebtToIncomeRatio:      f.DebtToIncomeRatio,
 		AvailableCredit:        f.AvailableCredit,
 		CreditUtilization:      f.CreditUtilization,
-		BankingRelationships:   f.BankingRelationships,
-		AccountAgeAverage:      f.AccountAgeAverage,
-		HasCheckingAccount:     f.HasCheckingAccount,
-		HasSavingsAccount:      f.HasSavingsAccount,
-		HasInvestmentAccount:   f.HasInvestmentAccount,
 	}
 }

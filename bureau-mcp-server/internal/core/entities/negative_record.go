@@ -8,16 +8,16 @@ import (
 
 type NegativeRecord struct {
 	gorm.Model
-	PersonID         uint   `gorm:"not null;index"`
-	RecordType       string `gorm:"size:100;not null;index"` // protest, bounced_check, spc, serasa, refin
-	Creditor         string `gorm:"size:255;not null"`
-	CreditorDocument string `gorm:"size:14"`
+	PersonID         uint    `gorm:"not null;index"`
+	RecordType       string  `gorm:"size:100;not null;index"` // protest, bounced_check, spc, serasa, refin
+	Creditor         *string `gorm:"size:255"`
+	CreditorDocument *string `gorm:"size:14"`
 
 	Amount         float64   `gorm:"not null"`
 	InclusionDate  time.Time `gorm:"not null;index"`
 	ContractNumber *string   `gorm:"size:100"`
 
-	Status        string `gorm:"size:50;not null;index"` // active, removed, disputed, expired
+	Status        *string `gorm:"size:50;index"` // active, removed, disputed, expired
 	RemovalDate   *time.Time
 	RemovalReason *string `gorm:"size:255"`
 

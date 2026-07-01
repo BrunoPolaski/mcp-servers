@@ -12,14 +12,14 @@ type CreditAccountDTO struct {
 	UpdatedAt         string     `json:"updated_at"`
 	PersonID          uint       `json:"person_id"`
 	AccountType       string     `json:"account_type"`
-	Creditor          string     `json:"creditor"`
-	CreditorDocument  string     `json:"creditor_document"`
-	AccountNumber     string     `json:"account_number"`
-	OpenedDate        time.Time  `json:"opened_date"`
+	Creditor          *string    `json:"creditor,omitempty"`
+	CreditorDocument  *string    `json:"creditor_document,omitempty"`
+	AccountNumber     *string    `json:"account_number,omitempty"`
+	OpenedDate        *time.Time `json:"opened_date,omitempty"`
 	ClosedDate        *time.Time `json:"closed_date,omitempty"`
-	Status            string     `json:"status"`
+	Status            *string    `json:"status,omitempty"`
 	CreditLimit       *float64   `json:"credit_limit,omitempty"`
-	CurrentBalance    float64    `json:"current_balance"`
+	CurrentBalance    *float64   `json:"current_balance,omitempty"`
 	AvailableCredit   *float64   `json:"available_credit,omitempty"`
 	OriginalAmount    *float64   `json:"original_amount,omitempty"`
 	RemainingAmount   *float64   `json:"remaining_amount,omitempty"`
@@ -28,13 +28,13 @@ type CreditAccountDTO struct {
 	PaymentDueDay     *int       `json:"payment_due_day,omitempty"`
 	NumberOfPayments  *int       `json:"number_of_payments,omitempty"`
 	RemainingPayments *int       `json:"remaining_payments,omitempty"`
-	PaymentStatus     string     `json:"payment_status"`
+	PaymentStatus     *string    `json:"payment_status,omitempty"`
 	DaysLate          int        `json:"days_late"`
 	HighestDaysLate   int        `json:"highest_days_late"`
 	TimesLate30Days   int        `json:"times_late_30_days"`
 	TimesLate60Days   int        `json:"times_late_60_days"`
 	TimesLate90Days   int        `json:"times_late_90_days"`
-	LastReportedDate  time.Time  `json:"last_reported_date"`
+	LastReportedDate  *time.Time `json:"last_reported_date,omitempty"`
 }
 
 func NewCreditAccountDTO(entity *entities.CreditAccount) *CreditAccountDTO {
@@ -106,10 +106,10 @@ type CreditInquiryDTO struct {
 	UpdatedAt        string    `json:"updated_at"`
 	PersonID         uint      `json:"person_id"`
 	InquiryDate      time.Time `json:"inquiry_date"`
-	InquiryType      string    `json:"inquiry_type"`
-	Creditor         string    `json:"creditor"`
-	CreditorDocument string    `json:"creditor_document"`
-	Purpose          string    `json:"purpose"`
+	InquiryType      *string   `json:"inquiry_type,omitempty"`
+	Creditor         *string   `json:"creditor,omitempty"`
+	CreditorDocument *string   `json:"creditor_document,omitempty"`
+	Purpose          *string   `json:"purpose,omitempty"`
 	Amount           *float64  `json:"amount,omitempty"`
 	Result           *string   `json:"result,omitempty"`
 }
@@ -144,18 +144,18 @@ func (c CreditInquiryDTO) ToEntity() *entities.CreditInquiry {
 }
 
 type PaymentHistoryDTO struct {
-	ID              uint      `json:"id"`
-	CreatedAt       string    `json:"created_at"`
-	UpdatedAt       string    `json:"updated_at"`
-	PersonID        uint      `json:"person_id"`
-	CreditAccountID *uint     `json:"credit_account_id,omitempty"`
-	DebtID          *uint     `json:"debt_id,omitempty"`
-	PaymentDate     time.Time `json:"payment_date"`
-	DueDate         time.Time `json:"due_date"`
-	Amount          float64   `json:"amount"`
-	AmountDue       float64   `json:"amount_due"`
-	Status          string    `json:"status"`
-	DaysLate        int       `json:"days_late"`
+	ID              uint       `json:"id"`
+	CreatedAt       string     `json:"created_at"`
+	UpdatedAt       string     `json:"updated_at"`
+	PersonID        uint       `json:"person_id"`
+	CreditAccountID *uint      `json:"credit_account_id,omitempty"`
+	DebtID          *uint      `json:"debt_id,omitempty"`
+	PaymentDate     time.Time  `json:"payment_date"`
+	DueDate         *time.Time `json:"due_date,omitempty"`
+	Amount          float64    `json:"amount"`
+	AmountDue       *float64   `json:"amount_due,omitempty"`
+	Status          *string    `json:"status,omitempty"`
+	DaysLate        int        `json:"days_late"`
 }
 
 func NewPaymentHistoryDTO(entity *entities.PaymentHistory) *PaymentHistoryDTO {

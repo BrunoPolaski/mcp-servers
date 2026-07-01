@@ -25,7 +25,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # ── Auth via Workload Identity ────────────────────────────────
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v2
         with:
@@ -35,7 +34,6 @@ jobs:
       - name: Set up gcloud
         uses: google-github-actions/setup-gcloud@v2
 
-      # ── Docker ───────────────────────────────────────────────────
       - name: Configure Docker
         run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
 
@@ -54,7 +52,6 @@ jobs:
           docker push ${{ env.IMAGE }}:${{ github.sha }}
           docker push ${{ env.IMAGE }}:latest
 
-      # ── Terraform ────────────────────────────────────────────────
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
 

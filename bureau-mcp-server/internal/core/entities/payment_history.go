@@ -13,9 +13,9 @@ type PaymentHistory struct {
 	DebtID          *uint `gorm:"index"`
 
 	PaymentDate time.Time `gorm:"not null;index"`
-	DueDate     time.Time `gorm:"not null"`
-	Amount      float64   `gorm:"not null"`
-	AmountDue   float64   `gorm:"not null"`
-	Status      string    `gorm:"size:50;not null;index"` // on_time, late, missed, partial
-	DaysLate    int       `gorm:"default:0;index"`
+	DueDate     *time.Time
+	Amount      float64 `gorm:"not null"`
+	AmountDue   *float64
+	Status      *string `gorm:"size:50;index"` // on_time, late, missed, partial
+	DaysLate    int     `gorm:"default:0;index"`
 }

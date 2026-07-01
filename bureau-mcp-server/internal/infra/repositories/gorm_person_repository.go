@@ -28,14 +28,12 @@ func (g *gormPersonRepository) GetById(ctx context.Context, id uint) (*entities.
 		Preload("CreditScore", nil).
 		Preload("FinancialProfile", nil).
 		Preload("EmploymentRecords", nil).
-		Preload("IncomeDeclarations", nil).
 		Preload("CreditAccounts", nil).
 		Preload("CreditInquiries", nil).
 		Preload("PaymentHistories", nil).
 		Preload("Debts", nil).
 		Preload("NegativeRecords", nil).
 		Preload("LegalRecords", nil).
-		Preload("ComplianceChecks", nil).
 		Preload("FraudAlerts", nil).
 		Preload("RiskAssessments", nil).
 		Preload("RelatedPersons", nil).
@@ -63,14 +61,12 @@ func (g *gormPersonRepository) GetByDocument(ctx context.Context, document strin
 		Preload("CreditScore", nil).
 		Preload("FinancialProfile", nil).
 		Preload("EmploymentRecords", nil).
-		Preload("IncomeDeclarations", nil).
 		Preload("CreditAccounts", nil).
 		Preload("CreditInquiries", nil).
 		Preload("PaymentHistories", nil).
 		Preload("Debts", nil).
 		Preload("NegativeRecords", nil).
 		Preload("LegalRecords", nil).
-		Preload("ComplianceChecks", nil).
 		Preload("FraudAlerts", nil).
 		Preload("RiskAssessments", nil).
 		Preload("RelatedPersons", nil).

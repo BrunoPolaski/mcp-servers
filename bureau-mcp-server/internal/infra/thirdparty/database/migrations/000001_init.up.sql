@@ -22,9 +22,9 @@ CREATE TABLE personal_informations (
     deleted_at TIMESTAMP,
     full_name VARCHAR(255) NOT NULL,
     mother_name VARCHAR(255),
-    birth_date TIMESTAMP NOT NULL,
+    birth_date TIMESTAMP,
     gender VARCHAR(20),
-    nationality VARCHAR(100) NOT NULL DEFAULT 'Brazilian',
+    nationality VARCHAR(100) DEFAULT 'Brazilian',
     marital_status VARCHAR(50),
     document VARCHAR(11) NOT NULL UNIQUE,
     rg VARCHAR(20),
@@ -32,16 +32,13 @@ CREATE TABLE personal_informations (
     rg_issue_date TIMESTAMP,
     voter_id VARCHAR(20),
     work_card VARCHAR(20),
-    primary_phone VARCHAR(15) NOT NULL,
+    primary_phone VARCHAR(15),
     secondary_phone VARCHAR(15),
     email VARCHAR(255),
     alternative_email VARCHAR(255),
     profile_photo_id BIGINT REFERENCES files(id),
-    document_validated BOOLEAN DEFAULT FALSE,
     email_verified BOOLEAN DEFAULT FALSE,
-    phone_verified BOOLEAN DEFAULT FALSE,
-    biometric_validated BOOLEAN DEFAULT FALSE,
-    receita_federal_status VARCHAR(50)
+    phone_verified BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE addresses (
@@ -49,12 +46,12 @@ CREATE TABLE addresses (
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    zip_code VARCHAR(16) NOT NULL,
-    state VARCHAR(100) NOT NULL,
-    city VARCHAR(100) NOT NULL,
+    zip_code VARCHAR(16),
+    state VARCHAR(100),
+    city VARCHAR(100),
     neighborhood VARCHAR(100),
-    street VARCHAR(255) NOT NULL,
-    number VARCHAR(16) NOT NULL,
+    street VARCHAR(255),
+    number VARCHAR(16),
     complement VARCHAR(255),
     reference_point VARCHAR(255),
     address_type VARCHAR(50),
@@ -64,7 +61,7 @@ CREATE TABLE addresses (
     risk_score INT,
     is_current BOOLEAN DEFAULT TRUE,
     is_correspondence BOOLEAN DEFAULT FALSE,
-    moved_in_date TIMESTAMP NOT NULL,
+    moved_in_date TIMESTAMP,
     moved_out_date TIMESTAMP,
     verification_status VARCHAR(50) DEFAULT 'unverified'
 );
@@ -100,15 +97,15 @@ CREATE TABLE credit_scores (
     person_id BIGINT NOT NULL,
     score INT NOT NULL,
     score_date TIMESTAMP NOT NULL,
-    score_model VARCHAR(50) NOT NULL,
+    score_model VARCHAR(50),
     score_reason TEXT,
-    payment_history INT NOT NULL,
-    credit_usage INT NOT NULL,
-    credit_age INT NOT NULL,
-    credit_mix INT NOT NULL,
-    recent_inquiries INT NOT NULL,
-    risk_level VARCHAR(50) NOT NULL,
-    default_probability DOUBLE PRECISION NOT NULL,
+    payment_history INT,
+    credit_usage INT,
+    credit_age INT,
+    credit_mix INT,
+    recent_inquiries INT,
+    risk_level VARCHAR(50),
+    default_probability DOUBLE PRECISION,
     UNIQUE (person_id, score_date)
 );
 
@@ -125,17 +122,11 @@ CREATE TABLE financial_profiles (
     total_assets DOUBLE PRECISION,
     real_estate_value DOUBLE PRECISION,
     vehicles_value DOUBLE PRECISION,
-    investments_value DOUBLE PRECISION,
     total_liabilities DOUBLE PRECISION,
     total_monthly_payments DOUBLE PRECISION,
     debt_to_income_ratio DOUBLE PRECISION,
     available_credit DOUBLE PRECISION,
     credit_utilization DOUBLE PRECISION,
-    banking_relationships INT,
-    account_age_average INT,
-    has_checking_account BOOLEAN DEFAULT FALSE,
-    has_savings_account BOOLEAN DEFAULT FALSE,
-    has_investment_account BOOLEAN DEFAULT FALSE,
     UNIQUE (person_id, profile_date)
 );
 
@@ -147,9 +138,7 @@ CREATE TABLE persons (
     personal_information_id BIGINT NOT NULL REFERENCES personal_informations(id),
     credit_score_id BIGINT,
     financial_profile_id BIGINT,
-    last_verified_at TIMESTAMP,
-    consent_status VARCHAR(50) NOT NULL DEFAULT 'pending',
-    consent_granted_at TIMESTAMP
+    last_verified_at TIMESTAMP
 );
 
 CREATE TABLE admins (
@@ -197,14 +186,14 @@ CREATE TABLE credit_accounts (
     deleted_at TIMESTAMP,
     person_id BIGINT NOT NULL REFERENCES persons(id),
     account_type VARCHAR(50) NOT NULL,
-    creditor VARCHAR(255) NOT NULL,
+    creditor VARCHAR(255),
     creditor_document VARCHAR(14),
     account_number VARCHAR(100),
-    opened_date TIMESTAMP NOT NULL,
+    opened_date TIMESTAMP,
     closed_date TIMESTAMP,
-    status VARCHAR(50) NOT NULL,
+    status VARCHAR(50),
     credit_limit DOUBLE PRECISION,
-    current_balance DOUBLE PRECISION NOT NULL,
+    current_balance DOUBLE PRECISION,
     available_credit DOUBLE PRECISION,
     original_amount DOUBLE PRECISION,
     remaining_amount DOUBLE PRECISION,
@@ -219,7 +208,7 @@ CREATE TABLE credit_accounts (
     times_late_30_days INT DEFAULT 0,
     times_late_60_days INT DEFAULT 0,
     times_late_90_days INT DEFAULT 0,
-    last_reported_date TIMESTAMP NOT NULL
+    last_reported_date TIMESTAMP
 );
 
 CREATE TABLE credit_inquiries (
@@ -229,8 +218,8 @@ CREATE TABLE credit_inquiries (
     deleted_at TIMESTAMP,
     person_id BIGINT NOT NULL REFERENCES persons(id),
     inquiry_date TIMESTAMP NOT NULL,
-    inquiry_type VARCHAR(50) NOT NULL,
-    creditor VARCHAR(255) NOT NULL,
+    inquiry_type VARCHAR(50),
+    creditor VARCHAR(255),
     creditor_document VARCHAR(14),
     purpose VARCHAR(100),
     amount DOUBLE PRECISION,
@@ -244,15 +233,15 @@ CREATE TABLE debts (
     deleted_at TIMESTAMP,
     person_id BIGINT NOT NULL REFERENCES persons(id),
     debt_type VARCHAR(100) NOT NULL,
-    creditor VARCHAR(255) NOT NULL,
+    creditor VARCHAR(255),
     creditor_document VARCHAR(14),
-    original_amount DOUBLE PRECISION NOT NULL,
+    original_amount DOUBLE PRECISION,
     current_amount DOUBLE PRECISION NOT NULL,
     interest_rate DOUBLE PRECISION,
     fees DOUBLE PRECISION,
-    origin_date TIMESTAMP NOT NULL,
-    due_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL,
+    origin_date TIMESTAMP,
+    due_date TIMESTAMP,
+    status VARCHAR(50),
     in_collection BOOLEAN DEFAULT FALSE,
     collection_date TIMESTAMP,
     collection_agency VARCHAR(255),
@@ -269,10 +258,10 @@ CREATE TABLE payment_histories (
     credit_account_id BIGINT REFERENCES credit_accounts(id),
     debt_id BIGINT REFERENCES debts(id),
     payment_date TIMESTAMP NOT NULL,
-    due_date TIMESTAMP NOT NULL,
+    due_date TIMESTAMP,
     amount DOUBLE PRECISION NOT NULL,
-    amount_due DOUBLE PRECISION NOT NULL,
-    status VARCHAR(50) NOT NULL,
+    amount_due DOUBLE PRECISION,
+    status VARCHAR(50),
     days_late INT DEFAULT 0
 );
 
@@ -283,12 +272,12 @@ CREATE TABLE negative_records (
     deleted_at TIMESTAMP,
     person_id BIGINT NOT NULL REFERENCES persons(id),
     record_type VARCHAR(100) NOT NULL,
-    creditor VARCHAR(255) NOT NULL,
+    creditor VARCHAR(255),
     creditor_document VARCHAR(14),
     amount DOUBLE PRECISION NOT NULL,
     inclusion_date TIMESTAMP NOT NULL,
     contract_number VARCHAR(100),
-    status VARCHAR(50) NOT NULL,
+    status VARCHAR(50),
     removal_date TIMESTAMP,
     removal_reason VARCHAR(255),
     process_number VARCHAR(100),
@@ -309,27 +298,11 @@ CREATE TABLE employment_records (
     job_title VARCHAR(255),
     employment_type VARCHAR(50),
     salary DOUBLE PRECISION,
-    start_date TIMESTAMP NOT NULL,
+    start_date TIMESTAMP,
     end_date TIMESTAMP,
     is_current BOOLEAN DEFAULT FALSE,
     verification_status VARCHAR(50) DEFAULT 'unverified',
     data_source VARCHAR(100)
-);
-
-CREATE TABLE income_declarations (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    declaration_date TIMESTAMP NOT NULL,
-    income_type VARCHAR(100) NOT NULL,
-    monthly_amount DOUBLE PRECISION NOT NULL,
-    yearly_amount DOUBLE PRECISION,
-    source VARCHAR(255),
-    verified BOOLEAN DEFAULT FALSE,
-    verified_by VARCHAR(100),
-    proof_file_id BIGINT REFERENCES files(id)
 );
 
 CREATE TABLE legal_records (
@@ -341,29 +314,12 @@ CREATE TABLE legal_records (
     record_type VARCHAR(100) NOT NULL,
     process_number VARCHAR(100),
     court VARCHAR(255),
-    filing_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL,
+    filing_date TIMESTAMP,
+    status VARCHAR(50),
     amount DOUBLE PRECISION,
     description TEXT,
     resolution TEXT,
     resolution_date TIMESTAMP
-);
-
-CREATE TABLE compliance_checks (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    check_type VARCHAR(100) NOT NULL,
-    check_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    details JSONB,
-    is_pep BOOLEAN DEFAULT FALSE,
-    pep_details TEXT,
-    on_sanctions_list BOOLEAN DEFAULT FALSE,
-    sanctions_details TEXT,
-    valid_until TIMESTAMP
 );
 
 CREATE TABLE fraud_alerts (
@@ -373,10 +329,10 @@ CREATE TABLE fraud_alerts (
     deleted_at TIMESTAMP,
     person_id BIGINT NOT NULL REFERENCES persons(id),
     alert_type VARCHAR(100) NOT NULL,
-    severity VARCHAR(50) NOT NULL,
-    description TEXT NOT NULL,
-    detected_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL,
+    severity VARCHAR(50),
+    description TEXT,
+    detected_date TIMESTAMP,
+    status VARCHAR(50),
     resolved_date TIMESTAMP,
     resolved_by VARCHAR(255),
     notes TEXT
@@ -390,8 +346,8 @@ CREATE TABLE risk_assessments (
     person_id BIGINT NOT NULL REFERENCES persons(id),
     assessment_date TIMESTAMP NOT NULL,
     assessment_type VARCHAR(100) NOT NULL,
-    risk_score INT NOT NULL,
-    risk_level VARCHAR(50) NOT NULL,
+    risk_score INT,
+    risk_level VARCHAR(50),
     risk_factors JSONB,
     recommendation TEXT,
     model_version VARCHAR(50)
@@ -489,18 +445,9 @@ CREATE INDEX idx_negative_records_status ON negative_records(status);
 CREATE INDEX idx_employment_records_person_id ON employment_records(person_id);
 CREATE INDEX idx_employment_records_is_current ON employment_records(is_current);
 
-CREATE INDEX idx_income_declarations_person_id ON income_declarations(person_id);
-CREATE INDEX idx_income_declarations_declaration_date ON income_declarations(declaration_date);
-
 CREATE INDEX idx_legal_records_person_id ON legal_records(person_id);
 CREATE INDEX idx_legal_records_record_type ON legal_records(record_type);
 CREATE INDEX idx_legal_records_process_number ON legal_records(process_number);
-
-CREATE INDEX idx_compliance_checks_person_id ON compliance_checks(person_id);
-CREATE INDEX idx_compliance_checks_check_type ON compliance_checks(check_type);
-CREATE INDEX idx_compliance_checks_check_date ON compliance_checks(check_date);
-CREATE INDEX idx_compliance_checks_is_pep ON compliance_checks(is_pep);
-CREATE INDEX idx_compliance_checks_on_sanctions_list ON compliance_checks(on_sanctions_list);
 
 CREATE INDEX idx_fraud_alerts_person_id ON fraud_alerts(person_id);
 CREATE INDEX idx_fraud_alerts_alert_type ON fraud_alerts(alert_type);
