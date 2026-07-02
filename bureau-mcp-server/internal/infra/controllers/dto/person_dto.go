@@ -264,3 +264,25 @@ type ListPersonsDTO struct {
 	PaginatedDTO
 	Document valueobjects.Document `json:"document"`
 }
+
+// PersonSummaryDTO is a lightweight projection of a person used by listing
+// endpoints. It exposes only the fields needed to identify a person so that
+// callers must fetch the full record via get_customer_by_id / get_customer_by_document.
+type PersonSummaryDTO struct {
+	ID       uint   `json:"id"`
+	Name     string `json:"name"`
+	Document string `json:"document"`
+}
+
+func NewPersonSummaryDTO(entity *entities.Person) *PersonSummaryDTO {
+	dto := &PersonSummaryDTO{
+		ID: entity.ID,
+	}
+
+	if entity.PersonalInformation != nil {
+		dto.Name = entity.PersonalInformation.FullName
+		dto.Document = entity.PersonalInformation.Document.String()
+	}
+
+	return dto
+}

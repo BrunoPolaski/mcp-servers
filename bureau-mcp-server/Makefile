@@ -8,15 +8,17 @@ BG_RESET = \033[0m
 FG_WHITE = \033[97m
 BG_GREY = \033[100m
 
+# Connection string for the migrate CLI, derived from DATABASE_URL so the app
+# and the migrations share a single source of truth.
+#   * migrate needs the postgres:// scheme (not postgresql://)
+#   * sslmode=disable is forced for local/dockerised Postgres
+#   * outside production the migrate CLI runs on the host, so the docker service
+#     address (postgres:5432) is rewritten to the exposed 127.0.0.1:5433
 ifeq ($(ENV),production)
-	DB_CONN_HOST = $(DB_HOST)
-	DB_CONN_PORT = $(DB_PORT)
+	MIGRATE_URL := $(shell echo '$(DATABASE_URL)' | sed 's|^postgresql://|postgres://|')?sslmode=disable
 else
-		DB_CONN_HOST = 127.0.0.1
-		DB_CONN_PORT = 5433
+	MIGRATE_URL := $(shell echo '$(DATABASE_URL)' | sed -e 's|^postgresql://|postgres://|' -e 's|@postgres:5432/|@127.0.0.1:5433/|')?sslmode=disable
 endif
-
-DB_PASSWORD_ENC := $(shell python3 -c 'import urllib.parse; print(urllib.parse.quote("$(DB_PASSWORD)", safe=""))')
 
 documentation:
 	@echo -e "$(BG_BLUE) $(FG_WHITE) Generating API documentation... $(BG_RESET)"
@@ -34,27 +36,27 @@ run-db:
 migration-status:
 	@echo -e "$(BG_BLUE) $(FG_WHITE) Checking database migration status... $(BG_RESET)"
 	@printf "Migration list:\n" && ls internal/infra/thirdparty/database/migrations | grep up.sql || echo "No migration files found."
-	@printf "Current version: " && migrate -path internal/infra/thirdparty/database/migrations -database postgres://$(DB_USERNAME):$(DB_PASSWORD_ENC)@$(DB_CONN_HOST):$(DB_CONN_PORT)/$(DB_NAME)?sslmode=disable version || echo "No migrations applied yet."
+	@printf "Current version: " && migrate -path internal/infra/thirdparty/database/migrations -database "$(MIGRATE_URL)" version || echo "No migrations applied yet."
 	@echo -e "$(BG_GREEN) Migration status checked. $(BG_RESET)"
 
 migration-up:
 	@echo -e "$(BG_BLUE) $(FG_WHITE) Running database migrations up... $(BG_RESET)"
-	@migrate -path internal/infra/thirdparty/database/migrations -database postgres://$(DB_USERNAME):$(DB_PASSWORD_ENC)@$(DB_CONN_HOST):$(DB_CONN_PORT)/$(DB_NAME)?sslmode=disable up
+	@migrate -path internal/infra/thirdparty/database/migrations -database "$(MIGRATE_URL)" up
 	@echo -e "$(BG_GREEN) Migrations completed. $(BG_RESET)"
 
 migration-up-single:
 	@echo -e "$(BG_BLUE) $(FG_WHITE) Running single database migration... $(BG_RESET)"
-	@migrate -path internal/infra/thirdparty/database/migrations -database postgres://$(DB_USERNAME):$(DB_PASSWORD_ENC)@$(DB_CONN_HOST):$(DB_CONN_PORT)/$(DB_NAME)?sslmode=disable up 1
+	@migrate -path internal/infra/thirdparty/database/migrations -database "$(MIGRATE_URL)" up 1
 	@echo -e "$(BG_GREEN) Single migration completed. $(BG_RESET)"
 
 migration-down:
 	@echo -e "$(BG_BLUE) $(FG_WHITE) Running database migrations down... $(BG_RESET)"
-	@migrate -path internal/infra/thirdparty/database/migrations -database postgres://$(DB_USERNAME):$(DB_PASSWORD_ENC)@$(DB_CONN_HOST):$(DB_CONN_PORT)/$(DB_NAME)?sslmode=disable down
+	@migrate -path internal/infra/thirdparty/database/migrations -database "$(MIGRATE_URL)" down
 	@echo -e "$(BG_GREEN) Migrations rolled back. $(BG_RESET)"
 
 migration-down-single:
 	@echo -e "$(BG_BLUE) $(FG_WHITE) Running database migrations to previous version... $(BG_RESET)"
-	@migrate -path internal/infra/thirdparty/database/migrations -database postgres://$(DB_USERNAME):$(DB_PASSWORD_ENC)@$(DB_CONN_HOST):$(DB_CONN_PORT)/$(DB_NAME)?sslmode=disable down 1
+	@migrate -path internal/infra/thirdparty/database/migrations -database "$(MIGRATE_URL)" down 1
 	@echo -e "$(BG_GREEN) Migration rolled back. $(BG_RESET)"
 
 migration-down-fixed: migration-fix migration-down
@@ -71,7 +73,7 @@ migration-fix:
 	read -p "Are you sure you want to force the migration to version $$version? This can be dangerous. [y/N]: " confirm; \
 	if [ "$$confirm" = "y" ] || [ "$$confirm" = "Y" ]; then \
 		echo -e "$(BG_BLUE) $(FG_WHITE) Forcing migration to version $$version... $(BG_RESET)"; \
-		migrate -path internal/infra/thirdparty/database/migrations -database "postgres://$(DB_USERNAME):$(DB_PASSWORD_ENC)@$(DB_CONN_HOST):$(DB_CONN_PORT)/$(DB_NAME)?sslmode=disable" force $$version; \
+		migrate -path internal/infra/thirdparty/database/migrations -database "$(MIGRATE_URL)" force $$version; \
 		echo -e "$(BG_GREEN) Migration version forced.$(BG_RESET)"; \
 	else \
 		echo -e "$(BG_RED) $(FG_WHITE) Migration force aborted. $(BG_RESET)"; \
