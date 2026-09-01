@@ -1,1 +1,140 @@
-[]
+[
+  {
+    "id": 1, "created_at": "2025-07-01T00:00:00Z", "updated_at": "2025-07-01T00:00:00Z", "deleted_at": null,
+    "person_id": 1, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0001", "contracted_date": "2025-07-01T00:00:00Z",
+    "status": "active", "balance": 850.00, "monthly_value": null
+  },
+  {
+    "id": 2, "created_at": "2025-07-01T00:00:00Z", "updated_at": "2025-07-01T00:00:00Z", "deleted_at": null,
+    "person_id": 1, "product_type": "loan", "product_name": "Emprestimo Pessoal",
+    "contract_number": "LN-0001", "contracted_date": "2025-07-15T00:00:00Z",
+    "status": "active", "balance": 8500.00, "monthly_value": 450.00
+  },
+  {
+    "id": 3, "created_at": "2018-09-01T00:00:00Z", "updated_at": "2018-09-01T00:00:00Z", "deleted_at": null,
+    "person_id": 2, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0002", "contracted_date": "2018-09-01T00:00:00Z",
+    "status": "active", "balance": 12400.00, "monthly_value": null
+  },
+  {
+    "id": 4, "created_at": "2019-03-01T00:00:00Z", "updated_at": "2019-03-01T00:00:00Z", "deleted_at": null,
+    "person_id": 2, "product_type": "credit_card", "product_name": "Cartao de Credito Gold",
+    "contract_number": "CC-0002-C", "contracted_date": "2019-03-01T00:00:00Z",
+    "status": "active", "balance": 3200.00, "monthly_value": null
+  },
+  {
+    "id": 5, "created_at": "2020-01-15T00:00:00Z", "updated_at": "2020-01-15T00:00:00Z", "deleted_at": null,
+    "person_id": 2, "product_type": "investment", "product_name": "CDB Premium",
+    "contract_number": "INV-0002", "contracted_date": "2020-01-15T00:00:00Z",
+    "status": "active", "balance": 85000.00, "monthly_value": null
+  },
+  {
+    "id": 6, "created_at": "2024-03-01T00:00:00Z", "updated_at": "2024-03-01T00:00:00Z", "deleted_at": null,
+    "person_id": 3, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0003", "contracted_date": "2024-03-01T00:00:00Z",
+    "status": "active", "balance": 2100.00, "monthly_value": null
+  },
+  {
+    "id": 7, "created_at": "2024-06-01T00:00:00Z", "updated_at": "2024-06-01T00:00:00Z", "deleted_at": null,
+    "person_id": 3, "product_type": "credit_card", "product_name": "Cartao de Credito Classic",
+    "contract_number": "CC-0003-C", "contracted_date": "2024-06-01T00:00:00Z",
+    "status": "active", "balance": 890.00, "monthly_value": null
+  },
+  {
+    "id": 8, "created_at": "2026-01-01T00:00:00Z", "updated_at": "2026-01-01T00:00:00Z", "deleted_at": null,
+    "person_id": 4, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0004", "contracted_date": "2026-01-01T00:00:00Z",
+    "status": "active", "balance": 1200.00, "monthly_value": null
+  },
+  {
+    "id": 9, "created_at": "2021-09-01T00:00:00Z", "updated_at": "2021-09-01T00:00:00Z", "deleted_at": null,
+    "person_id": 5, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0005", "contracted_date": "2021-09-01T00:00:00Z",
+    "status": "active", "balance": 5600.00, "monthly_value": null
+  },
+  {
+    "id": 10, "created_at": "2022-02-01T00:00:00Z", "updated_at": "2022-02-01T00:00:00Z", "deleted_at": null,
+    "person_id": 5, "product_type": "credit_card", "product_name": "Cartao de Credito Gold",
+    "contract_number": "CC-0005-C", "contracted_date": "2022-02-01T00:00:00Z",
+    "status": "active", "balance": 2800.00, "monthly_value": null
+  },
+  {
+    "id": 11, "created_at": "2023-01-01T00:00:00Z", "updated_at": "2023-01-01T00:00:00Z", "deleted_at": null,
+    "person_id": 5, "product_type": "investment", "product_name": "Fundo de Investimento",
+    "contract_number": "INV-0005", "contracted_date": "2023-01-01T00:00:00Z",
+    "status": "active", "balance": 42000.00, "monthly_value": null
+  },
+  {
+    "id": 12, "created_at": "2015-09-01T00:00:00Z", "updated_at": "2015-09-01T00:00:00Z", "deleted_at": null,
+    "person_id": 7, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0007", "contracted_date": "2015-09-01T00:00:00Z",
+    "status": "active", "balance": 28000.00, "monthly_value": null
+  },
+  {
+    "id": 13, "created_at": "2016-03-01T00:00:00Z", "updated_at": "2016-03-01T00:00:00Z", "deleted_at": null,
+    "person_id": 7, "product_type": "credit_card", "product_name": "Cartao de Credito Platinum",
+    "contract_number": "CC-0007-C", "contracted_date": "2016-03-01T00:00:00Z",
+    "status": "active", "balance": 8500.00, "monthly_value": null
+  },
+  {
+    "id": 14, "created_at": "2018-06-01T00:00:00Z", "updated_at": "2018-06-01T00:00:00Z", "deleted_at": null,
+    "person_id": 7, "product_type": "loan", "product_name": "Emprestimo Pessoal",
+    "contract_number": "LN-0007", "contracted_date": "2018-06-01T00:00:00Z",
+    "status": "active", "balance": 45000.00, "monthly_value": 1800.00
+  },
+  {
+    "id": 15, "created_at": "2017-01-01T00:00:00Z", "updated_at": "2017-01-01T00:00:00Z", "deleted_at": null,
+    "person_id": 7, "product_type": "investment", "product_name": "CDB Exclusivo",
+    "contract_number": "INV-0007", "contracted_date": "2017-01-01T00:00:00Z",
+    "status": "active", "balance": 320000.00, "monthly_value": null
+  },
+  {
+    "id": 16, "created_at": "2023-05-01T00:00:00Z", "updated_at": "2023-05-01T00:00:00Z", "deleted_at": null,
+    "person_id": 8, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0008", "contracted_date": "2023-05-01T00:00:00Z",
+    "status": "active", "balance": 7800.00, "monthly_value": null
+  },
+  {
+    "id": 17, "created_at": "2023-09-01T00:00:00Z", "updated_at": "2023-09-01T00:00:00Z", "deleted_at": null,
+    "person_id": 8, "product_type": "credit_card", "product_name": "Cartao de Credito Gold",
+    "contract_number": "CC-0008-C", "contracted_date": "2023-09-01T00:00:00Z",
+    "status": "active", "balance": 3100.00, "monthly_value": null
+  },
+  {
+    "id": 18, "created_at": "2022-03-01T00:00:00Z", "updated_at": "2022-03-01T00:00:00Z", "deleted_at": null,
+    "person_id": 9, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0009", "contracted_date": "2022-03-01T00:00:00Z",
+    "status": "active", "balance": 9200.00, "monthly_value": null
+  },
+  {
+    "id": 19, "created_at": "2022-08-01T00:00:00Z", "updated_at": "2022-08-01T00:00:00Z", "deleted_at": null,
+    "person_id": 9, "product_type": "credit_card", "product_name": "Cartao de Credito Gold",
+    "contract_number": "CC-0009-C", "contracted_date": "2022-08-01T00:00:00Z",
+    "status": "active", "balance": 4300.00, "monthly_value": null
+  },
+  {
+    "id": 20, "created_at": "2023-01-01T00:00:00Z", "updated_at": "2023-01-01T00:00:00Z", "deleted_at": null,
+    "person_id": 9, "product_type": "insurance", "product_name": "Seguro de Vida",
+    "contract_number": "INS-0009", "contracted_date": "2023-01-01T00:00:00Z",
+    "status": "active", "balance": null, "monthly_value": 180.00
+  },
+  {
+    "id": 21, "created_at": "2020-09-01T00:00:00Z", "updated_at": "2020-09-01T00:00:00Z", "deleted_at": null,
+    "person_id": 10, "product_type": "checking_account", "product_name": "Conta Corrente",
+    "contract_number": "CC-0010", "contracted_date": "2020-09-01T00:00:00Z",
+    "status": "active", "balance": 14500.00, "monthly_value": null
+  },
+  {
+    "id": 22, "created_at": "2021-02-01T00:00:00Z", "updated_at": "2021-02-01T00:00:00Z", "deleted_at": null,
+    "person_id": 10, "product_type": "credit_card", "product_name": "Cartao de Credito Platinum",
+    "contract_number": "CC-0010-C", "contracted_date": "2021-02-01T00:00:00Z",
+    "status": "active", "balance": 5600.00, "monthly_value": null
+  },
+  {
+    "id": 23, "created_at": "2022-06-01T00:00:00Z", "updated_at": "2022-06-01T00:00:00Z", "deleted_at": null,
+    "person_id": 10, "product_type": "investment", "product_name": "Tesouro Direto",
+    "contract_number": "INV-0010", "contracted_date": "2022-06-01T00:00:00Z",
+    "status": "active", "balance": 68000.00, "monthly_value": null
+  }
+]
