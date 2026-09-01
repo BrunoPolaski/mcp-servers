@@ -65,6 +65,5 @@ jobs:
           terraform apply -auto-approve \
             -var="project_id=${{ env.PROJECT_ID }}" \
             -var="region=${{ env.REGION }}" \
-            -var="image=${{ env.IMAGE }}:${{ github.sha }}" \
-            -var="database_url=${{ secrets.DATABASE_URL }}" \
-            -var="mcp_auth_token=${{ secrets.MCP_AUTH_TOKEN }}"
+            -var='images={"bureau-mcp":"${{ env.IMAGE }}:${{ github.sha }}","open-finance-mcp":"southamerica-east1-docker.pkg.dev/${{ env.PROJECT_ID }}/open-finance-mcp/open-finance-mcp:latest"}' \
+            -var='database_urls={"bureau-mcp":"${{ secrets.DATABASE_URL }}","open-finance-mcp":"${{ secrets.OPEN_FINANCE_DATABASE_URL }}"}'

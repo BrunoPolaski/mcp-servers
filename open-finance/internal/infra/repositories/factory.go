@@ -15,6 +15,11 @@ type RepositoryFactory struct {
 	analystRepository interfaces.AnalystRepository
 	userRepository    interfaces.UserRepository
 	sessionRepository interfaces.SessionRepository
+
+	bankStatementRepository        interfaces.BankStatementRepository
+	cashFlowAnalysisRepository     interfaces.CashFlowAnalysisRepository
+	recurringTransactionRepository interfaces.RecurringTransactionRepository
+	dataSharingConsentRepository   interfaces.DataSharingConsentRepository
 }
 
 func NewRepositoryFactory(tpf *thirdparty.ThirdPartyFactory) *RepositoryFactory {
@@ -27,6 +32,11 @@ func NewRepositoryFactory(tpf *thirdparty.ThirdPartyFactory) *RepositoryFactory 
 		analystRepository: NewGormAnalystRepository(tpf.DB()),
 		userRepository:    NewGormUserRepository(tpf.DB()),
 		sessionRepository: NewGormSessionRepository(tpf.DB()),
+
+		bankStatementRepository:        NewGormBankStatementRepository(tpf.DB()),
+		cashFlowAnalysisRepository:     NewGormCashFlowAnalysisRepository(tpf.DB()),
+		recurringTransactionRepository: NewGormRecurringTransactionRepository(tpf.DB()),
+		dataSharingConsentRepository:   NewGormDataSharingConsentRepository(tpf.DB()),
 	}
 }
 
@@ -56,4 +66,20 @@ func (f *RepositoryFactory) UserRepository() interfaces.UserRepository {
 
 func (f *RepositoryFactory) SessionRepository() interfaces.SessionRepository {
 	return f.sessionRepository
+}
+
+func (f *RepositoryFactory) BankStatementRepository() interfaces.BankStatementRepository {
+	return f.bankStatementRepository
+}
+
+func (f *RepositoryFactory) CashFlowAnalysisRepository() interfaces.CashFlowAnalysisRepository {
+	return f.cashFlowAnalysisRepository
+}
+
+func (f *RepositoryFactory) RecurringTransactionRepository() interfaces.RecurringTransactionRepository {
+	return f.recurringTransactionRepository
+}
+
+func (f *RepositoryFactory) DataSharingConsentRepository() interfaces.DataSharingConsentRepository {
+	return f.dataSharingConsentRepository
 }

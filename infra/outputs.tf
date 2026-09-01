@@ -1,9 +1,11 @@
-output "mcp_url" {
-  description = "URL pública do bureau-mcp no Cloud Run"
-  value       = google_cloud_run_v2_service.bureau_mcp.uri
+output "service_urls" {
+  description = "URL pública de cada servidor MCP no Cloud Run"
+  value       = { for k, s in google_cloud_run_v2_service.mcp : k => s.uri }
 }
 
-output "artifact_registry_repo" {
-  description = "Endereço do repositório no Artifact Registry"
-  value       = "${var.region}-docker.pkg.dev/${var.project_id}/bureau-mcp/bureau-mcp"
+output "artifact_registry_repos" {
+  description = "Endereço do repositório de imagens de cada servidor MCP"
+  value = {
+    for k in local.mcp_services : k => "${var.region}-docker.pkg.dev/${var.project_id}/${k}/${k}"
+  }
 }
