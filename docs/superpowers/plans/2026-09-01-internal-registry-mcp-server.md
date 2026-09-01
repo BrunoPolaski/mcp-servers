@@ -58,7 +58,7 @@ CREATE TABLE customer_relationships (
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
+    person_id BIGINT NOT NULL, -- sem FK: carregada antes de persons (persons.customer_relationship_id aponta para cá), espelhando bank_account_profiles do open-finance
     customer_since TIMESTAMP NOT NULL,
     relationship_months INTEGER NOT NULL DEFAULT 0,
     segment VARCHAR(50),
