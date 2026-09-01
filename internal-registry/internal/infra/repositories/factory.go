@@ -15,6 +15,12 @@ type RepositoryFactory struct {
 	analystRepository interfaces.AnalystRepository
 	userRepository    interfaces.UserRepository
 	sessionRepository interfaces.SessionRepository
+
+	customerRelationshipRepository  interfaces.CustomerRelationshipRepository
+	contractedProductRepository     interfaces.ContractedProductRepository
+	internalPaymentRecordRepository interfaces.InternalPaymentRecordRepository
+	preApprovedLimitRepository      interfaces.PreApprovedLimitRepository
+	incomeDeclarationRepository     interfaces.IncomeDeclarationRepository
 }
 
 func NewRepositoryFactory(tpf *thirdparty.ThirdPartyFactory) *RepositoryFactory {
@@ -27,6 +33,12 @@ func NewRepositoryFactory(tpf *thirdparty.ThirdPartyFactory) *RepositoryFactory 
 		analystRepository: NewGormAnalystRepository(tpf.DB()),
 		userRepository:    NewGormUserRepository(tpf.DB()),
 		sessionRepository: NewGormSessionRepository(tpf.DB()),
+
+		customerRelationshipRepository:  NewGormCustomerRelationshipRepository(tpf.DB()),
+		contractedProductRepository:     NewGormContractedProductRepository(tpf.DB()),
+		internalPaymentRecordRepository: NewGormInternalPaymentRecordRepository(tpf.DB()),
+		preApprovedLimitRepository:      NewGormPreApprovedLimitRepository(tpf.DB()),
+		incomeDeclarationRepository:     NewGormIncomeDeclarationRepository(tpf.DB()),
 	}
 }
 
@@ -56,4 +68,24 @@ func (f *RepositoryFactory) UserRepository() interfaces.UserRepository {
 
 func (f *RepositoryFactory) SessionRepository() interfaces.SessionRepository {
 	return f.sessionRepository
+}
+
+func (f *RepositoryFactory) CustomerRelationshipRepository() interfaces.CustomerRelationshipRepository {
+	return f.customerRelationshipRepository
+}
+
+func (f *RepositoryFactory) ContractedProductRepository() interfaces.ContractedProductRepository {
+	return f.contractedProductRepository
+}
+
+func (f *RepositoryFactory) InternalPaymentRecordRepository() interfaces.InternalPaymentRecordRepository {
+	return f.internalPaymentRecordRepository
+}
+
+func (f *RepositoryFactory) PreApprovedLimitRepository() interfaces.PreApprovedLimitRepository {
+	return f.preApprovedLimitRepository
+}
+
+func (f *RepositoryFactory) IncomeDeclarationRepository() interfaces.IncomeDeclarationRepository {
+	return f.incomeDeclarationRepository
 }
