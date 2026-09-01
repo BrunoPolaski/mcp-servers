@@ -1,12 +1,9 @@
 # Política de Crédito — Agente de Análise (LLM)
 
 > **Versão:** 1.0 · **Vigência:** 2026-07-02 · **Moeda:** BRL
->
-> Este documento parametriza a análise de crédito executada pelo agente (LLM)
-> sobre os dados retornados pelas ferramentas `get_all_customers`,
-> `get_customer_by_id` e `get_customer_by_document` do Bureau MCP Server.
-> A política é **determinística**: dado o mesmo conjunto de dados de entrada,
-> existe exatamente uma decisão correta.
+> **Situação:** política do experimento preliminar, conduzido apenas com o
+> servidor de birô de crédito. Para a fase integrada, com o servidor de Open
+> Finance conectado, use `docs/politica_credito_agente_v1.1.md`.
 
 ---
 
