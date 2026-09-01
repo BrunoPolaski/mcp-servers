@@ -91,6 +91,19 @@ func (as *PersonService) GetAll(ctx context.Context, limit, offset int, params m
 	return paginatedPersones, nil
 }
 
+func (as *PersonService) GetAllSummary(ctx context.Context, limit, offset int, params map[string]any) (*dto.PaginatedResponse[dto.PersonSummaryDTO], *rest_err.RestErr) {
+	persons, count, err := as.personRepository.GetAll(ctx, limit, offset, params)
+	if err != nil {
+		return nil, err
+	}
+
+	paginated := dto.NewPaginatedResponse(count, make([]*dto.PersonSummaryDTO, len(persons)))
+	for i := range persons {
+		paginated.Items[i] = dto.NewPersonSummaryDTO(&persons[i])
+	}
+	return paginated, nil
+}
+
 func (as *PersonService) Delete(ctx context.Context, id uint) *rest_err.RestErr {
 	return as.personRepository.Delete(ctx, id)
 }
