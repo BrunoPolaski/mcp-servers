@@ -31,6 +31,22 @@ services:
       postgres:
         condition: service_healthy
 
+  internal-registry-mcp:
+    build:
+      context: ./internal-registry
+      dockerfile: Dockerfile
+      target: mcp
+    ports:
+      - "8083:8080"
+    networks:
+      - interservice-network
+      - postgres-network
+    env_file:
+      - ./internal-registry/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     container_name: postgres
     image: postgres:16
