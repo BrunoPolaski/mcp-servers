@@ -92,66 +92,6 @@ CREATE TABLE person_documents (
     expiration_date TIMESTAMP
 );
 
-CREATE TABLE credit_scores (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL,
-    score INT NOT NULL,
-    score_date TIMESTAMP NOT NULL,
-    score_model VARCHAR(50) NOT NULL,
-    score_reason TEXT,
-    payment_history INT NOT NULL,
-    credit_usage INT NOT NULL,
-    credit_age INT NOT NULL,
-    credit_mix INT NOT NULL,
-    recent_inquiries INT NOT NULL,
-    risk_level VARCHAR(50) NOT NULL,
-    default_probability DOUBLE PRECISION NOT NULL,
-    UNIQUE (person_id, score_date)
-);
-
-CREATE TABLE financial_profiles (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL,
-    profile_date TIMESTAMP NOT NULL,
-    declared_monthly_income DOUBLE PRECISION,
-    estimated_monthly_income DOUBLE PRECISION,
-    income_source VARCHAR(100),
-    total_assets DOUBLE PRECISION,
-    real_estate_value DOUBLE PRECISION,
-    vehicles_value DOUBLE PRECISION,
-    investments_value DOUBLE PRECISION,
-    total_liabilities DOUBLE PRECISION,
-    total_monthly_payments DOUBLE PRECISION,
-    debt_to_income_ratio DOUBLE PRECISION,
-    available_credit DOUBLE PRECISION,
-    credit_utilization DOUBLE PRECISION,
-    banking_relationships INT,
-    account_age_average INT,
-    has_checking_account BOOLEAN DEFAULT FALSE,
-    has_savings_account BOOLEAN DEFAULT FALSE,
-    has_investment_account BOOLEAN DEFAULT FALSE,
-    UNIQUE (person_id, profile_date)
-);
-
-CREATE TABLE persons (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    personal_information_id BIGINT NOT NULL REFERENCES personal_informations(id),
-    credit_score_id BIGINT,
-    financial_profile_id BIGINT,
-    last_verified_at TIMESTAMP,
-    consent_status VARCHAR(50) NOT NULL DEFAULT 'pending',
-    consent_granted_at TIMESTAMP
-);
-
 CREATE TABLE admins (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP,
@@ -166,6 +106,16 @@ CREATE TABLE analysts (
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     personal_information_id BIGINT NOT NULL REFERENCES personal_informations(id)
+);
+
+CREATE TABLE persons (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+    personal_information_id BIGINT NOT NULL REFERENCES personal_informations(id),
+    customer_relationship_id BIGINT,
+    last_verified_at TIMESTAMP
 );
 
 CREATE TABLE users (
@@ -190,131 +140,83 @@ CREATE TABLE sessions (
     last_activity TIMESTAMP
 );
 
-CREATE TABLE credit_accounts (
+CREATE TABLE customer_relationships (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    account_type VARCHAR(50) NOT NULL,
-    creditor VARCHAR(255) NOT NULL,
-    creditor_document VARCHAR(14),
-    account_number VARCHAR(100),
-    opened_date TIMESTAMP NOT NULL,
-    closed_date TIMESTAMP,
-    status VARCHAR(50) NOT NULL,
-    credit_limit DOUBLE PRECISION,
-    current_balance DOUBLE PRECISION NOT NULL,
-    available_credit DOUBLE PRECISION,
-    original_amount DOUBLE PRECISION,
-    remaining_amount DOUBLE PRECISION,
-    interest_rate DOUBLE PRECISION,
-    monthly_payment DOUBLE PRECISION,
-    payment_due_day INT,
-    number_of_payments INT,
-    remaining_payments INT,
-    payment_status VARCHAR(50),
-    days_late INT DEFAULT 0,
-    highest_days_late INT DEFAULT 0,
-    times_late_30_days INT DEFAULT 0,
-    times_late_60_days INT DEFAULT 0,
-    times_late_90_days INT DEFAULT 0,
-    last_reported_date TIMESTAMP NOT NULL
+    person_id BIGINT NOT NULL, -- sem FK: carregada antes de persons (persons.customer_relationship_id aponta para cá), espelhando bank_account_profiles do open-finance
+    customer_since TIMESTAMP NOT NULL,
+    relationship_months INTEGER NOT NULL DEFAULT 0,
+    segment VARCHAR(50),
+    branch VARCHAR(100),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE,
+    churn_risk VARCHAR(50),
+    internal_score INTEGER
 );
+CREATE UNIQUE INDEX idx_customer_relationships_person_id ON customer_relationships(person_id) WHERE deleted_at IS NULL;
+CREATE INDEX idx_customer_relationships_months ON customer_relationships(relationship_months);
+CREATE INDEX idx_customer_relationships_active ON customer_relationships(is_active);
+CREATE INDEX idx_customer_relationships_score ON customer_relationships(internal_score);
 
-CREATE TABLE credit_inquiries (
+CREATE TABLE contracted_products (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     person_id BIGINT NOT NULL REFERENCES persons(id),
-    inquiry_date TIMESTAMP NOT NULL,
-    inquiry_type VARCHAR(50) NOT NULL,
-    creditor VARCHAR(255) NOT NULL,
-    creditor_document VARCHAR(14),
-    purpose VARCHAR(100),
-    amount DOUBLE PRECISION,
-    result VARCHAR(50)
-);
-
-CREATE TABLE debts (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    debt_type VARCHAR(100) NOT NULL,
-    creditor VARCHAR(255) NOT NULL,
-    creditor_document VARCHAR(14),
-    original_amount DOUBLE PRECISION NOT NULL,
-    current_amount DOUBLE PRECISION NOT NULL,
-    interest_rate DOUBLE PRECISION,
-    fees DOUBLE PRECISION,
-    origin_date TIMESTAMP NOT NULL,
-    due_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    in_collection BOOLEAN DEFAULT FALSE,
-    collection_date TIMESTAMP,
-    collection_agency VARCHAR(255),
-    settlement_amount DOUBLE PRECISION,
-    settlement_date TIMESTAMP
-);
-
-CREATE TABLE payment_histories (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    credit_account_id BIGINT REFERENCES credit_accounts(id),
-    debt_id BIGINT REFERENCES debts(id),
-    payment_date TIMESTAMP NOT NULL,
-    due_date TIMESTAMP NOT NULL,
-    amount DOUBLE PRECISION NOT NULL,
-    amount_due DOUBLE PRECISION NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    days_late INT DEFAULT 0
-);
-
-CREATE TABLE negative_records (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    record_type VARCHAR(100) NOT NULL,
-    creditor VARCHAR(255) NOT NULL,
-    creditor_document VARCHAR(14),
-    amount DOUBLE PRECISION NOT NULL,
-    inclusion_date TIMESTAMP NOT NULL,
+    product_type VARCHAR(50) NOT NULL,
+    product_name VARCHAR(255) NOT NULL,
     contract_number VARCHAR(100),
+    contracted_date TIMESTAMP NOT NULL,
     status VARCHAR(50) NOT NULL,
-    removal_date TIMESTAMP,
-    removal_reason VARCHAR(255),
-    process_number VARCHAR(100),
-    notary VARCHAR(255),
-    is_disputed BOOLEAN DEFAULT FALSE,
-    dispute_date TIMESTAMP,
-    dispute_reason TEXT
+    balance DOUBLE PRECISION,
+    monthly_value DOUBLE PRECISION
 );
+CREATE INDEX idx_contracted_products_person_id ON contracted_products(person_id);
+CREATE INDEX idx_contracted_products_type ON contracted_products(product_type);
+CREATE INDEX idx_contracted_products_number ON contracted_products(contract_number);
+CREATE INDEX idx_contracted_products_status ON contracted_products(status);
 
-CREATE TABLE employment_records (
+CREATE TABLE internal_payment_records (
     id BIGSERIAL PRIMARY KEY,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     deleted_at TIMESTAMP,
     person_id BIGINT NOT NULL REFERENCES persons(id),
-    employer_name VARCHAR(255) NOT NULL,
-    employer_document VARCHAR(14),
-    job_title VARCHAR(255),
-    employment_type VARCHAR(50),
-    salary DOUBLE PRECISION,
-    start_date TIMESTAMP NOT NULL,
-    end_date TIMESTAMP,
-    is_current BOOLEAN DEFAULT FALSE,
-    verification_status VARCHAR(50) DEFAULT 'unverified',
-    data_source VARCHAR(100)
+    contracted_product_id BIGINT REFERENCES contracted_products(id),
+    reference_month TIMESTAMP NOT NULL,
+    due_date TIMESTAMP NOT NULL,
+    payment_date TIMESTAMP,
+    amount_due DOUBLE PRECISION NOT NULL,
+    amount_paid DOUBLE PRECISION NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    days_late INTEGER NOT NULL DEFAULT 0
 );
+CREATE INDEX idx_internal_payment_records_person_id ON internal_payment_records(person_id);
+CREATE INDEX idx_internal_payment_records_product_id ON internal_payment_records(contracted_product_id);
+CREATE INDEX idx_internal_payment_records_ref_month ON internal_payment_records(reference_month);
+CREATE INDEX idx_internal_payment_records_status ON internal_payment_records(status);
+CREATE INDEX idx_internal_payment_records_days_late ON internal_payment_records(days_late);
+
+CREATE TABLE pre_approved_limits (
+    id BIGSERIAL PRIMARY KEY,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    deleted_at TIMESTAMP,
+    person_id BIGINT NOT NULL REFERENCES persons(id),
+    product_type VARCHAR(50) NOT NULL,
+    approved_amount DOUBLE PRECISION NOT NULL,
+    interest_rate DOUBLE PRECISION,
+    calculated_date TIMESTAMP NOT NULL,
+    valid_until TIMESTAMP NOT NULL,
+    policy_version VARCHAR(50),
+    is_active BOOLEAN NOT NULL DEFAULT TRUE
+);
+CREATE INDEX idx_pre_approved_limits_person_id ON pre_approved_limits(person_id);
+CREATE INDEX idx_pre_approved_limits_type ON pre_approved_limits(product_type);
+CREATE INDEX idx_pre_approved_limits_valid_until ON pre_approved_limits(valid_until);
+CREATE INDEX idx_pre_approved_limits_active ON pre_approved_limits(is_active);
 
 CREATE TABLE income_declarations (
     id BIGSERIAL PRIMARY KEY,
@@ -332,104 +234,6 @@ CREATE TABLE income_declarations (
     proof_file_id BIGINT REFERENCES files(id)
 );
 
-CREATE TABLE legal_records (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    record_type VARCHAR(100) NOT NULL,
-    process_number VARCHAR(100),
-    court VARCHAR(255),
-    filing_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    amount DOUBLE PRECISION,
-    description TEXT,
-    resolution TEXT,
-    resolution_date TIMESTAMP
-);
-
-CREATE TABLE compliance_checks (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    check_type VARCHAR(100) NOT NULL,
-    check_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    details JSONB,
-    is_pep BOOLEAN DEFAULT FALSE,
-    pep_details TEXT,
-    on_sanctions_list BOOLEAN DEFAULT FALSE,
-    sanctions_details TEXT,
-    valid_until TIMESTAMP
-);
-
-CREATE TABLE fraud_alerts (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    alert_type VARCHAR(100) NOT NULL,
-    severity VARCHAR(50) NOT NULL,
-    description TEXT NOT NULL,
-    detected_date TIMESTAMP NOT NULL,
-    status VARCHAR(50) NOT NULL,
-    resolved_date TIMESTAMP,
-    resolved_by VARCHAR(255),
-    notes TEXT
-);
-
-CREATE TABLE risk_assessments (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    assessment_date TIMESTAMP NOT NULL,
-    assessment_type VARCHAR(100) NOT NULL,
-    risk_score INT NOT NULL,
-    risk_level VARCHAR(50) NOT NULL,
-    risk_factors JSONB,
-    recommendation TEXT,
-    model_version VARCHAR(50)
-);
-
-CREATE TABLE person_relationships (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    related_person_id BIGINT NOT NULL REFERENCES persons(id),
-    relation_type VARCHAR(100) NOT NULL,
-    start_date TIMESTAMP,
-    end_date TIMESTAMP,
-    is_active BOOLEAN DEFAULT TRUE,
-    verification_status VARCHAR(50) DEFAULT 'unverified'
-);
-
-CREATE TABLE data_sources (
-    id BIGSERIAL PRIMARY KEY,
-    created_at TIMESTAMP,
-    updated_at TIMESTAMP,
-    deleted_at TIMESTAMP,
-    source_name VARCHAR(255) NOT NULL UNIQUE,
-    source_type VARCHAR(100) NOT NULL,
-    description TEXT,
-    is_active BOOLEAN DEFAULT TRUE,
-    last_sync_date TIMESTAMP,
-    reliability_score INT
-);
-
-CREATE TABLE person_data_sources (
-    person_id BIGINT NOT NULL REFERENCES persons(id),
-    data_source_id BIGINT NOT NULL REFERENCES data_sources(id),
-    PRIMARY KEY (person_id, data_source_id)
-);
-
 CREATE INDEX idx_personal_informations_full_name ON personal_informations(full_name);
 CREATE INDEX idx_personal_informations_mother_name ON personal_informations(mother_name);
 CREATE INDEX idx_personal_informations_birth_date ON personal_informations(birth_date);
@@ -445,74 +249,7 @@ CREATE INDEX idx_addresses_risk_score ON addresses(risk_score);
 CREATE INDEX idx_addresses_is_current ON addresses(is_current);
 
 CREATE INDEX idx_persons_personal_information_id ON persons(personal_information_id);
-CREATE INDEX idx_persons_credit_score_id ON persons(credit_score_id);
-CREATE INDEX idx_persons_financial_profile_id ON persons(financial_profile_id);
-
-CREATE INDEX idx_credit_scores_score ON credit_scores(score);
-
-CREATE INDEX idx_financial_profiles_declared_monthly_income ON financial_profiles(declared_monthly_income);
-CREATE INDEX idx_financial_profiles_estimated_monthly_income ON financial_profiles(estimated_monthly_income);
-CREATE INDEX idx_financial_profiles_total_liabilities ON financial_profiles(total_liabilities);
-CREATE INDEX idx_financial_profiles_debt_to_income_ratio ON financial_profiles(debt_to_income_ratio);
-CREATE INDEX idx_financial_profiles_credit_utilization ON financial_profiles(credit_utilization);
-
-CREATE INDEX idx_credit_accounts_person_id ON credit_accounts(person_id);
-CREATE INDEX idx_credit_accounts_account_type ON credit_accounts(account_type);
-CREATE INDEX idx_credit_accounts_status ON credit_accounts(status);
-CREATE INDEX idx_credit_accounts_credit_limit ON credit_accounts(credit_limit);
-CREATE INDEX idx_credit_accounts_current_balance ON credit_accounts(current_balance);
-CREATE INDEX idx_credit_accounts_payment_status ON credit_accounts(payment_status);
-CREATE INDEX idx_credit_accounts_days_late ON credit_accounts(days_late);
-
-CREATE INDEX idx_credit_inquiries_person_id ON credit_inquiries(person_id);
-CREATE INDEX idx_credit_inquiries_inquiry_date ON credit_inquiries(inquiry_date);
-
-CREATE INDEX idx_payment_histories_person_id ON payment_histories(person_id);
-CREATE INDEX idx_payment_histories_credit_account_id ON payment_histories(credit_account_id);
-CREATE INDEX idx_payment_histories_debt_id ON payment_histories(debt_id);
-CREATE INDEX idx_payment_histories_payment_date ON payment_histories(payment_date);
-CREATE INDEX idx_payment_histories_status ON payment_histories(status);
-CREATE INDEX idx_payment_histories_days_late ON payment_histories(days_late);
-
-CREATE INDEX idx_debts_person_id ON debts(person_id);
-CREATE INDEX idx_debts_debt_type ON debts(debt_type);
-CREATE INDEX idx_debts_creditor ON debts(creditor);
-CREATE INDEX idx_debts_current_amount ON debts(current_amount);
-CREATE INDEX idx_debts_due_date ON debts(due_date);
-CREATE INDEX idx_debts_status ON debts(status);
-CREATE INDEX idx_debts_in_collection ON debts(in_collection);
-
-CREATE INDEX idx_negative_records_person_id ON negative_records(person_id);
-CREATE INDEX idx_negative_records_record_type ON negative_records(record_type);
-CREATE INDEX idx_negative_records_status ON negative_records(status);
-
-CREATE INDEX idx_employment_records_person_id ON employment_records(person_id);
-CREATE INDEX idx_employment_records_is_current ON employment_records(is_current);
+CREATE INDEX idx_persons_customer_relationship_id ON persons(customer_relationship_id);
 
 CREATE INDEX idx_income_declarations_person_id ON income_declarations(person_id);
 CREATE INDEX idx_income_declarations_declaration_date ON income_declarations(declaration_date);
-
-CREATE INDEX idx_legal_records_person_id ON legal_records(person_id);
-CREATE INDEX idx_legal_records_record_type ON legal_records(record_type);
-CREATE INDEX idx_legal_records_process_number ON legal_records(process_number);
-
-CREATE INDEX idx_compliance_checks_person_id ON compliance_checks(person_id);
-CREATE INDEX idx_compliance_checks_check_type ON compliance_checks(check_type);
-CREATE INDEX idx_compliance_checks_check_date ON compliance_checks(check_date);
-CREATE INDEX idx_compliance_checks_is_pep ON compliance_checks(is_pep);
-CREATE INDEX idx_compliance_checks_on_sanctions_list ON compliance_checks(on_sanctions_list);
-
-CREATE INDEX idx_fraud_alerts_person_id ON fraud_alerts(person_id);
-CREATE INDEX idx_fraud_alerts_alert_type ON fraud_alerts(alert_type);
-CREATE INDEX idx_fraud_alerts_severity ON fraud_alerts(severity);
-CREATE INDEX idx_fraud_alerts_detected_date ON fraud_alerts(detected_date);
-
-CREATE INDEX idx_risk_assessments_person_id ON risk_assessments(person_id);
-CREATE INDEX idx_risk_assessments_assessment_date ON risk_assessments(assessment_date);
-CREATE INDEX idx_risk_assessments_risk_score ON risk_assessments(risk_score);
-CREATE INDEX idx_risk_assessments_risk_level ON risk_assessments(risk_level);
-
-CREATE INDEX idx_person_relationships_person_id ON person_relationships(person_id);
-CREATE INDEX idx_person_relationships_related_person_id ON person_relationships(related_person_id);
-
-CREATE INDEX idx_data_sources_reliability_score ON data_sources(reliability_score);
