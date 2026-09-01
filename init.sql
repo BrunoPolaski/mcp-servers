@@ -1,1 +1,2 @@
 CREATE DATABASE bureau;
+CREATE DATABASE "open-finance";
