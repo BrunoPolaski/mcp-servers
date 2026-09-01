@@ -22,6 +22,7 @@ func InitMCPServer() *server.MCPServer {
 		services.NewAddressService(rf),
 		services.NewAnalystService(rf),
 		services.NewPersonService(rf),
+		services.NewInternalRegistryService(rf),
 	)
 
 	logger.Info("MCP server set up successfully.")
