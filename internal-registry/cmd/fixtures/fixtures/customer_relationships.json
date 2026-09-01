@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "id": 1, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 1, "customer_since": "2025-07-01T00:00:00Z", "relationship_months": 14,
+    "segment": "retail", "branch": "0001 - Centro", "is_active": true,
+    "churn_risk": "high", "internal_score": 280
+  },
+  {
+    "id": 2, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 2, "customer_since": "2018-09-01T00:00:00Z", "relationship_months": 96,
+    "segment": "retail", "branch": "0002 - Sul", "is_active": true,
+    "churn_risk": "low", "internal_score": 740
+  },
+  {
+    "id": 3, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 3, "customer_since": "2024-03-01T00:00:00Z", "relationship_months": 30,
+    "segment": "retail", "branch": "0003 - Norte", "is_active": true,
+    "churn_risk": "medium", "internal_score": 430
+  },
+  {
+    "id": 4, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 4, "customer_since": "2026-01-01T00:00:00Z", "relationship_months": 8,
+    "segment": "retail", "branch": "0004 - Leste", "is_active": true,
+    "churn_risk": "high", "internal_score": 360
+  },
+  {
+    "id": 5, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 5, "customer_since": "2021-09-01T00:00:00Z", "relationship_months": 60,
+    "segment": "private", "branch": "0005 - Oeste", "is_active": true,
+    "churn_risk": "high", "internal_score": 380
+  },
+  {
+    "id": 6, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 7, "customer_since": "2015-09-01T00:00:00Z", "relationship_months": 132,
+    "segment": "private", "branch": "0006 - Premium", "is_active": true,
+    "churn_risk": "low", "internal_score": 910
+  },
+  {
+    "id": 7, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 8, "customer_since": "2023-05-01T00:00:00Z", "relationship_months": 40,
+    "segment": "retail", "branch": "0007 - Centro", "is_active": true,
+    "churn_risk": "medium", "internal_score": 450
+  },
+  {
+    "id": 8, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 9, "customer_since": "2022-03-01T00:00:00Z", "relationship_months": 54,
+    "segment": "retail", "branch": "0008 - Sul", "is_active": true,
+    "churn_risk": "low", "internal_score": 670
+  },
+  {
+    "id": 9, "created_at": "2024-01-02T00:00:00Z", "updated_at": "2024-01-02T00:00:00Z", "deleted_at": null,
+    "person_id": 10, "customer_since": "2020-09-01T00:00:00Z", "relationship_months": 72,
+    "segment": "retail", "branch": "0009 - Norte", "is_active": true,
+    "churn_risk": "low", "internal_score": 780
+  }
+]

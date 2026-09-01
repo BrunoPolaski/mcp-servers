@@ -1,1 +1,44 @@
-[]
+[
+  {
+    "id": 1, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 2, "product_type": "credit_card", "approved_amount": 25000.00,
+    "interest_rate": 0.0299, "calculated_date": "2026-08-01T00:00:00Z",
+    "valid_until": "2026-12-31T00:00:00Z", "policy_version": "internal-v3", "is_active": true
+  },
+  {
+    "id": 2, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 3, "product_type": "credit_card", "approved_amount": 3000.00,
+    "interest_rate": 0.0549, "calculated_date": "2026-08-01T00:00:00Z",
+    "valid_until": "2026-12-31T00:00:00Z", "policy_version": "internal-v3", "is_active": true
+  },
+  {
+    "id": 3, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 5, "product_type": "credit_card", "approved_amount": 8000.00,
+    "interest_rate": 0.0499, "calculated_date": "2026-08-01T00:00:00Z",
+    "valid_until": "2026-12-31T00:00:00Z", "policy_version": "internal-v3", "is_active": true
+  },
+  {
+    "id": 4, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 7, "product_type": "personal_loan", "approved_amount": 60000.00,
+    "interest_rate": 0.0199, "calculated_date": "2026-08-01T00:00:00Z",
+    "valid_until": "2026-12-31T00:00:00Z", "policy_version": "internal-v3", "is_active": true
+  },
+  {
+    "id": 5, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 8, "product_type": "credit_card", "approved_amount": 5000.00,
+    "interest_rate": 0.0449, "calculated_date": "2026-08-01T00:00:00Z",
+    "valid_until": "2026-12-31T00:00:00Z", "policy_version": "internal-v3", "is_active": true
+  },
+  {
+    "id": 6, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 9, "product_type": "credit_card", "approved_amount": 15000.00,
+    "interest_rate": 0.0349, "calculated_date": "2026-08-01T00:00:00Z",
+    "valid_until": "2026-12-31T00:00:00Z", "policy_version": "internal-v3", "is_active": true
+  },
+  {
+    "id": 7, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 10, "product_type": "personal_loan", "approved_amount": 30000.00,
+    "interest_rate": 0.0249, "calculated_date": "2026-08-01T00:00:00Z",
+    "valid_until": "2026-12-31T00:00:00Z", "policy_version": "internal-v3", "is_active": true
+  }
+]

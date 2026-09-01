@@ -1,1 +1,56 @@
-[]
+[
+  {
+    "id": 1, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 1, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "salary", "monthly_amount": 3690.00, "yearly_amount": 44280.00,
+    "source": "CLT", "verified": false, "verified_by": null, "proof_file_id": null
+  },
+  {
+    "id": 2, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 2, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "mixed", "monthly_amount": 7437.00, "yearly_amount": 89244.00,
+    "source": "Salario + Alugueis", "verified": true, "verified_by": "analista-01", "proof_file_id": null
+  },
+  {
+    "id": 3, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 3, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "rental", "monthly_amount": 2477.00, "yearly_amount": 29724.00,
+    "source": "Aluguel de imovel", "verified": true, "verified_by": "analista-02", "proof_file_id": null
+  },
+  {
+    "id": 4, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 4, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "salary", "monthly_amount": 3836.00, "yearly_amount": 46032.00,
+    "source": "CLT", "verified": true, "verified_by": "analista-01", "proof_file_id": null
+  },
+  {
+    "id": 5, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 5, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "business", "monthly_amount": 6915.00, "yearly_amount": 82980.00,
+    "source": "Empresa propria", "verified": false, "verified_by": null, "proof_file_id": null
+  },
+  {
+    "id": 6, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 7, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "salary", "monthly_amount": 16649.00, "yearly_amount": 199788.00,
+    "source": "CLT Senior", "verified": true, "verified_by": "analista-02", "proof_file_id": null
+  },
+  {
+    "id": 7, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 8, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "business", "monthly_amount": 12043.00, "yearly_amount": 144516.00,
+    "source": "Empresa propria", "verified": true, "verified_by": "analista-01", "proof_file_id": null
+  },
+  {
+    "id": 8, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 9, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "salary", "monthly_amount": 10529.00, "yearly_amount": 126348.00,
+    "source": "CLT", "verified": true, "verified_by": "analista-02", "proof_file_id": null
+  },
+  {
+    "id": 9, "created_at": "2026-08-31T00:00:00Z", "updated_at": "2026-08-31T00:00:00Z", "deleted_at": null,
+    "person_id": 10, "declaration_date": "2026-08-01T00:00:00Z",
+    "income_type": "mixed", "monthly_amount": 7958.00, "yearly_amount": 95496.00,
+    "source": "Salario + Dividendos", "verified": true, "verified_by": "analista-01", "proof_file_id": null
+  }
+]
