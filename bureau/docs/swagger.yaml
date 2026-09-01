@@ -1,0 +1,1744 @@
+definitions:
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AddressDTO:
+    properties:
+      city:
+        type: string
+      complement:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      number:
+        example: 1234 | S/N
+        type: string
+      state:
+        example: SC
+        type: string
+      street:
+        type: string
+      updated_at:
+        type: string
+      zip_code:
+        example: 12345-678
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AdminDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      personal_information:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonalInformationDTO'
+      updated_at:
+        type: string
+    required:
+    - personal_information
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AnalystDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      personal_information:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonalInformationDTO'
+      updated_at:
+        type: string
+    required:
+    - personal_information
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.ApiKeyDTO:
+    properties:
+      created_at:
+        type: string
+      slug:
+        type: string
+      uuid:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+    required:
+    - slug
+    - uuid
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.CreditAccountDTO:
+    properties:
+      account_number:
+        type: string
+      account_type:
+        type: string
+      available_credit:
+        type: number
+      closed_date:
+        type: string
+      created_at:
+        type: string
+      credit_limit:
+        type: number
+      creditor:
+        type: string
+      creditor_document:
+        type: string
+      current_balance:
+        type: number
+      days_late:
+        type: integer
+      highest_days_late:
+        type: integer
+      id:
+        type: integer
+      interest_rate:
+        type: number
+      last_reported_date:
+        type: string
+      monthly_payment:
+        type: number
+      number_of_payments:
+        type: integer
+      opened_date:
+        type: string
+      original_amount:
+        type: number
+      payment_due_day:
+        type: integer
+      payment_status:
+        type: string
+      person_id:
+        type: integer
+      remaining_amount:
+        type: number
+      remaining_payments:
+        type: integer
+      status:
+        type: string
+      times_late_30_days:
+        type: integer
+      times_late_60_days:
+        type: integer
+      times_late_90_days:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.CreditInquiryDTO:
+    properties:
+      amount:
+        type: number
+      created_at:
+        type: string
+      creditor:
+        type: string
+      creditor_document:
+        type: string
+      id:
+        type: integer
+      inquiry_date:
+        type: string
+      inquiry_type:
+        type: string
+      person_id:
+        type: integer
+      purpose:
+        type: string
+      result:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.CreditScoreDTO:
+    properties:
+      created_at:
+        type: string
+      credit_age:
+        type: integer
+      credit_mix:
+        type: integer
+      credit_usage:
+        type: integer
+      default_probability:
+        type: number
+      id:
+        type: integer
+      payment_history:
+        type: integer
+      person_id:
+        type: integer
+      recent_inquiries:
+        type: integer
+      risk_level:
+        type: string
+      score:
+        type: integer
+      score_date:
+        type: string
+      score_model:
+        type: string
+      score_reason:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.DataSourceDTO:
+    properties:
+      created_at:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      last_sync_date:
+        type: string
+      reliability_score:
+        type: integer
+      source_name:
+        type: string
+      source_type:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.DebtDTO:
+    properties:
+      collection_agency:
+        type: string
+      collection_date:
+        type: string
+      created_at:
+        type: string
+      creditor:
+        type: string
+      creditor_document:
+        type: string
+      current_amount:
+        type: number
+      debt_type:
+        type: string
+      due_date:
+        type: string
+      fees:
+        type: number
+      id:
+        type: integer
+      in_collection:
+        type: boolean
+      interest_rate:
+        type: number
+      origin_date:
+        type: string
+      original_amount:
+        type: number
+      person_id:
+        type: integer
+      settlement_amount:
+        type: number
+      settlement_date:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.EmploymentRecordDTO:
+    properties:
+      created_at:
+        type: string
+      data_source:
+        type: string
+      employer_document:
+        type: string
+      employer_name:
+        type: string
+      employment_type:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: integer
+      is_current:
+        type: boolean
+      job_title:
+        type: string
+      person_id:
+        type: integer
+      salary:
+        type: number
+      start_date:
+        type: string
+      updated_at:
+        type: string
+      verification_status:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.FileDTO:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      mime_type:
+        type: string
+      name:
+        type: string
+      original_name:
+        type: string
+      updated_at:
+        type: string
+      url:
+        example: https://example.com/file.jpg
+        type: string
+    required:
+    - original_name
+    - url
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.FinancialProfileDTO:
+    properties:
+      available_credit:
+        type: number
+      created_at:
+        type: string
+      credit_utilization:
+        type: number
+      debt_to_income_ratio:
+        type: number
+      declared_monthly_income:
+        type: number
+      estimated_monthly_income:
+        type: number
+      id:
+        type: integer
+      income_source:
+        type: string
+      person_id:
+        type: integer
+      profile_date:
+        type: string
+      real_estate_value:
+        type: number
+      total_assets:
+        type: number
+      total_liabilities:
+        type: number
+      total_monthly_payments:
+        type: number
+      updated_at:
+        type: string
+      vehicles_value:
+        type: number
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.FraudAlertDTO:
+    properties:
+      alert_type:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      detected_date:
+        type: string
+      id:
+        type: integer
+      notes:
+        type: string
+      person_id:
+        type: integer
+      resolved_by:
+        type: string
+      resolved_date:
+        type: string
+      severity:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.HealthResponse:
+    properties:
+      api_status:
+        type: string
+      cache_status:
+        type: string
+      database_status:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.LegalRecordDTO:
+    properties:
+      amount:
+        type: number
+      court:
+        type: string
+      created_at:
+        type: string
+      description:
+        type: string
+      filing_date:
+        type: string
+      id:
+        type: integer
+      person_id:
+        type: integer
+      process_number:
+        type: string
+      record_type:
+        type: string
+      resolution:
+        type: string
+      resolution_date:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.NegativeRecordDTO:
+    properties:
+      amount:
+        type: number
+      contract_number:
+        type: string
+      created_at:
+        type: string
+      creditor:
+        type: string
+      creditor_document:
+        type: string
+      dispute_date:
+        type: string
+      dispute_reason:
+        type: string
+      id:
+        type: integer
+      inclusion_date:
+        type: string
+      is_disputed:
+        type: boolean
+      notary:
+        type: string
+      person_id:
+        type: integer
+      process_number:
+        type: string
+      record_type:
+        type: string
+      removal_date:
+        type: string
+      removal_reason:
+        type: string
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  ? github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_AddressDTO
+  : properties:
+      items:
+        description: List of items in the current page
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AddressDTO'
+        type: array
+      total:
+        description: Total number of items available
+        type: integer
+    type: object
+  ? github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_AdminDTO
+  : properties:
+      items:
+        description: List of items in the current page
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AdminDTO'
+        type: array
+      total:
+        description: Total number of items available
+        type: integer
+    type: object
+  ? github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_AnalystDTO
+  : properties:
+      items:
+        description: List of items in the current page
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AnalystDTO'
+        type: array
+      total:
+        description: Total number of items available
+        type: integer
+    type: object
+  ? github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_ApiKeyDTO
+  : properties:
+      items:
+        description: List of items in the current page
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.ApiKeyDTO'
+        type: array
+      total:
+        description: Total number of items available
+        type: integer
+    type: object
+  ? github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_PersonDTO
+  : properties:
+      items:
+        description: List of items in the current page
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonDTO'
+        type: array
+      total:
+        description: Total number of items available
+        type: integer
+    type: object
+  ? github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_UserDTO
+  : properties:
+      items:
+        description: List of items in the current page
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.UserDTO'
+        type: array
+      total:
+        description: Total number of items available
+        type: integer
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaymentHistoryDTO:
+    properties:
+      amount:
+        type: number
+      amount_due:
+        type: number
+      created_at:
+        type: string
+      credit_account_id:
+        type: integer
+      days_late:
+        type: integer
+      debt_id:
+        type: integer
+      due_date:
+        type: string
+      id:
+        type: integer
+      payment_date:
+        type: string
+      person_id:
+        type: integer
+      status:
+        type: string
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonAddressDTO:
+    properties:
+      address_id:
+        type: integer
+      id:
+        type: integer
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonDTO:
+    properties:
+      created_at:
+        type: string
+      credit_accounts:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.CreditAccountDTO'
+        type: array
+      credit_inquiries:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.CreditInquiryDTO'
+        type: array
+      credit_score:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.CreditScoreDTO'
+      credit_score_id:
+        type: integer
+      data_sources:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.DataSourceDTO'
+        type: array
+      debts:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.DebtDTO'
+        type: array
+      employment_records:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.EmploymentRecordDTO'
+        type: array
+      financial_profile:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.FinancialProfileDTO'
+      financial_profile_id:
+        type: integer
+      fraud_alerts:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.FraudAlertDTO'
+        type: array
+      id:
+        type: integer
+      last_verified_at:
+        type: string
+      legal_records:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.LegalRecordDTO'
+        type: array
+      negative_records:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.NegativeRecordDTO'
+        type: array
+      payment_histories:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaymentHistoryDTO'
+        type: array
+      personal_information:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonalInformationDTO'
+      personal_information_id:
+        type: integer
+      related_persons:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonRelationshipDTO'
+        type: array
+      risk_assessments:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.RiskAssessmentDTO'
+        type: array
+      updated_at:
+        type: string
+    required:
+    - personal_information
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonDocumentDTO:
+    properties:
+      created_at:
+        type: string
+      document_type:
+        type: string
+      expiration_date:
+        type: string
+      file:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.FileDTO'
+      id:
+        type: integer
+      is_verified:
+        type: boolean
+      updated_at:
+        type: string
+      verified_at:
+        type: string
+      verified_by:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonRelationshipDTO:
+    properties:
+      created_at:
+        type: string
+      end_date:
+        type: string
+      id:
+        type: integer
+      is_active:
+        type: boolean
+      person_id:
+        type: integer
+      related_person_id:
+        type: integer
+      relation_type:
+        type: string
+      start_date:
+        type: string
+      updated_at:
+        type: string
+      verification_status:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonalInformationDTO:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonAddressDTO'
+        type: array
+      alternative_email:
+        type: string
+      birth_date:
+        type: string
+      document:
+        example: "12345678909"
+        type: string
+      documents:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonDocumentDTO'
+        type: array
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      full_name:
+        example: João da Silva
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      marital_status:
+        type: string
+      mother_name:
+        type: string
+      nationality:
+        type: string
+      phone_verified:
+        type: boolean
+      primary_phone:
+        example: "11999999999"
+        type: string
+      profile_photo:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.FileDTO'
+      rg:
+        type: string
+      rg_issue_date:
+        type: string
+      rg_issuer:
+        type: string
+      secondary_phone:
+        type: string
+      voter_id:
+        type: string
+      work_card:
+        type: string
+    required:
+    - full_name
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.RiskAssessmentDTO:
+    properties:
+      assessment_date:
+        type: string
+      assessment_type:
+        type: string
+      created_at:
+        type: string
+      id:
+        type: integer
+      model_version:
+        type: string
+      person_id:
+        type: integer
+      recommendation:
+        type: string
+      risk_factors:
+        type: string
+      risk_level:
+        type: string
+      risk_score:
+        type: integer
+      updated_at:
+        type: string
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.UserDTO:
+    properties:
+      additional_information_required:
+        example: false
+        type: boolean
+      admin:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AdminDTO'
+      analyst:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AnalystDTO'
+      created_at:
+        type: string
+      email:
+        example: user@example.com
+        type: string
+      id:
+        type: integer
+      password:
+        example: P@ssw0rd!
+        type: string
+      person:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonDTO'
+      updated_at:
+        type: string
+      user_type:
+        example: person | owner | admin | analyst
+        type: string
+    required:
+    - email
+    - password
+    - user_type
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_request.FileRequest:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      mime_type:
+        type: string
+      name:
+        type: string
+      original_name:
+        type: string
+      updated_at:
+        type: string
+      url:
+        example: https://example.com/file.jpg
+        type: string
+    required:
+    - original_name
+    - url
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_request.PersonAddressRequest:
+    properties:
+      address_id:
+        type: integer
+    required:
+    - address_id
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_request.PersonDocumentRequest:
+    properties:
+      document_type:
+        type: string
+      expiration_date:
+        type: string
+      file:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_request.FileRequest'
+      id:
+        type: integer
+      is_verified:
+        type: boolean
+      verified_at:
+        type: string
+      verified_by:
+        type: string
+    required:
+    - document_type
+    type: object
+  github_com_BrunoPolaski_bureau_internal_infra_controllers_request.PersonalInformationRequest:
+    properties:
+      addresses:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_request.PersonAddressRequest'
+        type: array
+      alternative_email:
+        type: string
+      biometric_validated:
+        type: boolean
+      birth_date:
+        type: string
+      document:
+        example: "12345678909"
+        type: string
+      document_validated:
+        type: boolean
+      documents:
+        items:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_request.PersonDocumentRequest'
+        type: array
+      email:
+        type: string
+      email_verified:
+        type: boolean
+      full_name:
+        example: João da Silva
+        type: string
+      gender:
+        type: string
+      id:
+        type: integer
+      marital_status:
+        type: string
+      mother_name:
+        type: string
+      nationality:
+        type: string
+      phone_verified:
+        type: boolean
+      primary_phone:
+        example: "11999999999"
+        type: string
+      profile_photo:
+        $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_request.FileRequest'
+      receita_federal_status:
+        type: string
+      rg:
+        type: string
+      rg_issue_date:
+        type: string
+      rg_issuer:
+        type: string
+      secondary_phone:
+        type: string
+      voter_id:
+        type: string
+      work_card:
+        type: string
+    required:
+    - document
+    - full_name
+    type: object
+  rest_err.Causes:
+    properties:
+      field:
+        description: Field or parameter that caused the error
+        example: email
+        type: string
+      message:
+        description: Description of the cause
+        example: invalid email address
+        type: string
+    type: object
+  rest_err.RestErr:
+    properties:
+      causes:
+        description: Detailed error causes, most common for json field validation
+          errors
+        items:
+          $ref: '#/definitions/rest_err.Causes'
+        type: array
+      code:
+        description: HTTP status code
+        example: 400
+        type: integer
+      error:
+        example: bad request
+        type: string
+      message:
+        description: Human readable message
+        example: invalid request parameters
+        type: string
+      timestamp:
+        description: When the error occurred
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is the API documentation for the Bureau MCP Server.
+  title: Bureau API
+  version: "1.0"
+paths:
+  /address:
+    delete:
+      consumes:
+      - application/json
+      description: Delete an address by its ID.
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Delete an address
+      tags:
+      - /address
+    get:
+      description: Get a list of all addresses.
+      parameters:
+      - description: Limit the number of results
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_AddressDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: List all addresses
+      tags:
+      - /address
+    post:
+      consumes:
+      - application/json
+      description: Creates a new address with the provided details.
+      parameters:
+      - description: Address
+        in: body
+        name: address
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AddressDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AddressDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Create a new address
+      tags:
+      - /address
+  /address/{id}:
+    get:
+      description: Get an address by its ID.
+      parameters:
+      - description: Address ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AddressDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Get an address by ID
+      tags:
+      - /address
+  /admin:
+    delete:
+      description: Delete an admin by its ID.
+      parameters:
+      - description: Admin ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Delete an admin
+      tags:
+      - /admin
+    get:
+      description: Get a list of all admins.
+      parameters:
+      - description: Limit the number of results
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_AdminDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: List all admins
+      tags:
+      - /admin
+    post:
+      consumes:
+      - application/json
+      description: Creates a new admin with the provided details.
+      parameters:
+      - description: Personal Information
+        in: body
+        name: personalInformation
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_request.PersonalInformationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AdminDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Create a new admin
+      tags:
+      - /admin
+  /admin/{id}:
+    get:
+      description: Get an admin by its ID.
+      parameters:
+      - description: Admin ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AdminDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Get an admin by ID
+      tags:
+      - /admin
+  /analyst:
+    get:
+      description: Get a list of all analysts.
+      parameters:
+      - description: Limit the number of results
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_AnalystDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: List all analysts
+      tags:
+      - /analyst
+    post:
+      consumes:
+      - application/json
+      description: Creates a new analyst with the provided details.
+      parameters:
+      - description: Personal Information
+        in: body
+        name: personalInformation
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_request.PersonalInformationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AnalystDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Create a new analyst
+      tags:
+      - /analyst
+  /analyst/{id}:
+    delete:
+      description: Delete an analyst by its ID.
+      parameters:
+      - description: Analyst ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Delete an analyst
+      tags:
+      - /analyst
+    get:
+      description: Get an analyst by its ID.
+      parameters:
+      - description: Analyst ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.AnalystDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Get an analyst by ID
+      tags:
+      - /analyst
+  /api-key:
+    get:
+      description: Get a list of all apiKeys.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_ApiKeyDTO'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: List all apiKeys
+      tags:
+      - /api-key
+    post:
+      consumes:
+      - application/json
+      description: Creates a new apiKey with the provided details.
+      parameters:
+      - description: ApiKey
+        in: body
+        name: apiKey
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.ApiKeyDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.ApiKeyDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Create a new apiKey
+      tags:
+      - /api-key
+  /api-key/{uuid}:
+    delete:
+      description: Delete a apiKey by its UUID.
+      parameters:
+      - description: ApiKey UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Delete a apiKey
+      tags:
+      - /api-key
+    get:
+      description: Get an apiKey by its UUID.
+      parameters:
+      - description: ApiKey UUID
+        in: path
+        name: uuid
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.ApiKeyDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Get an apiKey by UUID
+      tags:
+      - /api-key
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Creates a new user with the provided details.
+      parameters:
+      - description: User to create
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.UserDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.UserDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a new user
+      tags:
+      - /auth
+  /auth/signin:
+    post:
+      description: Signs in with the provided credentials
+      responses:
+        "200":
+          description: OK
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - ApiKeyAuth: []
+        BasicAuth: []
+      summary: Sign in
+      tags:
+      - /auth
+  /health:
+    get:
+      description: Checks the health of the API and its dependencies.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.HealthResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.HealthResponse'
+      summary: Check API health
+      tags:
+      - /health
+  /person:
+    get:
+      description: Get a list of all persons.
+      parameters:
+      - description: Limit the number of results
+        in: query
+        name: limit
+        type: integer
+      - description: Offset for pagination
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_PersonDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: List all persons
+      tags:
+      - /person
+    post:
+      consumes:
+      - application/json
+      description: Creates a new person with the provided details.
+      parameters:
+      - description: Personal Information
+        in: body
+        name: personalInformation
+        required: true
+        schema:
+          $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_request.PersonalInformationRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Create a new person
+      tags:
+      - /person
+  /person/{document}:
+    get:
+      description: Get an person by document.
+      parameters:
+      - description: Document
+        in: path
+        name: document
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Get an person by document
+      tags:
+      - /person
+  /person/{id}:
+    delete:
+      description: Delete an person by its ID.
+      parameters:
+      - description: Person ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Delete an person
+      tags:
+      - /person
+    get:
+      description: Get an person by its ID.
+      parameters:
+      - description: Person ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PersonDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Get an person by ID
+      tags:
+      - /person
+  /user:
+    get:
+      description: Get a list of all users.
+      parameters:
+      - default: 10
+        description: Limit
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Offset
+        in: query
+        name: offset
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.PaginatedResponse-github_com_BrunoPolaski_bureau_internal_infra_controllers_dto_UserDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: List all users
+      tags:
+      - /user
+  /user/{id}:
+    delete:
+      description: Delete a user by its ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "204":
+          description: No Content
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      summary: Delete a user
+      tags:
+      - /user
+    get:
+      description: Get a user by its ID.
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/github_com_BrunoPolaski_bureau_internal_infra_controllers_dto.UserDTO'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/rest_err.RestErr'
+      security:
+      - CookieAuth: []
+      summary: Get a user by ID
+      tags:
+      - /user
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: x-api-key
+    type: apiKey
+  BasicAuth:
+    type: basic
+  CookieAuth:
+    in: cookie
+    name: Sid
+    type: apiKey
+swagger: "2.0"

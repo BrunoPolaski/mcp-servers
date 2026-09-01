@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "bureau-mcp-server/**"   # só dispara se houver mudança no serviço MCP
+      - "bureau/**"   # só dispara se houver mudança no serviço MCP
       - ".github/workflows/deploy-mcp.yml"
 
 env:
@@ -50,7 +50,7 @@ jobs:
             --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:${{ env.IMAGE_TAG }} \
             --tag ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:latest \
             --cache-from ${{ env.REGION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPO }}/${{ env.SERVICE }}:latest \
-            ./bureau-mcp-server
+            ./bureau
 
       # ── 6. Push para o Artifact Registry ─────────────────────────
       - name: Push image
