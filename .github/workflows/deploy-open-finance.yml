@@ -1,17 +1,17 @@
-name: Deploy bureau-mcp
+name: Deploy open-finance-mcp
 
 on:
   push:
     branches: [main]
     paths:
-      - "bureau/**"
+      - "open-finance/**"
       - "infra/**"
-      - ".github/workflows/deploy-bureau.yml"
+      - ".github/workflows/deploy-open-finance.yml"
 
 env:
   PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
   REGION: southamerica-east1
-  IMAGE: southamerica-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/bureau-mcp/bureau-mcp
+  IMAGE: southamerica-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/open-finance-mcp/open-finance-mcp
 
 jobs:
   deploy:
@@ -45,7 +45,7 @@ jobs:
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --tag ${{ env.IMAGE }}:${{ github.sha }} \
             --tag ${{ env.IMAGE }}:latest \
-            ./bureau
+            ./open-finance
 
       - name: Push
         run: |
@@ -65,5 +65,5 @@ jobs:
           terraform apply -auto-approve \
             -var="project_id=${{ env.PROJECT_ID }}" \
             -var="region=${{ env.REGION }}" \
-            -var='images={"bureau-mcp":"${{ env.IMAGE }}:${{ github.sha }}","open-finance-mcp":"southamerica-east1-docker.pkg.dev/${{ env.PROJECT_ID }}/open-finance-mcp/open-finance-mcp:latest"}' \
+            -var='images={"bureau-mcp":"southamerica-east1-docker.pkg.dev/${{ env.PROJECT_ID }}/bureau-mcp/bureau-mcp:latest","open-finance-mcp":"${{ env.IMAGE }}:${{ github.sha }}"}' \
             -var='database_urls={"bureau-mcp":"${{ secrets.DATABASE_URL }}","open-finance-mcp":"${{ secrets.OPEN_FINANCE_DATABASE_URL }}"}'
