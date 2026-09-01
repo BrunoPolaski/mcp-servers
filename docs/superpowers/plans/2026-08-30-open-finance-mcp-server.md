@@ -2,17 +2,17 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Deixar o `open-finance-mcp-server` funcional como segundo conector MCP do protótipo, com esquema próprio, sete ferramentas, dados sintéticos coerentes com o birô e a política de crédito v1.1.
+**Goal:** Deixar o `open-finance` funcional como segundo conector MCP do protótipo, com esquema próprio, sete ferramentas, dados sintéticos coerentes com o birô e a política de crédito v1.1.
 
-**Architecture:** Arquitetura em camadas já estabelecida pelo `bureau-mcp-server` — entidades Gorm em `internal/core/entities`, repositórios em `internal/infra/repositories` atrás de interfaces, serviços em `internal/services`, ferramentas MCP em `internal/interfaces/mcp/tools`. O servidor expõe três ferramentas consolidadas (espelhando o birô) e quatro por dimensão de dado. As dependências dos serviços e das ferramentas passam a ser declaradas como interfaces, para permitir dublês nos testes.
+**Architecture:** Arquitetura em camadas já estabelecida pelo `bureau` — entidades Gorm em `internal/core/entities`, repositórios em `internal/infra/repositories` atrás de interfaces, serviços em `internal/services`, ferramentas MCP em `internal/interfaces/mcp/tools`. O servidor expõe três ferramentas consolidadas (espelhando o birô) e quatro por dimensão de dado. As dependências dos serviços e das ferramentas passam a ser declaradas como interfaces, para permitir dublês nos testes.
 
 **Tech Stack:** Go 1.25.5, `github.com/mark3labs/mcp-go` v0.54.0, Gorm v1.31.1 sobre PostgreSQL, `github.com/BrunoPolaski/go-rest-err` para erros, `golang-migrate` para migrations, Docker Compose local, Terraform + Cloud Run em produção.
 
-**Spec:** `docs/superpowers/specs/2026-08-30-open-finance-mcp-server-design.md`
+**Spec:** `docs/superpowers/specs/2026-08-30-open-finance-design.md`
 
 ## Global Constraints
 
-- Módulo Go: `github.com/BrunoPolaski/open-finance-mcp-server`. Todo import interno usa esse prefixo.
+- Módulo Go: `github.com/BrunoPolaski/open-finance`. Todo import interno usa esse prefixo.
 - Erros de domínio sempre como `*rest_err.RestErr`: `rest_err.NewBadRequestError`, `NewNotFoundError`, `NewInternalServerError(msg).WithCause(err)`.
 - Repositórios devolvem `(valor, *rest_err.RestErr)`; nunca `error` cru.
 - Nomes de ferramentas: `get_all_customers`, `get_customer_by_id`, `get_customer_by_document`, `get_bank_statements`, `get_cash_flow_analysis`, `get_recurring_transactions`, `get_data_sharing_consents`.
@@ -30,8 +30,8 @@
 Reescreve a migration inicial, que hoje é cópia do birô, para refletir as entidades que o servidor realmente tem.
 
 **Files:**
-- Modify: `open-finance-mcp-server/internal/infra/thirdparty/database/migrations/000001_init.up.sql`
-- Modify: `open-finance-mcp-server/internal/infra/thirdparty/database/migrations/000001_init.down.sql`
+- Modify: `open-finance/internal/infra/thirdparty/database/migrations/000001_init.up.sql`
+- Modify: `open-finance/internal/infra/thirdparty/database/migrations/000001_init.down.sql`
 - Modify: `init.sql`
 
 **Interfaces:**
@@ -214,7 +214,7 @@ DROP TABLE IF EXISTS files;
 - [ ] **Step 4: Aplicar e reverter, para provar que as duas direções funcionam**
 
 ```bash
-cd open-finance-mcp-server
+cd open-finance
 make migration-up
 make migration-down
 make migration-up
@@ -233,7 +233,7 @@ Esperado: as 17 tabelas listadas (as 12 mantidas mais as 5 de Open Finance) e **
 - [ ] **Step 6: Commit**
 
 ```bash
-git add init.sql open-finance-mcp-server/internal/infra/thirdparty/database/migrations/
+git add init.sql open-finance/internal/infra/thirdparty/database/migrations/
 git commit -m "feat: esquema de dados próprio do servidor de Open Finance"
 ```
 
@@ -244,16 +244,16 @@ git commit -m "feat: esquema de dados próprio do servidor de Open Finance"
 Hoje só existe `PersonRepository`. As ferramentas por dimensão precisam consultar cada agregado isoladamente.
 
 **Files:**
-- Create: `open-finance-mcp-server/internal/infra/repositories/interfaces/bank_statement_repository.go`
-- Create: `open-finance-mcp-server/internal/infra/repositories/interfaces/cash_flow_analysis_repository.go`
-- Create: `open-finance-mcp-server/internal/infra/repositories/interfaces/recurring_transaction_repository.go`
-- Create: `open-finance-mcp-server/internal/infra/repositories/interfaces/data_sharing_consent_repository.go`
-- Create: `open-finance-mcp-server/internal/infra/repositories/gorm_bank_statement_repository.go`
-- Create: `open-finance-mcp-server/internal/infra/repositories/gorm_cash_flow_analysis_repository.go`
-- Create: `open-finance-mcp-server/internal/infra/repositories/gorm_recurring_transaction_repository.go`
-- Create: `open-finance-mcp-server/internal/infra/repositories/gorm_data_sharing_consent_repository.go`
-- Modify: `open-finance-mcp-server/internal/infra/repositories/factory.go`
-- Test: `open-finance-mcp-server/internal/infra/repositories/contract_test.go`
+- Create: `open-finance/internal/infra/repositories/interfaces/bank_statement_repository.go`
+- Create: `open-finance/internal/infra/repositories/interfaces/cash_flow_analysis_repository.go`
+- Create: `open-finance/internal/infra/repositories/interfaces/recurring_transaction_repository.go`
+- Create: `open-finance/internal/infra/repositories/interfaces/data_sharing_consent_repository.go`
+- Create: `open-finance/internal/infra/repositories/gorm_bank_statement_repository.go`
+- Create: `open-finance/internal/infra/repositories/gorm_cash_flow_analysis_repository.go`
+- Create: `open-finance/internal/infra/repositories/gorm_recurring_transaction_repository.go`
+- Create: `open-finance/internal/infra/repositories/gorm_data_sharing_consent_repository.go`
+- Modify: `open-finance/internal/infra/repositories/factory.go`
+- Test: `open-finance/internal/infra/repositories/contract_test.go`
 
 **Interfaces:**
 - Consumes: as tabelas da Task 1; `entities.BankStatement`, `entities.CashFlowAnalysis`, `entities.RecurringTransaction`, `entities.DataSharingConsent`.
@@ -278,7 +278,7 @@ package repositories
 import (
 	"testing"
 
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/repositories/interfaces"
+	"github.com/BrunoPolaski/open-finance/internal/infra/repositories/interfaces"
 )
 
 // As asserções abaixo falham em compilação se alguma implementação divergir da
@@ -310,7 +310,7 @@ func TestFactoryExposesOpenFinanceRepositories(t *testing.T) {
 
 - [ ] **Step 2: Rodar e confirmar que falha**
 
-Run: `cd open-finance-mcp-server && go test ./internal/infra/repositories/...`
+Run: `cd open-finance && go test ./internal/infra/repositories/...`
 Expected: FAIL na compilação, com `undefined: gormBankStatementRepository` e os demais.
 
 - [ ] **Step 3: Escrever as quatro interfaces**
@@ -324,7 +324,7 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
 )
 
 type BankStatementRepository interface {
@@ -343,7 +343,7 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
 )
 
 type CashFlowAnalysisRepository interface {
@@ -362,7 +362,7 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
 )
 
 type RecurringTransactionRepository interface {
@@ -381,7 +381,7 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
 )
 
 type DataSharingConsentRepository interface {
@@ -400,8 +400,8 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/repositories/interfaces"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/infra/repositories/interfaces"
 	"gorm.io/gorm"
 )
 
@@ -437,8 +437,8 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/repositories/interfaces"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/infra/repositories/interfaces"
 	"gorm.io/gorm"
 )
 
@@ -476,8 +476,8 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/repositories/interfaces"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/infra/repositories/interfaces"
 	"gorm.io/gorm"
 )
 
@@ -516,8 +516,8 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/repositories/interfaces"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/infra/repositories/interfaces"
 	"gorm.io/gorm"
 )
 
@@ -584,13 +584,13 @@ func (f *RepositoryFactory) DataSharingConsentRepository() interfaces.DataSharin
 
 - [ ] **Step 6: Rodar o teste e confirmar que passa**
 
-Run: `cd open-finance-mcp-server && go test ./internal/infra/repositories/... && go build ./...`
+Run: `cd open-finance && go test ./internal/infra/repositories/... && go build ./...`
 Expected: PASS e build sem erro.
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add open-finance-mcp-server/internal/infra/repositories/
+git add open-finance/internal/infra/repositories/
 git commit -m "feat: repositórios das dimensões de Open Finance"
 ```
 
@@ -601,9 +601,9 @@ git commit -m "feat: repositórios das dimensões de Open Finance"
 `PersonSummaryDTO` força o agente a buscar o cadastro completo. Os DTOs de resultado dão às ferramentas por dimensão um objeto de topo, exigido pela validação de esquema de saída do MCP, e carregam a identificação do cliente como metadado de rastreabilidade.
 
 **Files:**
-- Modify: `open-finance-mcp-server/internal/infra/controllers/dto/person_dto.go`
-- Create: `open-finance-mcp-server/internal/infra/controllers/dto/open_finance_result_dto.go`
-- Test: `open-finance-mcp-server/internal/infra/controllers/dto/person_dto_test.go`
+- Modify: `open-finance/internal/infra/controllers/dto/person_dto.go`
+- Create: `open-finance/internal/infra/controllers/dto/open_finance_result_dto.go`
+- Test: `open-finance/internal/infra/controllers/dto/person_dto_test.go`
 
 **Interfaces:**
 - Consumes: `entities.Person`, `entities.PersonalInformation` e os DTOs já existentes em `open_finance_dto.go`.
@@ -621,8 +621,8 @@ package dto
 import (
 	"testing"
 
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	valueobjects "github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities/value_objects"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	valueobjects "github.com/BrunoPolaski/open-finance/internal/core/entities/value_objects"
 	"gorm.io/gorm"
 )
 
@@ -734,7 +734,7 @@ func TestNewPersonDTOAgregaDimensoes(t *testing.T) {
 
 - [ ] **Step 2: Rodar e confirmar que falha**
 
-Run: `cd open-finance-mcp-server && go test ./internal/infra/controllers/dto/...`
+Run: `cd open-finance && go test ./internal/infra/controllers/dto/...`
 Expected: FAIL na compilação, com `undefined: NewPersonSummaryDTO`.
 
 - [ ] **Step 3: Implementar `PersonSummaryDTO`**
@@ -804,13 +804,13 @@ type DataSharingConsentsResultDTO struct {
 
 - [ ] **Step 5: Rodar os testes e confirmar que passam**
 
-Run: `cd open-finance-mcp-server && go test ./internal/infra/controllers/dto/... -v`
+Run: `cd open-finance && go test ./internal/infra/controllers/dto/... -v`
 Expected: PASS nos três testes.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add open-finance-mcp-server/internal/infra/controllers/dto/
+git add open-finance/internal/infra/controllers/dto/
 git commit -m "feat: DTOs de listagem resumida e de resultado das dimensões"
 ```
 
@@ -821,9 +821,9 @@ git commit -m "feat: DTOs de listagem resumida e de resultado das dimensões"
 Orquestra os quatro repositórios e resolve a identificação do cliente, que pode chegar por id ou por CPF.
 
 **Files:**
-- Create: `open-finance-mcp-server/internal/services/open_finance_service.go`
-- Modify: `open-finance-mcp-server/internal/services/person_service.go`
-- Test: `open-finance-mcp-server/internal/services/open_finance_service_test.go`
+- Create: `open-finance/internal/services/open_finance_service.go`
+- Modify: `open-finance/internal/services/person_service.go`
+- Test: `open-finance/internal/services/open_finance_service_test.go`
 
 **Interfaces:**
 - Consumes: os repositórios da Task 2, os DTOs da Task 3, `interfaces.PersonRepository`.
@@ -848,8 +848,8 @@ import (
 	"testing"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	valueobjects "github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities/value_objects"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	valueobjects "github.com/BrunoPolaski/open-finance/internal/core/entities/value_objects"
 	"gorm.io/gorm"
 )
 
@@ -1122,7 +1122,7 @@ func TestGetDataSharingConsents(t *testing.T) {
 
 - [ ] **Step 2: Rodar e confirmar que falha**
 
-Run: `cd open-finance-mcp-server && go test ./internal/services/...`
+Run: `cd open-finance && go test ./internal/services/...`
 Expected: FAIL na compilação, com `undefined: OpenFinanceService`.
 
 - [ ] **Step 3: Implementar o serviço**
@@ -1136,10 +1136,10 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/controllers/dto"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/repositories"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/repositories/interfaces"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/infra/controllers/dto"
+	"github.com/BrunoPolaski/open-finance/internal/infra/repositories"
+	"github.com/BrunoPolaski/open-finance/internal/infra/repositories/interfaces"
 )
 
 // CustomerRef identifica o cliente de uma consulta por dimensão. Exatamente um
@@ -1308,13 +1308,13 @@ func (as *PersonService) GetAllSummary(ctx context.Context, limit, offset int, p
 
 - [ ] **Step 5: Rodar os testes e confirmar que passam**
 
-Run: `cd open-finance-mcp-server && go test ./internal/services/... -v && go build ./...`
+Run: `cd open-finance && go test ./internal/services/... -v && go build ./...`
 Expected: PASS em todos os casos de `TestResolveCustomerRef` e nos demais; build limpo.
 
 - [ ] **Step 6: Commit**
 
 ```bash
-git add open-finance-mcp-server/internal/services/
+git add open-finance/internal/services/
 git commit -m "feat: serviço de Open Finance com resolução de cliente por id ou documento"
 ```
 
@@ -1325,10 +1325,10 @@ git commit -m "feat: serviço de Open Finance com resolução de cliente por id 
 Renomeia as três ferramentas herdadas, reescreve as descrições para o domínio de Open Finance e passa a listagem a usar o resumo. As dependências do `Server` viram interfaces, para que os handlers possam ser testados com dublês.
 
 **Files:**
-- Modify: `open-finance-mcp-server/internal/interfaces/mcp/tools/server.go`
-- Modify: `open-finance-mcp-server/internal/interfaces/mcp/tools/person.go`
-- Modify: `open-finance-mcp-server/internal/interfaces/mcp/mcp.go`
-- Test: `open-finance-mcp-server/internal/interfaces/mcp/tools/person_test.go`
+- Modify: `open-finance/internal/interfaces/mcp/tools/server.go`
+- Modify: `open-finance/internal/interfaces/mcp/tools/person.go`
+- Modify: `open-finance/internal/interfaces/mcp/mcp.go`
+- Test: `open-finance/internal/interfaces/mcp/tools/person_test.go`
 
 **Interfaces:**
 - Consumes: `services.PersonService` (Task 4), `dto.PersonSummaryDTO` (Task 3).
@@ -1350,9 +1350,9 @@ import (
 	"testing"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	valueobjects "github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities/value_objects"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/controllers/dto"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	valueobjects "github.com/BrunoPolaski/open-finance/internal/core/entities/value_objects"
+	"github.com/BrunoPolaski/open-finance/internal/infra/controllers/dto"
 	"github.com/mark3labs/mcp-go/mcp"
 	"gorm.io/gorm"
 )
@@ -1552,7 +1552,7 @@ func TestNomesDasFerramentasConsolidadas(t *testing.T) {
 
 - [ ] **Step 2: Rodar e confirmar que falha**
 
-Run: `cd open-finance-mcp-server && go test ./internal/interfaces/mcp/tools/...`
+Run: `cd open-finance && go test ./internal/interfaces/mcp/tools/...`
 Expected: FAIL — `cannot use svc (variable of type *fakePersonService) as *services.PersonService`, e nomes de ferramenta divergentes.
 
 - [ ] **Step 3: Trocar as dependências do `Server` por interfaces**
@@ -1566,10 +1566,10 @@ import (
 	"context"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/core/entities"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/controllers/dto"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/interfaces/http/middlewares"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/services"
+	"github.com/BrunoPolaski/open-finance/internal/core/entities"
+	"github.com/BrunoPolaski/open-finance/internal/infra/controllers/dto"
+	"github.com/BrunoPolaski/open-finance/internal/interfaces/http/middlewares"
+	"github.com/BrunoPolaski/open-finance/internal/services"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
@@ -1641,7 +1641,7 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/controllers/dto"
+	"github.com/BrunoPolaski/open-finance/internal/infra/controllers/dto"
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
@@ -1813,13 +1813,13 @@ Em `internal/interfaces/mcp/mcp.go`, acrescentar `services.NewOpenFinanceService
 
 - [ ] **Step 6: Rodar os testes e confirmar que passam**
 
-Run: `cd open-finance-mcp-server && go test ./... && go build ./...`
+Run: `cd open-finance && go test ./... && go build ./...`
 Expected: PASS em todos os pacotes; build limpo.
 
 - [ ] **Step 7: Commit**
 
 ```bash
-git add open-finance-mcp-server/internal/interfaces/mcp/
+git add open-finance/internal/interfaces/mcp/
 git commit -m "feat: ferramentas consolidadas de Open Finance com listagem resumida"
 ```
 
@@ -1830,9 +1830,9 @@ git commit -m "feat: ferramentas consolidadas de Open Finance com listagem resum
 Quatro ferramentas que expõem cada dimensão isoladamente, para que o agente possa aprofundar sem recarregar o agregado inteiro.
 
 **Files:**
-- Create: `open-finance-mcp-server/internal/interfaces/mcp/tools/open_finance.go`
-- Modify: `open-finance-mcp-server/internal/interfaces/mcp/tools/server.go:registerTools`
-- Test: `open-finance-mcp-server/internal/interfaces/mcp/tools/open_finance_test.go`
+- Create: `open-finance/internal/interfaces/mcp/tools/open_finance.go`
+- Modify: `open-finance/internal/interfaces/mcp/tools/server.go:registerTools`
+- Test: `open-finance/internal/interfaces/mcp/tools/open_finance_test.go`
 
 **Interfaces:**
 - Consumes: `tools.OpenFinanceService` e `services.CustomerRef` (Task 5 e 4).
@@ -1850,8 +1850,8 @@ import (
 	"testing"
 
 	"github.com/BrunoPolaski/go-rest-err/rest_err"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/controllers/dto"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/services"
+	"github.com/BrunoPolaski/open-finance/internal/infra/controllers/dto"
+	"github.com/BrunoPolaski/open-finance/internal/services"
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
@@ -2114,7 +2114,7 @@ func TestNomesDasFerramentasPorDimensao(t *testing.T) {
 
 - [ ] **Step 2: Rodar e confirmar que falha**
 
-Run: `cd open-finance-mcp-server && go test ./internal/interfaces/mcp/tools/...`
+Run: `cd open-finance && go test ./internal/interfaces/mcp/tools/...`
 Expected: FAIL na compilação, com `undefined: customerRefFrom` e `s.HandleGetBankStatements undefined`.
 
 - [ ] **Step 3: Implementar as quatro ferramentas**
@@ -2128,8 +2128,8 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/infra/controllers/dto"
-	"github.com/BrunoPolaski/open-finance-mcp-server/internal/services"
+	"github.com/BrunoPolaski/open-finance/internal/infra/controllers/dto"
+	"github.com/BrunoPolaski/open-finance/internal/services"
 	"github.com/mark3labs/mcp-go/mcp"
 )
 
@@ -2361,13 +2361,13 @@ Em `tools/server.go`, acrescentar ao final de `registerTools`:
 
 - [ ] **Step 5: Rodar os testes e confirmar que passam**
 
-Run: `cd open-finance-mcp-server && go test ./... && go build ./...`
+Run: `cd open-finance && go test ./... && go build ./...`
 Expected: PASS em todos os pacotes.
 
 - [ ] **Step 6: Verificar as sete ferramentas no servidor em execução**
 
 ```bash
-cd open-finance-mcp-server && ENV=local MCP_PORT=8082 go run ./cmd/mcp &
+cd open-finance && ENV=local MCP_PORT=8082 go run ./cmd/mcp &
 sleep 3
 curl -s -X POST http://localhost:8082/mcp \
   -H 'Content-Type: application/json' \
@@ -2381,7 +2381,7 @@ Expected: as sete linhas — `get_customer_by_id`, `get_customer_by_document`, `
 - [ ] **Step 7: Commit**
 
 ```bash
-git add open-finance-mcp-server/internal/interfaces/mcp/
+git add open-finance/internal/interfaces/mcp/
 git commit -m "feat: ferramentas de extrato, fluxo de caixa, recorrências e consentimento"
 ```
 
@@ -2392,18 +2392,18 @@ git commit -m "feat: ferramentas de extrato, fluxo de caixa, recorrências e con
 Substitui os dez clientes placeholder pelos dez do birô e gera os dados de Open Finance coerentes com cada perfil de crédito.
 
 **Files:**
-- Create: `open-finance-mcp-server/cmd/fixtures/generate.py`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/personal_informations.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/persons.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/addresses.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/person_addresses.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/person_documents.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/files.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/bank_account_profiles.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/bank_statements.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/cash_flow_analyses.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/recurring_transactions.json`
-- Modify: `open-finance-mcp-server/cmd/fixtures/fixtures/data_sharing_consents.json`
+- Create: `open-finance/cmd/fixtures/generate.py`
+- Modify: `open-finance/cmd/fixtures/fixtures/personal_informations.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/persons.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/addresses.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/person_addresses.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/person_documents.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/files.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/bank_account_profiles.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/bank_statements.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/cash_flow_analyses.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/recurring_transactions.json`
+- Modify: `open-finance/cmd/fixtures/fixtures/data_sharing_consents.json`
 
 **Interfaces:**
 - Consumes: o esquema da Task 1; as fixtures do birô como fonte dos dados de identificação.
@@ -2412,15 +2412,15 @@ Substitui os dez clientes placeholder pelos dez do birô e gera os dados de Open
 - [ ] **Step 1: Copiar as fixtures de identificação do birô**
 
 ```bash
-cd open-finance-mcp-server/cmd/fixtures/fixtures
+cd open-finance/cmd/fixtures/fixtures
 for f in files.json addresses.json personal_informations.json person_addresses.json person_documents.json; do
-  cp ../../../../bureau-mcp-server/cmd/fixtures/fixtures/$f .
+  cp ../../../../bureau/cmd/fixtures/fixtures/$f .
 done
 ```
 
 - [ ] **Step 2: Escrever o gerador**
 
-Criar `open-finance-mcp-server/cmd/fixtures/generate.py`. O script é determinístico — sem aleatoriedade — para que regerar as fixtures produza exatamente o mesmo arquivo:
+Criar `open-finance/cmd/fixtures/generate.py`. O script é determinístico — sem aleatoriedade — para que regerar as fixtures produza exatamente o mesmo arquivo:
 
 ```python
 #!/usr/bin/env python3
@@ -2721,8 +2721,8 @@ if __name__ == "__main__":
 - [ ] **Step 3: Copiar `persons.json` do birô e rodar o gerador**
 
 ```bash
-cd open-finance-mcp-server/cmd/fixtures
-cp ../../../bureau-mcp-server/cmd/fixtures/fixtures/persons.json fixtures/persons.json
+cd open-finance/cmd/fixtures
+cp ../../../bureau/cmd/fixtures/fixtures/persons.json fixtures/persons.json
 python3 generate.py
 ```
 
@@ -2731,7 +2731,7 @@ Expected: cinco linhas de contagem — `bank_account_profiles.json: 9 registros`
 - [ ] **Step 4: Carregar as fixtures no banco**
 
 ```bash
-cd open-finance-mcp-server
+cd open-finance
 make migration-down && make migration-up
 go run ./cmd/fixtures -dir ./cmd/fixtures/fixtures -truncate
 ```
@@ -2765,7 +2765,7 @@ Verificar, linha a linha:
 - [ ] **Step 6: Consultar uma ferramenta contra os dados reais**
 
 ```bash
-cd open-finance-mcp-server && ENV=local MCP_PORT=8082 go run ./cmd/mcp &
+cd open-finance && ENV=local MCP_PORT=8082 go run ./cmd/mcp &
 sleep 3
 curl -s -X POST http://localhost:8082/mcp \
   -H 'Content-Type: application/json' \
@@ -2779,7 +2779,7 @@ Expected: resposta com `"customer_id": 8` e um item de `"amount": 4200`.
 - [ ] **Step 7: Commit**
 
 ```bash
-git add open-finance-mcp-server/cmd/fixtures/
+git add open-finance/cmd/fixtures/
 git commit -m "feat: dados sintéticos de Open Finance alinhados aos dez clientes do birô"
 ```
 
@@ -2789,7 +2789,7 @@ git commit -m "feat: dados sintéticos de Open Finance alinhados aos dez cliente
 
 **Files:**
 - Create: `docs/politica_credito_agente_v1.1.md`
-- Modify: `bureau-mcp-server/docs/politica_credito_agente.md` (apenas a nota de versão no topo)
+- Modify: `bureau/docs/politica_credito_agente.md` (apenas a nota de versão no topo)
 
 **Interfaces:**
 - Consumes: os dados produzidos pela Task 7 e as ferramentas das Tasks 5 e 6.
@@ -2797,7 +2797,7 @@ git commit -m "feat: dados sintéticos de Open Finance alinhados aos dez cliente
 
 - [ ] **Step 1: Marcar a v1.0 como política do experimento preliminar**
 
-Substituir, no topo de `bureau-mcp-server/docs/politica_credito_agente.md`, a linha de versão por:
+Substituir, no topo de `bureau/docs/politica_credito_agente.md`, a linha de versão por:
 
 ```markdown
 > **Versão:** 1.0 · **Vigência:** 2026-07-02 · **Moeda:** BRL
@@ -2969,7 +2969,7 @@ Ler a v1.1 do início ao fim confirmando que:
 - [ ] **Step 5: Commit**
 
 ```bash
-git add docs/politica_credito_agente_v1.1.md bureau-mcp-server/docs/politica_credito_agente.md
+git add docs/politica_credito_agente_v1.1.md bureau/docs/politica_credito_agente.md
 git commit -m "docs: política de crédito v1.1 com critérios de Open Finance"
 ```
 
@@ -2988,7 +2988,7 @@ Coloca o servidor no Compose local e no provisionamento de nuvem. Nada é public
 - Create: `.github/workflows/deploy-open-finance.yml`
 
 **Interfaces:**
-- Consumes: o `Dockerfile` já existente em `open-finance-mcp-server/`, com o `target: mcp`.
+- Consumes: o `Dockerfile` já existente em `open-finance/`, com o `target: mcp`.
 - Produces: serviço Compose `open-finance-mcp` em `localhost:8082`; recursos Terraform do serviço `open-finance-mcp`.
 
 - [ ] **Step 1: Acrescentar o serviço ao Compose**
@@ -2998,7 +2998,7 @@ Em `docker-compose.yaml`, logo após o bloco `bureau-mcp`:
 ```yaml
   open-finance-mcp:
     build:
-      context: ./open-finance-mcp-server
+      context: ./open-finance
       dockerfile: Dockerfile
       target: mcp
     ports:
@@ -3007,7 +3007,7 @@ Em `docker-compose.yaml`, logo após o bloco `bureau-mcp`:
       - interservice-network
       - postgres-network
     env_file:
-      - ./open-finance-mcp-server/.env
+      - ./open-finance/.env
     depends_on:
       postgres:
         condition: service_healthy
@@ -3197,7 +3197,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "open-finance-mcp-server/**"
+      - "open-finance/**"
       - "infra/**"
       - ".github/workflows/deploy-open-finance.yml"
 
@@ -3238,7 +3238,7 @@ jobs:
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --tag ${{ env.IMAGE }}:${{ github.sha }} \
             --tag ${{ env.IMAGE }}:latest \
-            ./open-finance-mcp-server
+            ./open-finance
 
       - name: Push
         run: |
@@ -3276,7 +3276,7 @@ Remover a linha `-var="mcp_auth_token=${{ secrets.MCP_AUTH_TOKEN }}"`, já que a
 - [ ] **Step 7: Rodar a suíte inteira uma última vez**
 
 ```bash
-cd open-finance-mcp-server && go build ./... && go test ./... && go vet ./...
+cd open-finance && go build ./... && go test ./... && go vet ./...
 cd ../infra && terraform fmt -check && terraform validate
 ```
 

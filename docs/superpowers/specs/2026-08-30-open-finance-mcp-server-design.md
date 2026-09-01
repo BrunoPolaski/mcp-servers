@@ -2,11 +2,11 @@
 
 **Data:** 2026-08-30
 **Cronograma:** `tcc/src/5_next-steps.tex`, atividade "Desenvolver servidor MCP simulando Open Finance"
-**Repositório:** `open-finance-mcp-server/`
+**Repositório:** `open-finance/`
 
 ## 1. Objetivo
 
-Tornar o `open-finance-mcp-server` funcional e integrável ao host Claude Web como
+Tornar o `open-finance` funcional e integrável ao host Claude Web como
 segundo conector do protótipo, expondo os dados que a metodologia atribui a essa
 fonte: consentimento de compartilhamento, extratos bancários dos últimos 90 dias,
 análise de fluxo de caixa e identificação de receitas recorrentes e despesas fixas.
@@ -17,7 +17,7 @@ regra eliminatória de divergência entre fontes.
 
 ## 2. Estado atual
 
-O repositório já contém, no `open-finance-mcp-server`:
+O repositório já contém, no `open-finance`:
 
 - Entidades do domínio: `BankAccountProfile`, `BankStatement`, `CashFlowAnalysis`,
   `RecurringTransaction`, `DataSharingConsent`
@@ -103,7 +103,7 @@ resolve a identificação do cliente: toda tool por dimensão aceita `customer_i
 `PersonRepository.GetByDocument`. Exatamente um dos dois deve ser informado.
 
 **`PersonSummaryDTO`** e **`PersonService.GetAllSummary`** replicam o birô
-(`bureau-mcp-server/internal/infra/controllers/dto/person_dto.go:268` e
+(`bureau/internal/infra/controllers/dto/person_dto.go:268` e
 `person_service.go:94`), para que a listagem devolva apenas `id`, `name` e
 `document` e obrigue o agente a recuperar o cadastro completo antes de analisar.
 
@@ -197,7 +197,7 @@ Demais parâmetros por cliente:
 
 ## 7. Política de crédito v1.1
 
-A v1.0 permanece intacta em `bureau-mcp-server/docs/politica_credito_agente.md` —
+A v1.0 permanece intacta em `bureau/docs/politica_credito_agente.md` —
 é o documento sob o qual os pré-resultados do capítulo 4 foram apurados. A v1.1
 nasce em `docs/politica_credito_agente_v1.1.md`, na raiz do repositório, por passar
 a reger dois servidores.
@@ -315,7 +315,7 @@ execução das fixtures contra o Postgres local.
 
 - **`init.sql`** — acrescentar `CREATE DATABASE "open-finance";`
 - **`docker-compose.yaml`** — serviço `open-finance-mcp`, build de
-  `./open-finance-mcp-server` com `target: mcp`, porta `8082:8080`, mesmas redes e
+  `./open-finance` com `target: mcp`, porta `8082:8080`, mesmas redes e
   `depends_on` do birô
 - **`infra/main.tf`** — segundo Artifact Registry (`open-finance-mcp`), segunda
   service account, segundo `google_cloud_run_v2_service` e o `iam_member` público
@@ -325,7 +325,7 @@ execução das fixtures contra o Postgres local.
 - **`infra/secrets.tf`** e **`variables.tf`** — secret `DATABASE_URL` próprio do
   Open Finance
 - **`.github/workflows/deploy-open-finance.yml`** — espelha `deploy-bureau.yml`,
-  com `paths` filtrando `open-finance-mcp-server/**` e `infra/**`
+  com `paths` filtrando `open-finance/**` e `infra/**`
 
 Os arquivos ficam prontos e versionados. **Nenhum deploy ou push é executado** —
 isso fica a cargo do autor.

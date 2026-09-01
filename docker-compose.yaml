@@ -1,7 +1,7 @@
 services:
   bureau-mcp:
     build:
-      context: ./bureau-mcp-server
+      context: ./bureau
       dockerfile: Dockerfile
       target: mcp
     ports:
@@ -10,7 +10,7 @@ services:
       - interservice-network
       - postgres-network
     env_file:
-      - ./bureau-mcp-server/.env
+      - ./bureau/.env
     depends_on:
       postgres:
         condition: service_healthy

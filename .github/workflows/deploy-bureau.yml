@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "bureau-mcp-server/**"
+      - "bureau/**"
       - "infra/**"
       - ".github/workflows/deploy-bureau.yml"
 
@@ -45,7 +45,7 @@ jobs:
             --build-arg BUILDKIT_INLINE_CACHE=1 \
             --tag ${{ env.IMAGE }}:${{ github.sha }} \
             --tag ${{ env.IMAGE }}:latest \
-            ./bureau-mcp-server
+            ./bureau
 
       - name: Push
         run: |
