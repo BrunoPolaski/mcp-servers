@@ -132,3 +132,22 @@ type ListPersonsDTO struct {
 	PaginatedDTO
 	Document valueobjects.Document `json:"document"`
 }
+
+// PersonSummaryDTO é uma projeção enxuta de um cliente, usada pela listagem.
+// Expõe apenas o necessário para identificá-lo, obrigando o chamador a buscar o
+// cadastro completo por get_customer_by_id ou get_customer_by_document antes de
+// qualquer análise.
+type PersonSummaryDTO struct {
+	ID       uint   `json:"id"`
+	Name     string `json:"name"`
+	Document string `json:"document"`
+}
+
+func NewPersonSummaryDTO(entity *entities.Person) *PersonSummaryDTO {
+	dto := &PersonSummaryDTO{ID: entity.ID}
+	if entity.PersonalInformation != nil {
+		dto.Name = entity.PersonalInformation.FullName
+		dto.Document = entity.PersonalInformation.Document.String()
+	}
+	return dto
+}
