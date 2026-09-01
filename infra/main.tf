@@ -20,7 +20,7 @@ provider "google" {
 }
 
 locals {
-  mcp_services = toset(["bureau-mcp", "open-finance-mcp"])
+  mcp_services = toset(["bureau-mcp", "open-finance-mcp", "internal-registry-mcp"])
 }
 
 # ──────────────────────────────────────────

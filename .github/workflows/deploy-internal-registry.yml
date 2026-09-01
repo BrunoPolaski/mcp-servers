@@ -1,0 +1,69 @@
+name: Deploy internal-registry-mcp
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "internal-registry/**"
+      - "infra/**"
+      - ".github/workflows/deploy-internal-registry.yml"
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  REGION: southamerica-east1
+  IMAGE: southamerica-east1-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/internal-registry-mcp/internal-registry-mcp
+
+jobs:
+  deploy:
+    name: Build & Deploy
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Authenticate to GCP
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ secrets.GCP_SERVICE_ACCOUNT }}
+
+      - name: Set up gcloud
+        uses: google-github-actions/setup-gcloud@v2
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker ${{ env.REGION }}-docker.pkg.dev --quiet
+
+      - name: Build
+        run: |
+          docker build \
+            --target mcp \
+            --cache-from ${{ env.IMAGE }}:latest \
+            --build-arg BUILDKIT_INLINE_CACHE=1 \
+            --tag ${{ env.IMAGE }}:${{ github.sha }} \
+            --tag ${{ env.IMAGE }}:latest \
+            ./internal-registry
+
+      - name: Push
+        run: |
+          docker push ${{ env.IMAGE }}:${{ github.sha }}
+          docker push ${{ env.IMAGE }}:latest
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        working-directory: infra/
+        run: terraform init
+
+      - name: Terraform Apply
+        working-directory: infra/
+        run: |
+          terraform apply -auto-approve \
+            -var="project_id=${{ env.PROJECT_ID }}" \
+            -var="region=${{ env.REGION }}" \
+            -var='images={"bureau-mcp":"southamerica-east1-docker.pkg.dev/${{ env.PROJECT_ID }}/bureau-mcp/bureau-mcp:latest","open-finance-mcp":"southamerica-east1-docker.pkg.dev/${{ env.PROJECT_ID }}/open-finance-mcp/open-finance-mcp:latest","internal-registry-mcp":"${{ env.IMAGE }}:${{ github.sha }}"}' \
+            -var='database_urls={"bureau-mcp":"${{ secrets.DATABASE_URL }}","open-finance-mcp":"${{ secrets.OPEN_FINANCE_DATABASE_URL }}","internal-registry-mcp":"${{ secrets.INTERNAL_REGISTRY_DATABASE_URL }}"}'
