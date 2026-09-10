@@ -38,7 +38,7 @@ func NewMCPServer(
 }
 
 func (s *Server) registerTools(mcpSrv *server.MCPServer) {
-	mcpSrv.AddTool(s.GetPersonByIDTool(), mcp.NewStructuredToolHandler(s.HandleGetPersonByID))
-	mcpSrv.AddTool(s.GetPersonByDocumentTool(), mcp.NewStructuredToolHandler(s.HandleGetPersonByDocument))
-	mcpSrv.AddTool(s.GetAllPersonsTool(), mcp.NewStructuredToolHandler(s.HandleGetAllPersons))
+	mcpSrv.AddTool(s.GetPersonByIDTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetPersonByID)))
+	mcpSrv.AddTool(s.GetPersonByDocumentTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetPersonByDocument)))
+	mcpSrv.AddTool(s.GetAllPersonsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetAllPersons)))
 }

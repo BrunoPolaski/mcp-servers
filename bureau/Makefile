@@ -78,3 +78,13 @@ migration-fix:
 	else \
 		echo -e "$(BG_RED) $(FG_WHITE) Migration force aborted. $(BG_RESET)"; \
 	fi
+
+fixtures:
+	@echo -e "$(BG_BLUE) $(FG_WHITE) Loading fixtures... $(BG_RESET)"
+	@cd cmd/fixtures && go run .
+	@echo -e "$(BG_GREEN) Fixtures loaded. $(BG_RESET)"
+
+fixtures-reset:
+	@echo -e "$(BG_BLUE) $(FG_WHITE) Truncating tables and reloading fixtures... $(BG_RESET)"
+	@cd cmd/fixtures && go run . -truncate
+	@echo -e "$(BG_GREEN) Fixtures reloaded. $(BG_RESET)"

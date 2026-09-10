@@ -1,32 +1,38 @@
 package dto
 
 import (
+	"time"
+
 	"github.com/BrunoPolaski/bureau/internal/core/entities"
 )
 
 type AddressDTO struct {
-	Id         uint    `json:"id"`
-	Street     *string `json:"street,omitempty"`
-	Number     *string `json:"number,omitempty" example:"1234 | S/N"`
-	City       *string `json:"city,omitempty"`
-	State      *string `json:"state,omitempty" example:"SC"`
-	ZipCode    *string `json:"zip_code,omitempty" example:"12345-678"`
-	Complement *string `json:"complement,omitempty"`
-	CreatedAt  string  `json:"created_at"`
-	UpdatedAt  string  `json:"updated_at"`
+	Id          uint    `json:"id"`
+	Street      *string `json:"street,omitempty"`
+	Number      *string `json:"number,omitempty" example:"1234 | S/N"`
+	City        *string `json:"city,omitempty"`
+	State       *string `json:"state,omitempty" example:"SC"`
+	ZipCode     *string `json:"zip_code,omitempty" example:"12345-678"`
+	Complement  *string `json:"complement,omitempty"`
+	IsCurrent   bool    `json:"is_current"`
+	MovedInDate *string `json:"moved_in_date,omitempty"`
+	CreatedAt   string  `json:"created_at"`
+	UpdatedAt   string  `json:"updated_at"`
 }
 
 func NewAddressDTO(entity *entities.Address) *AddressDTO {
 	return &AddressDTO{
-		Id:         entity.ID,
-		Street:     entity.Street,
-		Number:     entity.Number,
-		City:       entity.City,
-		State:      entity.State,
-		ZipCode:    entity.ZipCode,
-		Complement: entity.Complement,
-		CreatedAt:  entity.CreatedAt.Format("2006-01-02 15:04:05"),
-		UpdatedAt:  entity.UpdatedAt.Format("2006-01-02 15:04:05"),
+		Id:          entity.ID,
+		Street:      entity.Street,
+		Number:      entity.Number,
+		City:        entity.City,
+		State:       entity.State,
+		ZipCode:     entity.ZipCode,
+		Complement:  entity.Complement,
+		IsCurrent:   entity.IsCurrent,
+		MovedInDate: formatDate(entity.MovedInDate),
+		CreatedAt:   entity.CreatedAt.Format("2006-01-02 15:04:05"),
+		UpdatedAt:   entity.UpdatedAt.Format("2006-01-02 15:04:05"),
 	}
 }
 
@@ -39,4 +45,12 @@ func (a AddressDTO) ToEntity() *entities.Address {
 		ZipCode:    a.ZipCode,
 		Complement: a.Complement,
 	}
+}
+
+func formatDate(value *time.Time) *string {
+	if value == nil {
+		return nil
+	}
+	formatted := value.Format("2006-01-02")
+	return &formatted
 }

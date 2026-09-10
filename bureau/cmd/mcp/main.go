@@ -60,5 +60,7 @@ func main() {
 		zap.String("endpoint", "/mcp"),
 	)
 
-	http.ListenAndServe(":8080", httpServer)
+	if err := http.ListenAndServe(":"+port, httpServer); err != nil {
+		logger.Error("MCP server stopped", err)
+	}
 }

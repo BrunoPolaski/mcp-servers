@@ -11,11 +11,14 @@ import (
 
 func (s *Server) GetPersonByIDTool() mcp.Tool {
 	return mcp.NewTool(
-		"get_person_by_id",
+		"get_customer_by_id",
 		mcp.WithDescription(
 			`
-			Get a person by their ID
-			This returns a person's registration validation data, including their name, date of birth, and associated addresses.
+			Get a customer by their ID
+			This returns what the Receita Federal base holds about the customer (civil name,
+			mother's name and date of birth) together with the document validations, fiscal
+			regularity, eSocial employment links and compliance checks on record.
+			This source has no address, phone or e-mail.
 			Example usage:
 			{
 				"id": 123
@@ -25,7 +28,7 @@ func (s *Server) GetPersonByIDTool() mcp.Tool {
 		mcp.WithOutputSchema[dto.PersonDTO](),
 		mcp.WithInteger(
 			"id",
-			mcp.Description("The ID of the person to retrieve"),
+			mcp.Description("The ID of the customer to retrieve"),
 		),
 	)
 }
@@ -48,11 +51,14 @@ func (s *Server) HandleGetPersonByID(ctx context.Context, request mcp.CallToolRe
 
 func (s *Server) GetPersonByDocumentTool() mcp.Tool {
 	return mcp.NewTool(
-		"get_person_by_document",
+		"get_customer_by_document",
 		mcp.WithDescription(
 			`
-			Get a person by their document number
-			This returns a person's registration validation data, including their name, date of birth, and associated addresses.
+			Get a customer by their document number (CPF)
+			This returns what the Receita Federal base holds about the customer (civil name,
+			mother's name and date of birth) together with the document validations, fiscal
+			regularity, eSocial employment links and compliance checks on record.
+			This source has no address, phone or e-mail.
 			Example usage:
 			{
 				"document": "12345678900"
@@ -62,7 +68,7 @@ func (s *Server) GetPersonByDocumentTool() mcp.Tool {
 		mcp.WithOutputSchema[dto.PersonDTO](),
 		mcp.WithString(
 			"document",
-			mcp.Description("The document number of the person to retrieve"),
+			mcp.Description("The document number (CPF) of the customer to retrieve"),
 		),
 	)
 }
@@ -85,17 +91,17 @@ func (s *Server) HandleGetPersonByDocument(ctx context.Context, request mcp.Call
 
 func (s *Server) GetAllPersonsTool() mcp.Tool {
 	return mcp.NewTool(
-		"get_all_persons",
+		"get_all_customers",
 		mcp.WithDescription(
 			`
-			List persons with pagination
+			List customers with pagination
 			Example usage:
 			{
 				"limit": 10,
 				"offset": 0
 			}
 
-			To fetch all persons, set "limit" to 0.
+			To fetch all customers, set "limit" to 0.
 			`,
 		),
 		mcp.WithOutputSchema[dto.PaginatedResponse[dto.PersonDTO]](),
@@ -113,7 +119,7 @@ func (s *Server) GetAllPersonsTool() mcp.Tool {
 		),
 		mcp.WithObject(
 			"params",
-			mcp.Description("Additional filters for querying persons. e.g. {\"name\": \"John Doe\"}"),
+			mcp.Description("Additional filters for querying customers. e.g. {\"name\": \"John Doe\"}"),
 		),
 	)
 }

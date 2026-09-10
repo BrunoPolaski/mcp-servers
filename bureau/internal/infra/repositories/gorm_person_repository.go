@@ -25,6 +25,7 @@ func NewGormPersonRepository(db *gorm.DB) interfaces.PersonRepository {
 func (g *gormPersonRepository) GetById(ctx context.Context, id uint) (*entities.Person, *rest_err.RestErr) {
 	res, err := gorm.G[*entities.Person](g.db).
 		Preload("PersonalInformation", nil).
+		Preload("PersonalInformation.Addresses.Address", nil).
 		Preload("CreditScore", nil).
 		Preload("FinancialProfile", nil).
 		Preload("EmploymentRecords", nil).
@@ -58,6 +59,7 @@ func (g *gormPersonRepository) GetByDocument(ctx context.Context, document strin
 				return nil
 			},
 		).
+		Preload("PersonalInformation.Addresses.Address", nil).
 		Preload("CreditScore", nil).
 		Preload("FinancialProfile", nil).
 		Preload("EmploymentRecords", nil).
@@ -91,6 +93,7 @@ func (g *gormPersonRepository) GetAll(ctx context.Context, limit, offset int, pa
 
 	query := gorm.G[entities.Person](g.db).
 		Preload("PersonalInformation", nil).
+		Preload("PersonalInformation.Addresses.Address", nil).
 		Where(params)
 	if limit > 0 {
 		query = query.Limit(limit)

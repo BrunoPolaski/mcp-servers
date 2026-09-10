@@ -7,6 +7,7 @@ type PaginatedDTO struct {
 }
 
 type PaginatedResponse[T any] struct {
+	Traceable
 	Total int64 `json:"total"` // Total number of items available
 	Items []*T  `json:"items"` // List of items in the current page
 }

@@ -47,6 +47,22 @@ services:
       postgres:
         condition: service_healthy
 
+  registration-validation-mcp:
+    build:
+      context: ./registration-validation
+      dockerfile: Dockerfile
+      target: mcp
+    ports:
+      - "8084:8080"
+    networks:
+      - interservice-network
+      - postgres-network
+    env_file:
+      - ./registration-validation/.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
   postgres:
     container_name: postgres
     image: postgres:16

@@ -61,12 +61,12 @@ func NewMCPServer(
 }
 
 func (s *Server) registerTools(mcpSrv *server.MCPServer) {
-	mcpSrv.AddTool(s.GetPersonByIDTool(), mcp.NewStructuredToolHandler(s.HandleGetPersonByID))
-	mcpSrv.AddTool(s.GetPersonByDocumentTool(), mcp.NewStructuredToolHandler(s.HandleGetPersonByDocument))
-	mcpSrv.AddTool(s.GetAllPersonsTool(), mcp.NewStructuredToolHandler(s.HandleGetAllPersons))
+	mcpSrv.AddTool(s.GetPersonByIDTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetPersonByID)))
+	mcpSrv.AddTool(s.GetPersonByDocumentTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetPersonByDocument)))
+	mcpSrv.AddTool(s.GetAllPersonsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetAllPersons)))
 
-	mcpSrv.AddTool(s.GetBankStatementsTool(), mcp.NewStructuredToolHandler(s.HandleGetBankStatements))
-	mcpSrv.AddTool(s.GetCashFlowAnalysisTool(), mcp.NewStructuredToolHandler(s.HandleGetCashFlowAnalysis))
-	mcpSrv.AddTool(s.GetRecurringTransactionsTool(), mcp.NewStructuredToolHandler(s.HandleGetRecurringTransactions))
-	mcpSrv.AddTool(s.GetDataSharingConsentsTool(), mcp.NewStructuredToolHandler(s.HandleGetDataSharingConsents))
+	mcpSrv.AddTool(s.GetBankStatementsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetBankStatements)))
+	mcpSrv.AddTool(s.GetCashFlowAnalysisTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetCashFlowAnalysis)))
+	mcpSrv.AddTool(s.GetRecurringTransactionsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetRecurringTransactions)))
+	mcpSrv.AddTool(s.GetDataSharingConsentsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetDataSharingConsents)))
 }

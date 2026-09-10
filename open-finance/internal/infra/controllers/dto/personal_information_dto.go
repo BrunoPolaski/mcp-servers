@@ -140,15 +140,20 @@ func (p PersonalInformationDTO) ToEntity() *entities.PersonalInformation {
 }
 
 type PersonAddressDTO struct {
-	ID        uint `json:"id"`
-	AddressID uint `json:"address_id"`
+	ID        uint        `json:"id"`
+	AddressID uint        `json:"address_id"`
+	Address   *AddressDTO `json:"address,omitempty"`
 }
 
 func NewPersonAddressDTO(entity *entities.PersonAddress) PersonAddressDTO {
-	return PersonAddressDTO{
+	dto := PersonAddressDTO{
 		ID:        entity.ID,
 		AddressID: entity.AddressID,
 	}
+	if entity.Address != nil {
+		dto.Address = NewAddressDTO(entity.Address)
+	}
+	return dto
 }
 
 func (p PersonAddressDTO) ToEntity() entities.PersonAddress {

@@ -62,13 +62,13 @@ func NewMCPServer(
 }
 
 func (s *Server) registerTools(mcpSrv *server.MCPServer) {
-	mcpSrv.AddTool(s.GetPersonByIDTool(), mcp.NewStructuredToolHandler(s.HandleGetPersonByID))
-	mcpSrv.AddTool(s.GetPersonByDocumentTool(), mcp.NewStructuredToolHandler(s.HandleGetPersonByDocument))
-	mcpSrv.AddTool(s.GetAllPersonsTool(), mcp.NewStructuredToolHandler(s.HandleGetAllPersons))
+	mcpSrv.AddTool(s.GetPersonByIDTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetPersonByID)))
+	mcpSrv.AddTool(s.GetPersonByDocumentTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetPersonByDocument)))
+	mcpSrv.AddTool(s.GetAllPersonsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetAllPersons)))
 
-	mcpSrv.AddTool(s.GetCustomerRelationshipTool(), mcp.NewStructuredToolHandler(s.HandleGetCustomerRelationship))
-	mcpSrv.AddTool(s.GetContractedProductsTool(), mcp.NewStructuredToolHandler(s.HandleGetContractedProducts))
-	mcpSrv.AddTool(s.GetInternalPaymentRecordsTool(), mcp.NewStructuredToolHandler(s.HandleGetInternalPaymentRecords))
-	mcpSrv.AddTool(s.GetPreApprovedLimitsTool(), mcp.NewStructuredToolHandler(s.HandleGetPreApprovedLimits))
-	mcpSrv.AddTool(s.GetIncomeDeclarationsTool(), mcp.NewStructuredToolHandler(s.HandleGetIncomeDeclarations))
+	mcpSrv.AddTool(s.GetCustomerRelationshipTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetCustomerRelationship)))
+	mcpSrv.AddTool(s.GetContractedProductsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetContractedProducts)))
+	mcpSrv.AddTool(s.GetInternalPaymentRecordsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetInternalPaymentRecords)))
+	mcpSrv.AddTool(s.GetPreApprovedLimitsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetPreApprovedLimits)))
+	mcpSrv.AddTool(s.GetIncomeDeclarationsTool(), mcp.NewStructuredToolHandler(traced(s.HandleGetIncomeDeclarations)))
 }

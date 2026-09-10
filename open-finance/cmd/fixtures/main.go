@@ -67,7 +67,7 @@ func main() {
 		} else if os.Getenv("ENV") == "dev" {
 			logger.Info("Using development database configuration")
 		} else {
-			os.Setenv("DATABASE_URL", "postgres://postgres:123456@127.0.0.1:5433/open-finance-mcp?sslmode=disable")
+			os.Setenv("DATABASE_URL", "postgres://root:123456@127.0.0.1:5433/open-finance?sslmode=disable")
 		}
 	}
 

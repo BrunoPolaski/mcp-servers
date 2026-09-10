@@ -8,6 +8,7 @@ import (
 )
 
 type PersonDTO struct {
+	Traceable
 	ID                     uint                       `json:"id"`
 	CreatedAt              string                     `json:"created_at"`
 	UpdatedAt              string                     `json:"updated_at"`
