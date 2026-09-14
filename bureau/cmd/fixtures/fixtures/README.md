@@ -31,8 +31,11 @@ propositais e precisam continuar coerentes com as demais.
 
 ## Cenários
 
-Os registros de id 1 a 10 são o conjunto preliminar, curado à mão. Os de id 11 a
-40 são os 30 cenários de avaliação (10 simples, 10 intermediários, 10 complexos)
-gerados por `generate_cenarios.py`, na raiz de `mcp-servers/`, que declara cada
-cenário uma única vez e o deriva para as quatro fontes. Edite o gerador, não os
-arquivos, e rode `generate_cadastro.py` em seguida.
+Os registros de id 1 a 30 são os 30 cenários de avaliação de crédito gerados por
+`generate_cenarios.py`, na raiz de `mcp-servers/`, que declara cada cenário uma
+única vez (no dicionário `CENARIOS`) e o deriva para as quatro fontes. Eles se
+distribuem em faixas `bom` (1-3), `ruim` (4-6) e `complexo` (7-30), na
+proporção 10% / 10% / 80% — deliberada, para imitar uma carteira real: casos
+limpos e casos obviamente reprováveis são raros, e a maioria exige ler as
+quatro fontes juntas, que frequentemente discordam entre si. Edite o gerador,
+não os arquivos, e rode `generate_cadastro.py` em seguida.

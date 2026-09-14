@@ -166,7 +166,7 @@
     "deleted_at": null,
     "personal_information_id": 17,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": 17,
+    "credit_score_id": null,
     "financial_profile_id": 17
   },
   {
@@ -176,7 +176,7 @@
     "deleted_at": null,
     "personal_information_id": 18,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": 18,
+    "credit_score_id": 17,
     "financial_profile_id": 18
   },
   {
@@ -186,7 +186,7 @@
     "deleted_at": null,
     "personal_information_id": 19,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": 19,
+    "credit_score_id": 18,
     "financial_profile_id": 19
   },
   {
@@ -196,7 +196,7 @@
     "deleted_at": null,
     "personal_information_id": 20,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": 20,
+    "credit_score_id": 19,
     "financial_profile_id": 20
   },
   {
@@ -206,7 +206,7 @@
     "deleted_at": null,
     "personal_information_id": 21,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": 21,
+    "credit_score_id": 20,
     "financial_profile_id": 21
   },
   {
@@ -216,7 +216,7 @@
     "deleted_at": null,
     "personal_information_id": 22,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": 22,
+    "credit_score_id": 21,
     "financial_profile_id": 22
   },
   {
@@ -226,7 +226,7 @@
     "deleted_at": null,
     "personal_information_id": 23,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": 23,
+    "credit_score_id": 22,
     "financial_profile_id": 23
   },
   {
@@ -236,7 +236,7 @@
     "deleted_at": null,
     "personal_information_id": 24,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": 24,
+    "credit_score_id": 23,
     "financial_profile_id": 24
   },
   {
@@ -296,7 +296,7 @@
     "deleted_at": null,
     "personal_information_id": 30,
     "last_verified_at": "2026-08-20T00:00:00Z",
-    "credit_score_id": null,
+    "credit_score_id": 30,
     "financial_profile_id": 30
   }
 ]
