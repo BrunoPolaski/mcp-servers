@@ -128,7 +128,7 @@ vencedora. A análise encerra aí (não aplicar §5–§7).
 | K6 | Negativação de alto valor | Soma das negativações ativas > **5 × renda considerada** | `REPROVADO` |
 | K7 | Dívida em cobrança de alto valor | Soma das dívidas em cobrança não quitadas > **10 × renda considerada** | `REPROVADO` |
 | K8 | Divergência de renda entre fontes | Havendo consentimento concedido e não expirado **e** ao menos uma receita recorrente ativa, se a renda considerada > **2 ×** a soma dessas receitas | `ANALISE_MANUAL` |
-| K9 | Inadimplência interna grave | Parcela interna não paga com atraso > 90 dias em produto contratado ativo | `REPROVADO` |
+| K9 | Inadimplência interna grave | Parcela interna não paga com atraso > 90 dias em produto contratado | `REPROVADO` |
 | K9-L | Inadimplência interna recente | Parcela interna não paga com atraso ≤ 90 dias nos últimos 6 meses (sem nenhum caso acima de 90 dias) | `ANALISE_MANUAL` |
 | **K10** | **Documento inválido ou titular impedido** | Na validação cadastral mais recente, documento inválido **ou** situação na Receita Federal em `canceled` ou `deceased` | `REPROVADO` |
 | **K11** | **Situação cadastral não regularizada** | Situação na Receita Federal em `pending` ou `suspended` na validação mais recente | `ANALISE_MANUAL` |
