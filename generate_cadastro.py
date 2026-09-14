@@ -95,7 +95,7 @@ def divergencias():
 
 # Telefone que o birô ainda tem em cadastro, anterior ao que o cliente informou
 # ao banco.
-TELEFONE_ANTIGO = {4: "81988001122", 6: "81997654321", 79: "85991234455"}
+TELEFONE_ANTIGO = {7: "81988001122"}
 
 # Quem tem mais de um endereco no cadastro do banco mudou de casa; o birô so
 # conhece o anterior, e ainda o trata como atual.
