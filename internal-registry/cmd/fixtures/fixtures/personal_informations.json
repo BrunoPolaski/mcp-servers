@@ -626,7 +626,7 @@
     "gender": "male",
     "nationality": "Brazilian",
     "marital_status": "married",
-    "document": null,
+    "document": "",
     "rg": "42.122.222-2",
     "rg_issuer": "SSP-CE",
     "rg_issue_date": "1992-03-11T00:00:00Z",

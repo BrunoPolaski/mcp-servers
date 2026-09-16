@@ -78,7 +78,7 @@ RUAS = ["Rua das Acacias", "Avenida Central", "Rua Sete de Setembro", "Rua Sao J
 #                situacao: regular | pending | suspended | canceled | deceased
 #                CND:      regular | irregular | suspended
 #   divergencias campos do cadastro que nao conferem com a Receita Federal
-#   falta        campos deliberadamente ausentes; "cpf" = documento nulo em
+#   falta        campos deliberadamente ausentes; "cpf" = documento vazio em
 #                personal_informations (aciona M3); "dti" = indice e parcelas
 #                nulos (C2 incalculavel, dado ausente); "dti_informado" = so o
 #                indice nulo, parcelas continuam informadas (C2 cai no
@@ -514,7 +514,7 @@ def cadastro():
             "gender": "female" if offset % 2 else "male",
             "nationality": "Brazilian",
             "marital_status": ["single", "married", "divorced"][offset % 3],
-            "document": None if "cpf" in c["falta"] else cpf(person_id),
+            "document": "" if "cpf" in c["falta"] else cpf(person_id),
             "rg": f"{20 + offset}.{100 + offset}.{200 + offset}-{offset % 10}",
             "rg_issuer": f"SSP-{uf}",
             "rg_issue_date": dia(nascimento.replace(year=nascimento.year + 18)),
@@ -1017,7 +1017,7 @@ def validacao_cadastral():
 
     for person_id, c in sorted(CENARIOS.items()):
         situacao, cnd, pep, sancoes = c["receita"]
-        documento = cpf(person_id)
+        documento = "" if "cpf" in c["falta"] else cpf(person_id)
 
         # "ausente": o cliente nunca passou por validacao cadastral
         if c["cadastral"] == "ausente":

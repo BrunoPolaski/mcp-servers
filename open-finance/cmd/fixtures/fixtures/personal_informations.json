@@ -560,7 +560,7 @@
     "gender": "male",
     "nationality": "Brazilian",
     "marital_status": "married",
-    "document": null,
+    "document": "",
     "rg": null,
     "rg_issuer": null,
     "rg_issue_date": null,
