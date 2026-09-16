@@ -63,8 +63,17 @@ def divergencias():
     que existem no mundo real e que essas flags servem para apontar.
     """
     base_pessoas = {row["id"]: row for row in read(BANCO, "personal_informations")}
-    plantadas = {}
+
+    # um cenario pode ter mais de uma validacao (historico); so a mais recente
+    # vale para K10/C13, e e ela que deve plantar a divergencia aqui tambem
+    mais_recentes = {}
     for validacao in read("registration-validation", "document_validations"):
+        atual = mais_recentes.get(validacao["person_id"])
+        if atual is None or validacao["validation_date"] > atual["validation_date"]:
+            mais_recentes[validacao["person_id"]] = validacao
+
+    plantadas = {}
+    for validacao in mais_recentes.values():
         pessoa = base_pessoas.get(validacao["person_id"])
         if pessoa is None:
             continue
@@ -86,7 +95,7 @@ def divergencias():
 
 # Telefone que o birô ainda tem em cadastro, anterior ao que o cliente informou
 # ao banco.
-TELEFONE_ANTIGO = {4: "81988001122", 6: "81997654321"}
+TELEFONE_ANTIGO = {7: "81988001122"}
 
 # Quem tem mais de um endereco no cadastro do banco mudou de casa; o birô so
 # conhece o anterior, e ainda o trata como atual.

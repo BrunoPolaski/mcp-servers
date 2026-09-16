@@ -55,8 +55,8 @@
     "person_id": 4,
     "check_type": "kyc_full",
     "check_date": "2026-08-10T00:00:00Z",
-    "status": "regular",
-    "details": null,
+    "status": "irregular",
+    "details": "{\"motivo\": \"alerta de fraude grave e ativo\"}",
     "is_pep": false,
     "pep_details": null,
     "on_sanctions_list": false,
@@ -87,8 +87,8 @@
     "person_id": 6,
     "check_type": "kyc_full",
     "check_date": "2026-08-10T00:00:00Z",
-    "status": "regular",
-    "details": null,
+    "status": "irregular",
+    "details": "{\"motivo\": \"pensao por morte movimentada apos obito do titular: severidade decide por K10\"}",
     "is_pep": false,
     "pep_details": null,
     "on_sanctions_list": false,
@@ -167,32 +167,16 @@
     "person_id": 11,
     "check_type": "kyc_full",
     "check_date": "2026-08-10T00:00:00Z",
-    "status": "regular",
-    "details": null,
-    "is_pep": false,
-    "pep_details": null,
+    "status": "attention",
+    "details": "{\"motivo\": \"pessoa exposta politicamente com perfil de credito excelente\"}",
+    "is_pep": true,
+    "pep_details": "Contrato vigente com orgao publico",
     "on_sanctions_list": false,
     "sanctions_details": null,
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
     "id": 12,
-    "created_at": "2026-08-31T00:00:00Z",
-    "updated_at": "2026-08-31T00:00:00Z",
-    "deleted_at": null,
-    "person_id": 12,
-    "check_type": "kyc_full",
-    "check_date": "2026-08-10T00:00:00Z",
-    "status": "regular",
-    "details": null,
-    "is_pep": false,
-    "pep_details": null,
-    "on_sanctions_list": false,
-    "sanctions_details": null,
-    "valid_until": "2027-02-06T00:00:00Z"
-  },
-  {
-    "id": 13,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -208,7 +192,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 14,
+    "id": 13,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -224,7 +208,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 15,
+    "id": 14,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -240,7 +224,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 16,
+    "id": 15,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -256,7 +240,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 17,
+    "id": 16,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -272,7 +256,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 18,
+    "id": 17,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -288,7 +272,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 19,
+    "id": 18,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -304,7 +288,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 20,
+    "id": 19,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -320,7 +304,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 21,
+    "id": 20,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -336,7 +320,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 22,
+    "id": 21,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -352,7 +336,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 23,
+    "id": 22,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -368,15 +352,15 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 24,
+    "id": 23,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
     "person_id": 24,
     "check_type": "kyc_full",
     "check_date": "2026-08-10T00:00:00Z",
-    "status": "regular",
-    "details": null,
+    "status": "irregular",
+    "details": "{\"motivo\": \"fraude em apuracao e CPF pendente simultaneos, vence a de menor numero\"}",
     "is_pep": false,
     "pep_details": null,
     "on_sanctions_list": false,
@@ -384,7 +368,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 25,
+    "id": 24,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -400,7 +384,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 26,
+    "id": 25,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -416,7 +400,7 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 27,
+    "id": 26,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -432,15 +416,31 @@
     "valid_until": "2027-02-06T00:00:00Z"
   },
   {
-    "id": 28,
+    "id": 27,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
     "person_id": 28,
     "check_type": "kyc_full",
     "check_date": "2026-08-10T00:00:00Z",
-    "status": "irregular",
-    "details": "{\"motivo\": \"alerta de fraude grave ativo, com divergencia de nome: reprovacao\"}",
+    "status": "regular",
+    "details": null,
+    "is_pep": false,
+    "pep_details": null,
+    "on_sanctions_list": false,
+    "sanctions_details": null,
+    "valid_until": "2027-02-06T00:00:00Z"
+  },
+  {
+    "id": 28,
+    "created_at": "2026-08-31T00:00:00Z",
+    "updated_at": "2026-08-31T00:00:00Z",
+    "deleted_at": null,
+    "person_id": 29,
+    "check_type": "kyc_full",
+    "check_date": "2026-08-10T00:00:00Z",
+    "status": "regular",
+    "details": null,
     "is_pep": false,
     "pep_details": null,
     "on_sanctions_list": false,
@@ -449,22 +449,6 @@
   },
   {
     "id": 29,
-    "created_at": "2026-08-31T00:00:00Z",
-    "updated_at": "2026-08-31T00:00:00Z",
-    "deleted_at": null,
-    "person_id": 29,
-    "check_type": "kyc_full",
-    "check_date": "2026-08-10T00:00:00Z",
-    "status": "attention",
-    "details": "{\"motivo\": \"PEP com contrato publico e alerta em apuracao: encaminhamento manual\"}",
-    "is_pep": true,
-    "pep_details": "Contrato vigente com orgao publico",
-    "on_sanctions_list": false,
-    "sanctions_details": null,
-    "valid_until": "2027-02-06T00:00:00Z"
-  },
-  {
-    "id": 30,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,

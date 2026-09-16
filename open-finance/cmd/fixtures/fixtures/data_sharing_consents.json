@@ -175,28 +175,14 @@
     "person_id": 13,
     "consent_id": "urn:sintetico:consent:0013",
     "institution": "Banco Sintético Beta",
-    "status": "granted",
+    "status": "revoked",
     "scope": "[\"ACCOUNTS_READ\", \"ACCOUNTS_BALANCES_READ\", \"RESOURCES_READ\"]",
     "granted_at": "2026-07-17T00:00:00Z",
     "expires_at": "2027-01-13T00:00:00Z",
-    "revoked_at": null
+    "revoked_at": "2026-08-11T00:00:00Z"
   },
   {
     "id": 14,
-    "created_at": "2026-08-31T00:00:00Z",
-    "updated_at": "2026-08-31T00:00:00Z",
-    "deleted_at": null,
-    "person_id": 14,
-    "consent_id": "urn:sintetico:consent:0014",
-    "institution": "Banco Sintético Gama",
-    "status": "granted",
-    "scope": "[\"ACCOUNTS_READ\", \"ACCOUNTS_BALANCES_READ\", \"RESOURCES_READ\"]",
-    "granted_at": "2026-07-17T00:00:00Z",
-    "expires_at": "2027-01-13T00:00:00Z",
-    "revoked_at": null
-  },
-  {
-    "id": 15,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -210,7 +196,7 @@
     "revoked_at": null
   },
   {
-    "id": 16,
+    "id": 15,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -224,7 +210,7 @@
     "revoked_at": null
   },
   {
-    "id": 17,
+    "id": 16,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -238,7 +224,7 @@
     "revoked_at": null
   },
   {
-    "id": 18,
+    "id": 17,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -252,7 +238,7 @@
     "revoked_at": null
   },
   {
-    "id": 19,
+    "id": 18,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -266,7 +252,7 @@
     "revoked_at": null
   },
   {
-    "id": 20,
+    "id": 19,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -280,7 +266,7 @@
     "revoked_at": null
   },
   {
-    "id": 21,
+    "id": 20,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -294,7 +280,7 @@
     "revoked_at": null
   },
   {
-    "id": 22,
+    "id": 21,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -308,7 +294,7 @@
     "revoked_at": null
   },
   {
-    "id": 23,
+    "id": 22,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -322,7 +308,7 @@
     "revoked_at": null
   },
   {
-    "id": 24,
+    "id": 23,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -336,7 +322,7 @@
     "revoked_at": null
   },
   {
-    "id": 25,
+    "id": 24,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -350,7 +336,7 @@
     "revoked_at": null
   },
   {
-    "id": 26,
+    "id": 25,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -364,7 +350,7 @@
     "revoked_at": null
   },
   {
-    "id": 27,
+    "id": 26,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -378,7 +364,7 @@
     "revoked_at": null
   },
   {
-    "id": 28,
+    "id": 27,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -392,7 +378,7 @@
     "revoked_at": null
   },
   {
-    "id": 29,
+    "id": 28,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -406,7 +392,7 @@
     "revoked_at": null
   },
   {
-    "id": 30,
+    "id": 29,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,

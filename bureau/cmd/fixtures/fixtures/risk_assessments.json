@@ -7,10 +7,10 @@
     "person_id": 1,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 812,
+    "risk_score": 842,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "assalariado estavel, sem restricoes",
+    "recommendation": "assalariado de carreira, quatro fontes concordantes",
     "model_version": "v3"
   },
   {
@@ -21,10 +21,10 @@
     "person_id": 2,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 845,
+    "risk_score": 831,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "renda alta, relacionamento longo",
+    "recommendation": "aposentado do INSS com consignado em dia, margem preservada",
     "model_version": "v3"
   },
   {
@@ -35,10 +35,10 @@
     "person_id": 3,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 764,
+    "risk_score": 810,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "servidor publico; mudou de endereco e o birô nao foi informado",
+    "recommendation": "servidor com dois vinculos vigentes; vale o de maior salario",
     "model_version": "v3"
   },
   {
@@ -49,10 +49,10 @@
     "person_id": 4,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 795,
-    "risk_level": "low",
-    "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "CLT com investimentos",
+    "risk_score": 512,
+    "risk_level": "medium",
+    "risk_factors": "[\"multiple_recent_inquiries\"]",
+    "recommendation": "alerta de fraude grave e ativo",
     "model_version": "v3"
   },
   {
@@ -63,10 +63,10 @@
     "person_id": 5,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 878,
-    "risk_level": "low",
-    "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "alta renda, sem passivo relevante",
+    "risk_score": 241,
+    "risk_level": "high",
+    "risk_factors": "[\"active_delinquency\", \"high_utilization\", \"high_debt_to_income\", \"multiple_recent_inquiries\"]",
+    "recommendation": "score critico, abaixo do piso da politica",
     "model_version": "v3"
   },
   {
@@ -77,10 +77,10 @@
     "person_id": 6,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 731,
-    "risk_level": "low",
+    "risk_score": 680,
+    "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "renda menor, mas pontual",
+    "recommendation": "pensao por morte movimentada apos obito do titular: severidade decide por K10",
     "model_version": "v3"
   },
   {
@@ -91,10 +91,10 @@
     "person_id": 7,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 803,
+    "risk_score": 812,
     "risk_level": "low",
-    "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "dois vinculos, o anterior encerrado sem pendencia",
+    "risk_factors": "[\"high_utilization\", \"high_debt_to_income\"]",
+    "recommendation": "biro otimo e comportamento interno pessimo: fontes discordam",
     "model_version": "v3"
   },
   {
@@ -105,10 +105,10 @@
     "person_id": 8,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 758,
-    "risk_level": "low",
-    "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "cliente novo no banco, historico externo limpo",
+    "risk_score": 612,
+    "risk_level": "medium",
+    "risk_factors": "[\"high_debt_to_income\"]",
+    "recommendation": "vinculo declarado no biro sem contrapartida no eSocial",
     "model_version": "v3"
   },
   {
@@ -119,10 +119,10 @@
     "person_id": 9,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 826,
-    "risk_level": "low",
-    "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "MEI consolidado, faturamento estavel",
+    "risk_score": 596,
+    "risk_level": "medium",
+    "risk_factors": "[\"settled_delinquency\", \"high_debt_to_income\", \"multiple_recent_inquiries\"]",
+    "recommendation": "fluxo de caixa do open finance desmente a renda declarada",
     "model_version": "v3"
   },
   {
@@ -133,10 +133,10 @@
     "person_id": 10,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 771,
+    "risk_score": 767,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "sem telefone no cadastro do biro",
+    "recommendation": "inadimplencia interna acima de noventa dias com biro intacto",
     "model_version": "v3"
   },
   {
@@ -147,10 +147,10 @@
     "person_id": 11,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 648,
-    "risk_level": "medium",
-    "risk_factors": "[\"settled_delinquency\"]",
-    "recommendation": "dois atrasos curtos ja regularizados",
+    "risk_score": 828,
+    "risk_level": "low",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "pessoa exposta politicamente com perfil de credito excelente",
     "model_version": "v3"
   },
   {
@@ -161,10 +161,10 @@
     "person_id": 12,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 604,
+    "risk_score": 601,
     "risk_level": "medium",
-    "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "autonomo sem renda declarada; biro estima",
+    "risk_factors": "[\"high_debt_to_income\"]",
+    "recommendation": "cliente nunca passou por validacao cadastral",
     "model_version": "v3"
   },
   {
@@ -175,10 +175,10 @@
     "person_id": 13,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 671,
+    "risk_score": 596,
     "risk_level": "medium",
-    "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "renda variavel de comissao",
+    "risk_factors": "[\"high_debt_to_income\"]",
+    "recommendation": "consentimento de open finance revogado",
     "model_version": "v3"
   },
   {
@@ -189,10 +189,10 @@
     "person_id": 14,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 559,
+    "risk_score": 648,
     "risk_level": "medium",
-    "risk_factors": "[\"high_debt_to_income\", \"multiple_recent_inquiries\"]",
-    "recommendation": "endividamento perto do limite da politica",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "nao-cliente da instituicao, sem historico interno",
     "model_version": "v3"
   },
   {
@@ -203,10 +203,10 @@
     "person_id": 15,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 622,
+    "risk_score": 592,
     "risk_level": "medium",
-    "risk_factors": "[\"multiple_recent_inquiries\"]",
-    "recommendation": "cinco consultas em 90 dias",
+    "risk_factors": "[\"high_debt_to_income\"]",
+    "recommendation": "sem historico de pagamento no biro",
     "model_version": "v3"
   },
   {
@@ -217,10 +217,10 @@
     "person_id": 16,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 587,
+    "risk_score": 588,
     "risk_level": "medium",
-    "risk_factors": "[\"settled_delinquency\", \"high_debt_to_income\"]",
-    "recommendation": "negativacao quitada ha um ano",
+    "risk_factors": "[\"high_debt_to_income\", \"multiple_recent_inquiries\"]",
+    "recommendation": "sem renda declarada, sem estimativa e sem vinculo vigente",
     "model_version": "v3"
   },
   {
@@ -231,10 +231,10 @@
     "person_id": 17,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 663,
-    "risk_level": "medium",
+    "risk_score": 0,
+    "risk_level": "high",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "PJ com sazonalidade forte",
+    "recommendation": "biro sem score calculado",
     "model_version": "v3"
   },
   {
@@ -245,10 +245,10 @@
     "person_id": 18,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 531,
+    "risk_score": 604,
     "risk_level": "medium",
-    "risk_factors": "[\"high_utilization\", \"high_debt_to_income\", \"multiple_recent_inquiries\"]",
-    "recommendation": "vinculo nao confirmado no eSocial e nascimento divergente da Receita",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "sem comprometimento informado e sem parcelas mensais para calcular",
     "model_version": "v3"
   },
   {
@@ -259,10 +259,10 @@
     "person_id": 19,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 695,
-    "risk_level": "medium",
+    "risk_score": 700,
+    "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "processo civil em andamento, sem penhora",
+    "recommendation": "tres criterios exatamente no limite superior da faixa",
     "model_version": "v3"
   },
   {
@@ -273,10 +273,10 @@
     "person_id": 20,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 576,
+    "risk_score": 699,
     "risk_level": "medium",
-    "risk_factors": "[\"high_debt_to_income\"]",
-    "recommendation": "sem e-mail e sem renda estimada no biro",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "os mesmos criterios um passo abaixo do limite",
     "model_version": "v3"
   },
   {
@@ -287,10 +287,10 @@
     "person_id": 21,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 342,
-    "risk_level": "high",
-    "risk_factors": "[\"settled_delinquency\"]",
-    "recommendation": "inadimplencia de 2022 quitada; fluxo atual positivo no open finance",
+    "risk_score": 662,
+    "risk_level": "medium",
+    "risk_factors": "[\"active_delinquency\"]",
+    "recommendation": "negativacao ativa e contestada pelo cliente",
     "model_version": "v3"
   },
   {
@@ -301,10 +301,10 @@
     "person_id": 22,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 388,
-    "risk_level": "high",
-    "risk_factors": "[\"settled_delinquency\"]",
-    "recommendation": "recuperacao judicial ativa da empresa do titular: regra eliminatoria",
+    "risk_score": 788,
+    "risk_level": "low",
+    "risk_factors": "[\"high_utilization\", \"high_debt_to_income\", \"multiple_recent_inquiries\"]",
+    "recommendation": "as mesmas dividas, agora acima do teto",
     "model_version": "v3"
   },
   {
@@ -315,10 +315,10 @@
     "person_id": 23,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 296,
-    "risk_level": "high",
-    "risk_factors": "[\"settled_delinquency\"]",
-    "recommendation": "score abaixo de 300: reprovacao por regra eliminatoria",
+    "risk_score": 650,
+    "risk_level": "medium",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "CPF ausente no cadastro, aciona M3",
     "model_version": "v3"
   },
   {
@@ -329,10 +329,10 @@
     "person_id": 24,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 412,
-    "risk_level": "high",
-    "risk_factors": "[\"active_delinquency\"]",
-    "recommendation": "negativacao ativa e contestada ao mesmo tempo: falha a pre-condicao",
+    "risk_score": 600,
+    "risk_level": "medium",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "fraude em apuracao e CPF pendente simultaneos, vence a de menor numero",
     "model_version": "v3"
   },
   {
@@ -343,10 +343,10 @@
     "person_id": 25,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 357,
-    "risk_level": "high",
-    "risk_factors": "[\"settled_delinquency\"]",
-    "recommendation": "sem renda determinavel: sem declaracao, sem estimativa e sem vinculo vigente",
+    "risk_score": 560,
+    "risk_level": "medium",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "dois scores de biro com datas diferentes; vale o mais recente",
     "model_version": "v3"
   },
   {
@@ -357,10 +357,10 @@
     "person_id": 26,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 806,
-    "risk_level": "low",
-    "risk_factors": "[\"high_utilization\", \"high_debt_to_income\", \"multiple_recent_inquiries\"]",
-    "recommendation": "score alto, mas dividas em cobranca acima de dez vezes a renda",
+    "risk_score": 680,
+    "risk_level": "medium",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "documento antigo cancelado, validacao mais recente regular nao reprova",
     "model_version": "v3"
   },
   {
@@ -371,10 +371,10 @@
     "person_id": 27,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 772,
-    "risk_level": "low",
-    "risk_factors": "[\"active_delinquency\", \"multiple_recent_inquiries\"]",
-    "recommendation": "score alto, tres negativacoes ativas e aumento subito de despesas",
+    "risk_score": 590,
+    "risk_level": "medium",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "duas analises de fluxo de caixa em datas distintas; vale a mais recente",
     "model_version": "v3"
   },
   {
@@ -385,10 +385,10 @@
     "person_id": 28,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 758,
+    "risk_score": 760,
     "risk_level": "low",
-    "risk_factors": "[\"multiple_recent_inquiries\"]",
-    "recommendation": "alerta de fraude grave ativo, com divergencia de nome: reprovacao",
+    "risk_factors": "[\"clean_history\", \"stable_income\"]",
+    "recommendation": "tres pre-aprovacoes ativas do mesmo tipo; vale a de maior valor como piso",
     "model_version": "v3"
   },
   {
@@ -399,10 +399,10 @@
     "person_id": 29,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 791,
-    "risk_level": "low",
+    "risk_score": 560,
+    "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "PEP com contrato publico e alerta em apuracao: encaminhamento manual",
+    "recommendation": "trabalhador informal vivendo de Pix; C2 cai no fallback parcelas / renda",
     "model_version": "v3"
   },
   {
@@ -413,10 +413,10 @@
     "person_id": 30,
     "assessment_date": "2026-08-20T00:00:00Z",
     "assessment_type": "credit",
-    "risk_score": 0,
-    "risk_level": "high",
-    "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "biro sem score calculado: falha a pre-condicao de dados minimos",
+    "risk_score": 660,
+    "risk_level": "medium",
+    "risk_factors": "[\"settled_delinquency\", \"high_debt_to_income\"]",
+    "recommendation": "superendividamento regularizado: negativacoes quitadas e dividas renegociadas fora de cobranca (Lei 14.181/2021)",
     "model_version": "v3"
   }
 ]

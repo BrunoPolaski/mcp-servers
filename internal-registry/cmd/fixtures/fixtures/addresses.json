@@ -56,30 +56,6 @@
     "state": "PE",
     "city": "Recife",
     "neighborhood": "Boa Vista",
-    "street": "Rua dos Ipes",
-    "number": "146",
-    "complement": null,
-    "reference_point": null,
-    "address_type": "residential",
-    "latitude": null,
-    "longitude": null,
-    "validated_by_post": true,
-    "risk_score": 31,
-    "is_current": false,
-    "is_correspondence": false,
-    "moved_in_date": "2018-03-03T00:00:00Z",
-    "moved_out_date": "2021-03-03T00:00:00Z",
-    "verification_status": "disputed"
-  },
-  {
-    "id": 4,
-    "created_at": "2026-08-31T00:00:00Z",
-    "updated_at": "2026-08-31T00:00:00Z",
-    "deleted_at": null,
-    "zip_code": "10111-009",
-    "state": "PE",
-    "city": "Recife",
-    "neighborhood": "Boa Vista",
     "street": "Rua Sete de Setembro",
     "number": "139",
     "complement": null,
@@ -96,7 +72,7 @@
     "verification_status": "disputed"
   },
   {
-    "id": 5,
+    "id": 4,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -120,7 +96,7 @@
     "verification_status": "verified"
   },
   {
-    "id": 6,
+    "id": 5,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -144,7 +120,7 @@
     "verification_status": "unverified"
   },
   {
-    "id": 7,
+    "id": 6,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -166,6 +142,30 @@
     "moved_in_date": "2024-06-06T00:00:00Z",
     "moved_out_date": null,
     "verification_status": "disputed"
+  },
+  {
+    "id": 7,
+    "created_at": "2026-08-31T00:00:00Z",
+    "updated_at": "2026-08-31T00:00:00Z",
+    "deleted_at": null,
+    "zip_code": "10259-021",
+    "state": "CE",
+    "city": "Fortaleza",
+    "neighborhood": "Boa Vista",
+    "street": "Avenida Central",
+    "number": "198",
+    "complement": "Apto 16",
+    "reference_point": null,
+    "address_type": "residential",
+    "latitude": null,
+    "longitude": null,
+    "validated_by_post": true,
+    "risk_score": 59,
+    "is_current": false,
+    "is_correspondence": false,
+    "moved_in_date": "2016-07-07T00:00:00Z",
+    "moved_out_date": "2019-07-07T00:00:00Z",
+    "verification_status": "verified"
   },
   {
     "id": 8,
@@ -560,30 +560,6 @@
     "state": "CE",
     "city": "Fortaleza",
     "neighborhood": "Boa Vista",
-    "street": "Avenida Central",
-    "number": "406",
-    "complement": null,
-    "reference_point": null,
-    "address_type": "residential",
-    "latitude": null,
-    "longitude": null,
-    "validated_by_post": true,
-    "risk_score": 11,
-    "is_current": false,
-    "is_correspondence": false,
-    "moved_in_date": "2020-11-23T00:00:00Z",
-    "moved_out_date": "2023-11-23T00:00:00Z",
-    "verification_status": "unverified"
-  },
-  {
-    "id": 25,
-    "created_at": "2026-08-31T00:00:00Z",
-    "updated_at": "2026-08-31T00:00:00Z",
-    "deleted_at": null,
-    "zip_code": "10851-069",
-    "state": "CE",
-    "city": "Fortaleza",
-    "neighborhood": "Boa Vista",
     "street": "Rua Marechal Deodoro",
     "number": "399",
     "complement": null,
@@ -600,7 +576,7 @@
     "verification_status": "unverified"
   },
   {
-    "id": 26,
+    "id": 25,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -624,7 +600,7 @@
     "verification_status": "disputed"
   },
   {
-    "id": 27,
+    "id": 26,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -648,7 +624,7 @@
     "verification_status": "verified"
   },
   {
-    "id": 28,
+    "id": 27,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -672,7 +648,7 @@
     "verification_status": "unverified"
   },
   {
-    "id": 29,
+    "id": 28,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -696,7 +672,7 @@
     "verification_status": "disputed"
   },
   {
-    "id": 30,
+    "id": 29,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -720,7 +696,7 @@
     "verification_status": "verified"
   },
   {
-    "id": 31,
+    "id": 30,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
@@ -744,7 +720,7 @@
     "verification_status": "unverified"
   },
   {
-    "id": 32,
+    "id": 31,
     "created_at": "2026-08-31T00:00:00Z",
     "updated_at": "2026-08-31T00:00:00Z",
     "deleted_at": null,
