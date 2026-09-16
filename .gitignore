@@ -132,3 +132,8 @@ crash.log
 # MCP / local runtime
 # =========================
 storage/
+# =========================
+# Python (geradores de fixtures)
+# =========================
+__pycache__/
+*.pyc
