@@ -560,7 +560,7 @@
     "gender": null,
     "nationality": null,
     "marital_status": null,
-    "document": null,
+    "document": "",
     "rg": null,
     "rg_issuer": null,
     "rg_issue_date": null,
