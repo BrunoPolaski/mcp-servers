@@ -13,23 +13,22 @@ markdown, as tres dimensoes que a metodologia deriva dos logs:
   - eficiencia operacional: tempo total, numero de chamadas e latencia media por
     analise, alem das medias gerais.
 
-A quarta dimensao, aderencia a politica, nao vem dos logs - vem da decisao que o
-agente produziu, que so existe na transcricao do Claude Web. Passe um arquivo de
-decisoes (--decisions) mapeando cada cenario a decisao/regra/pontuacao que o
-agente emitiu, e o script compara com o gabarito determinístico.
+The fourth dimension, policy adherence, comes from the structured block the
+agent emits at the end of each analysis (policy §8, item 6). run_evaluation.py
+collects those blocks, with each session's time window and host-side stats, in
+resultados.jsonl; pass it with --results and the JSON answer key with
+--gabarito.
 
 Uso:
-    # coleta ao vivo: junte o stdout dos quatro servidores num arquivo e passe
-    python3 analyze_metrics.py logs/*.jsonl --gabarito docs/gabarito_cenarios.md
-    # com aderencia:
-    python3 analyze_metrics.py logs/*.jsonl --gabarito docs/gabarito_cenarios.md \
-            --decisions decisoes_do_agente.json
-    # ou por stdin
-    cat logs.jsonl | python3 analyze_metrics.py --gabarito docs/gabarito_cenarios.md
+    python3 analyze_metrics.py logs/*.jsonl --gabarito docs/gabarito_cenarios.json \
+            --results runs/2026-09-27/resultados.jsonl
+    # so os logs, sem aderencia (agrupa por cliente, ver abaixo)
+    cat logs.jsonl | python3 analyze_metrics.py
 
-Uma analise e o conjunto de chamadas que consultam o mesmo cliente - agrupadas
-pelo `id` ou `document` passado a ferramenta. Chamadas de listagem, sem cliente,
-entram como custo geral e nao contam para "fontes por analise".
+With --results, an analysis is the set of log records inside one agent session
+window, and records outside every window are dropped. Without it, an analysis
+is the set of calls about the same client, grouped by the `id` or `document`
+passed to the tool; listing calls, with no client, count as general cost.
 
 Autoverificacao (nao precisa dos servidores):
     python3 analyze_metrics.py --selftest
@@ -38,9 +37,9 @@ Autoverificacao (nao precisa dos servidores):
 import argparse
 import glob
 import json
-import re
 import statistics
 import sys
+from datetime import datetime
 
 TRACE_MESSAGE = "mcp tool call"
 EXPECTED_SOURCES = ("bureau", "open-finance", "internal-registry", "registration-validation")
@@ -80,6 +79,7 @@ def parse_log_lines(lines, since=None, until=None):
             "duration_ms": obj.get("duration_ms"),
             "sucesso": obj.get("level") != "error",
             "cliente": client_key(obj.get("arguments")),
+            "time": t,
         })
     return registros
 
@@ -97,6 +97,27 @@ def client_key(arguments):
     if arguments.get("id") not in (None, ""):
         return f"id:{arguments['id']}"
     return None
+
+
+def assign_sessions(registros, resultados):
+    """Attributes each log record to the agent session whose window contains it.
+
+    Sessions run one at a time, so windows never overlap. This is sturdier than
+    client_key: an agent that looks a client up by id in one server and by CPF
+    in another still yields one analysis. Records outside every window (a pilot
+    run, a manual check) are dropped.
+    """
+    windows = [(datetime.fromisoformat(r["inicio"]), datetime.fromisoformat(r["fim"]), r["cenario"])
+               for r in resultados]
+    kept = []
+    for r in registros:
+        if not r["time"]:
+            continue
+        t = datetime.fromisoformat(r["time"])
+        cenario = next((n for start, end, n in windows if start <= t <= end), None)
+        if cenario is not None:
+            kept.append({**r, "cliente": f"cenario:{cenario}"})
+    return kept
 
 
 def aggregate(registros):
@@ -143,6 +164,8 @@ def aggregate(registros):
         "media_fontes_por_analise": _media(fontes_por_analise),
         "pct_com_quatro_fontes": (com_quatro / len(analises)) if analises else None,
         "media_chamadas_por_analise": _media(chamadas_por_analise),
+        "min_chamadas_por_analise": min(chamadas_por_analise, default=None),
+        "max_chamadas_por_analise": max(chamadas_por_analise, default=None),
         "media_duracao_por_analise_ms": _media(duracao_por_analise),
         "latencia_media_ms": _media(latencias),
     }
@@ -152,37 +175,44 @@ def _media(xs):
     return statistics.mean(xs) if xs else None
 
 
-# --------------------------------------------------------------------------- gabarito e aderencia
-def parse_gabarito(texto):
-    """Le a tabela 'Por cenario' do gabarito em markdown.
+# --------------------------------------------------------------------------- host
+def host_stats(resultados):
+    """End-to-end cost of each analysis as the host saw it: time, turns, tokens."""
+    duracoes = [r["duracao_ms"] / 1000 for r in resultados if r.get("duracao_ms")]
+    turnos = [r["turnos"] for r in resultados if r.get("turnos")]
+    usos = [r["uso"] for r in resultados if r.get("uso")]
+    entrada = [u["inputTokens"] + u["cacheCreationInputTokens"] + u["cacheReadInputTokens"] for u in usos]
+    return {
+        "sessoes": len(resultados),
+        "erros": sum(1 for r in resultados if r.get("erro")),
+        "modelos": sorted({m for r in resultados for m in r.get("modelos") or []}),
+        "tempo_total_s": sum(duracoes),
+        "tempo_medio_s": _media(duracoes),
+        "tempo_mediano_s": statistics.median(duracoes) if duracoes else None,
+        "tempo_min_s": min(duracoes, default=None),
+        "tempo_max_s": max(duracoes, default=None),
+        "turnos_medio": _media(turnos),
+        "tokens_entrada_medio": _media(entrada),
+        "tokens_saida_medio": _media([u["outputTokens"] for u in usos]),
+    }
 
-    Colunas: # | Faixa | O que exercita | Decisao | Pontos | Regra | Limite | ...
+
+# --------------------------------------------------------------------------- aderencia
+def compare_adherence(gabarito, blocos):
+    """Confronta os blocos estruturados do agente com o gabarito, cenario a cenario.
+
+    gabarito and blocos are keyed by scenario number as a string. Criteria and
+    the missing-data list are only compared where the answer key has a score:
+    a case closed by M/K has neither.
     """
-    esperado = {}
-    for linha in texto.splitlines():
-        m = re.match(r"\|\s*(\d+)\s*\|", linha)
-        if not m:
-            continue
-        cols = [c.strip() for c in linha.strip().strip("|").split("|")]
-        if len(cols) < 7:
-            continue
-        cenario = int(cols[0])
-        esperado[cenario] = {
-            "decisao": cols[3].strip("`"),
-            "pontuacao": None if cols[4] == "-" else int(cols[4]),
-            "regra": None if cols[5] == "-" else cols[5],
-        }
-    return esperado
-
-
-def compare_adherence(gabarito, decisoes):
-    """Confronta as decisoes do agente com o gabarito, cenario a cenario."""
     linhas, ok_decisao, ok_regra, ok_pontos, n_pontos = [], 0, 0, 0, 0
-    for cenario in sorted(gabarito):
+    crit_ok, crit_n, crit_div = 0, 0, {}
+    aus_ok, aus_n = 0, 0
+    for cenario in sorted(gabarito, key=int):
         esp = gabarito[cenario]
-        obt = decisoes.get(str(cenario)) or decisoes.get(cenario)
+        obt = blocos.get(cenario)
         if obt is None:
-            linhas.append((cenario, esp, None, "sem resposta"))
+            linhas.append((cenario, esp, None, "sem bloco"))
             continue
         d_ok = obt.get("decisao") == esp["decisao"]
         r_ok = (obt.get("regra") or None) == esp["regra"]
@@ -190,16 +220,28 @@ def compare_adherence(gabarito, decisoes):
         ok_regra += r_ok
         if esp["pontuacao"] is not None:
             n_pontos += 1
-            ok_pontos += 1 if obt.get("pontuacao") == esp["pontuacao"] else 0
+            ok_pontos += obt.get("pontuacao") == esp["pontuacao"]
+            obtidos = obt.get("criterios") or {}
+            for criterio, pontos in esp["criterios"].items():
+                crit_n += 1
+                if obtidos.get(criterio) == pontos:
+                    crit_ok += 1
+                else:
+                    crit_div.setdefault(criterio, []).append((cenario, pontos, obtidos.get(criterio)))
+            aus_n += 1
+            aus_ok += sorted(obt.get("criterios_sem_dado") or []) == sorted(esp["criterios_sem_dado"])
         linhas.append((cenario, esp, obt, "ok" if d_ok and r_ok else "divergente"))
     n = len(gabarito)
-    respondidos = sum(1 for _, _, o, _ in linhas if o is not None)
     return {
         "n": n,
-        "respondidos": respondidos,
+        "respondidos": sum(1 for _, _, o, _ in linhas if o is not None),
         "conformidade_decisao": ok_decisao / n if n else None,
         "conformidade_regra": ok_regra / n if n else None,
         "exatidao_pontuacao": (ok_pontos / n_pontos) if n_pontos else None,
+        "n_pontuados": n_pontos,
+        "exatidao_criterios": (crit_ok / crit_n) if crit_n else None,
+        "divergencias_por_criterio": crit_div,
+        "registro_ausentes": (aus_ok / aus_n) if aus_n else None,
         "linhas": linhas,
     }
 
@@ -213,7 +255,11 @@ def _num(x, casas=1):
     return "-" if x is None else f"{x:.{casas}f}"
 
 
-def render(ag, aderencia=None):
+def _criterio_key(c):
+    return int(c[1:])
+
+
+def render(ag, aderencia=None, host=None):
     L = ["# Metricas de avaliacao", ""]
 
     L += ["## Viabilidade tecnica", "",
@@ -238,32 +284,57 @@ def render(ag, aderencia=None):
           f"- Chamadas de listagem (sem cliente): {ag['listagens']}",
           "",
           "> Lacunas informacionais nao preenchidas nao vem dos logs: sao o bloco "
-          "de dados ausentes que o agente reporta na saida (§9 da politica)."]
+          "de dados ausentes que o agente reporta na saida (§8 da politica)."]
 
     L += ["", "## Eficiencia operacional", "",
-          f"- Chamadas por analise (media): **{_num(ag['media_chamadas_por_analise'], 2)}**",
-          f"- Tempo por analise (media): **{_num(ag['media_duracao_por_analise_ms'], 0)} ms**",
-          f"- Latencia media por chamada: **{_num(ag['latencia_media_ms'], 1)} ms**",
-          "",
-          "> O tempo por analise cobre so a execucao das ferramentas nos servidores; "
-          "o tempo de raciocinio do agente esta na transcricao do host, nao aqui."]
+          f"- Chamadas por analise (media): **{_num(ag['media_chamadas_por_analise'], 2)}** "
+          f"(min {ag['min_chamadas_por_analise']}, max {ag['max_chamadas_por_analise']})",
+          f"- Tempo de ferramenta por analise (media): **{_num(ag['media_duracao_por_analise_ms'], 0)} ms**",
+          f"- Latencia media por chamada: **{_num(ag['latencia_media_ms'], 1)} ms**"]
+    if host:
+        L += [f"- Tempo total de analise, ponta a ponta (media): **{_num(host['tempo_medio_s'], 1)} s** "
+              f"(mediana {_num(host['tempo_mediano_s'], 1)} s, min {_num(host['tempo_min_s'], 1)} s, "
+              f"max {_num(host['tempo_max_s'], 1)} s; soma {_num(host['tempo_total_s'] / 60, 1)} min)",
+              f"- Turnos do agente por analise (media): **{_num(host['turnos_medio'], 1)}**",
+              f"- Tokens por analise (media): **{_num(host['tokens_entrada_medio'], 0)}** de entrada, "
+              f"**{_num(host['tokens_saida_medio'], 0)}** de saida",
+              f"- Sessoes: {host['sessoes']}, com erro: {host['erros']}; modelos no host: {', '.join(host['modelos']) or '-'}",
+              "",
+              "> O tempo ponta a ponta e o da sessao do agente no host (raciocinio, "
+              "chamadas e resposta); o tempo de ferramenta e so a execucao nos servidores."]
+    else:
+        L += ["", "> O tempo por analise cobre so a execucao das ferramentas nos servidores; "
+              "o tempo de raciocinio do agente esta no host, nao aqui."]
 
     L += ["", "## Aderencia a politica", ""]
     if aderencia is None:
-        L += ["> Sem arquivo de decisoes. Passe --decisions com a decisao, a regra e "
-              "a pontuacao que o agente emitiu por cenario para apurar esta dimensao."]
+        L += ["> Sem resultados. Passe --results (resultados.jsonl de run_evaluation.py) "
+              "e --gabarito (docs/gabarito_cenarios.json) para apurar esta dimensao."]
     else:
         a = aderencia
-        L += [f"- Cenarios respondidos: **{a['respondidos']}/{a['n']}**",
+        L += [f"- Cenarios com bloco estruturado: **{a['respondidos']}/{a['n']}**",
               f"- Conformidade da decisao: **{_pct(a['conformidade_decisao'])}**",
               f"- Concordancia na regra de encerramento: **{_pct(a['conformidade_regra'])}**",
-              f"- Exatidao da pontuacao (onde aplicavel): **{_pct(a['exatidao_pontuacao'])}**",
-              "", "| # | Esperado | Obtido | Situacao |", "|---|---|---|---|"]
+              f"- Exatidao da pontuacao total ({a['n_pontuados']} casos pontuados): "
+              f"**{_pct(a['exatidao_pontuacao'])}**",
+              f"- Exatidao por criterio (casos pontuados x 15 criterios): **{_pct(a['exatidao_criterios'])}**",
+              f"- Registro de dados ausentes identico ao gabarito (casos pontuados): "
+              f"**{_pct(a['registro_ausentes'])}**",
+              "", "| # | Esperado | Obtido | Pontos esp. | Pontos obt. | Situacao |", "|---|---|---|---|---|---|"]
         for cenario, esp, obt, sit in a["linhas"]:
             e = f"{esp['decisao']}" + (f" / {esp['regra']}" if esp["regra"] else "")
             o = "-" if obt is None else (obt.get("decisao", "?")
                                          + (f" / {obt['regra']}" if obt.get("regra") else ""))
-            L.append(f"| {cenario} | {e} | {o} | {sit} |")
+            pe = "-" if esp["pontuacao"] is None else esp["pontuacao"]
+            po = "-" if obt is None or obt.get("pontuacao") is None else obt["pontuacao"]
+            L.append(f"| {cenario} | {e} | {o} | {pe} | {po} | {sit} |")
+        if a["divergencias_por_criterio"]:
+            L += ["", "### Divergencias por criterio", "",
+                  "| Criterio | Casos | Cenario: esperado -> obtido |", "|---|---|---|"]
+            for criterio in sorted(a["divergencias_por_criterio"], key=_criterio_key):
+                casos = a["divergencias_por_criterio"][criterio]
+                L.append(f"| {criterio} | {len(casos)} | "
+                         + ", ".join(f"{c}: {e} -> {o}" for c, e, o in casos) + " |")
     L.append("")
     return "\n".join(L)
 
@@ -283,8 +354,8 @@ def load_logs(paths, since=None, until=None):
 def main(argv=None):
     p = argparse.ArgumentParser(description="Consolida metricas dos logs dos servidores MCP.")
     p.add_argument("logs", nargs="*", help="arquivos de log (glob); vazio le do stdin")
-    p.add_argument("--gabarito", help="docs/gabarito_cenarios.md, para aderencia")
-    p.add_argument("--decisions", help="JSON: cenario -> {decisao, regra, pontuacao} do agente")
+    p.add_argument("--gabarito", help="docs/gabarito_cenarios.json, para aderencia")
+    p.add_argument("--results", help="resultados.jsonl de run_evaluation.py: blocos, janelas e custo no host")
     p.add_argument("--since", help="descarta registros com time (ISO8601) anterior a este")
     p.add_argument("--until", help="descarta registros com time (ISO8601) posterior a este")
     p.add_argument("--selftest", action="store_true", help="roda a autoverificacao e sai")
@@ -293,13 +364,19 @@ def main(argv=None):
     if args.selftest:
         return selftest()
 
-    ag = aggregate(load_logs(args.logs, args.since, args.until))
-    aderencia = None
-    if args.gabarito and args.decisions:
-        gabarito = parse_gabarito(open(args.gabarito, encoding="utf-8").read())
-        decisoes = json.load(open(args.decisions, encoding="utf-8"))
-        aderencia = compare_adherence(gabarito, decisoes)
-    print(render(ag, aderencia))
+    registros = load_logs(args.logs, args.since, args.until)
+    aderencia = host = None
+    if args.results:
+        with open(args.results, encoding="utf-8") as fh:
+            resultados = [json.loads(linha) for linha in fh if linha.strip()]
+        registros = assign_sessions(registros, resultados)
+        host = host_stats(resultados)
+        if args.gabarito:
+            with open(args.gabarito, encoding="utf-8") as fh:
+                gabarito = json.load(fh)
+            blocos = {str(r["cenario"]): r["bloco"] for r in resultados if r.get("bloco")}
+            aderencia = compare_adherence(gabarito, blocos)
+    print(render(aggregate(registros), aderencia, host))
     return 0
 
 
@@ -332,8 +409,6 @@ def selftest():
     janela = aggregate(parse_log_lines(logs_datados, since="2026-09-16T00:00:00Z"))
     assert janela["total_chamadas"] == 1, janela["total_chamadas"]
     assert janela["latencia_media_ms"] == 30.0, janela["latencia_media_ms"]
-    ag = aggregate(parse_log_lines(logs))
-    assert ag["sucessos"] == 6, ag["sucessos"]
     assert abs(ag["taxa_sucesso"] - 6 / 7) < 1e-9
     assert ag["n_analises"] == 2, ag["n_analises"]
     assert ag["listagens"] == 1, ag["listagens"]
@@ -343,24 +418,46 @@ def selftest():
     assert ag["media_duracao_por_analise_ms"] == 105.0      # (140 + 70) / 2
     assert ag["falhas_por_tool"] == {"get_bank_statements": 1}
 
-    gabarito = parse_gabarito(
-        "| # | Faixa | O que | Decisao | Pontos | Regra | Limite | X |\n"
-        "|---|---|---|---|---|---|---|---|\n"
-        "| 1 | bom | x | `APROVADO` | 100 | - | R$ 40.000 | - |\n"
-        "| 2 | ruim | y | `REPROVADO` | - | K1 | - | - |\n")
-    assert gabarito[1]["decisao"] == "APROVADO" and gabarito[1]["pontuacao"] == 100
-    assert gabarito[2]["regra"] == "K1" and gabarito[2]["pontuacao"] is None
+    # session windows: a CPF lookup and an id lookup in the same session are one
+    # analysis; the record outside every window (a pilot) is dropped
+    sessao = parse_log_lines([
+        '{"level":"info","message":"mcp tool call","time":"2026-09-27T10:00:05.000-0300","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":23}}',
+        '{"level":"info","message":"mcp tool call","time":"2026-09-27T10:00:09.000-0300","source":"open-finance","tool":"get_customer_by_document","duration_ms":5,"arguments":{"document":"123"}}',
+        '{"level":"info","message":"mcp tool call","time":"2026-09-27T09:00:00.000-0300","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":1}}',
+    ])
+    resultados = [{"cenario": 23, "inicio": "2026-09-27T10:00:00-03:00", "fim": "2026-09-27T10:01:00-03:00",
+                   "duracao_ms": 60000, "turnos": 8, "erro": False, "modelos": ["claude-opus-5-5"],
+                   "uso": {"inputTokens": 10, "cacheCreationInputTokens": 100,
+                           "cacheReadInputTokens": 1000, "outputTokens": 50}}]
+    por_sessao = aggregate(assign_sessions(sessao, resultados))
+    assert por_sessao["n_analises"] == 1 and por_sessao["total_chamadas"] == 2, por_sessao
+    assert por_sessao["media_fontes_por_analise"] == 2
+    h = host_stats(resultados)
+    assert h["tempo_medio_s"] == 60.0 and h["tokens_entrada_medio"] == 1110 and h["erros"] == 0
 
-    decisoes = {"1": {"decisao": "APROVADO", "regra": None, "pontuacao": 100},
-                "2": {"decisao": "ANALISE_MANUAL", "regra": "K2", "pontuacao": None}}
-    ad = compare_adherence(gabarito, decisoes)
+    todos = {f"C{i}": 1 for i in range(1, 16)}
+    gabarito = {
+        "1": {"decisao": "APROVADO", "regra": None, "pontuacao": 15, "criterios": todos,
+              "criterios_sem_dado": ["C5"]},
+        "2": {"decisao": "REPROVADO", "regra": "K1", "pontuacao": None, "criterios": {},
+              "criterios_sem_dado": []},
+    }
+    blocos = {"1": {"decisao": "APROVADO", "regra": None, "pontuacao": 14,
+                    "criterios": {**todos, "C3": 0}, "criterios_sem_dado": ["C5"]},
+              "2": {"decisao": "ANALISE_MANUAL", "regra": "K2", "pontuacao": None, "criterios": {}}}
+    ad = compare_adherence(gabarito, blocos)
     assert ad["conformidade_decisao"] == 0.5               # 1 certo de 2
     assert ad["conformidade_regra"] == 0.5                 # cenario 1: None==None
-    assert ad["exatidao_pontuacao"] == 1.0                 # so o cenario 1 tem pontos, e bate
+    assert ad["exatidao_pontuacao"] == 0.0                 # so o cenario 1 tem pontos, e erra por 1
+    assert ad["exatidao_criterios"] == 14 / 15
+    assert ad["divergencias_por_criterio"] == {"C3": [("1", 1, 0)]}
+    assert ad["registro_ausentes"] == 1.0
+    assert compare_adherence(gabarito, {})["respondidos"] == 0
 
-    # render nao pode estourar em nenhum dos dois modos
+    # render nao pode estourar em nenhum dos modos
     assert "Viabilidade tecnica" in render(ag, None)
-    assert "Conformidade da decisao" in render(ag, ad)
+    texto = render(ag, ad, h)
+    assert "Conformidade da decisao" in texto and "| C3 | 1 |" in texto and "ponta a ponta" in texto
     print("selftest ok")
     return 0
 

@@ -56,9 +56,9 @@ RUAS = ["Rua das Acacias", "Avenida Central", "Rua Sete de Setembro", "Rua Sao J
 #   utilizacao   utilizacao do limite rotativo (fracao de 0 a 1)
 #   pontual      proporcao de parcelas pagas em dia no biro, ultimos 12 meses
 #   negativacoes (valor, status, contestada) - status: active | paid | None
-#                (None = situacao nula, tratada como ativa - §8)
+#                (None = situacao nula, tratada como ativa - §7)
 #   dividas      (valor, em_cobranca) - em_cobranca: True | False | None
-#                (None = situacao nula, tratada como nao quitada - §8)
+#                (None = situacao nula, tratada como nao quitada - §7)
 #   processos    tipos de acao judicial
 #   fraude       (severidade, status) ou None; severidade pode ser None
 #                (severidade nula = tratar por K2, nunca presumir gravidade)
@@ -72,8 +72,8 @@ RUAS = ["Rua das Acacias", "Avenida Central", "Rua Sete de Setembro", "Rua Sao J
 #                (usa-se sempre a de data mais recente, C7/C8/C9/K8)
 #   banco        (meses de relacionamento, segmento, limite pre-aprovado);
 #                limite pre-aprovado pode ser um valor ou uma lista de valores
-#                (varias linhas em pre_approved_limits; usa-se a de maior valor
-#                aprovado ativo, §7)
+#                (varias linhas em pre_approved_limits; dado de contexto, a
+#                politica nao o pontua)
 #   receita      (situacao do CPF, CND, PEP, sancoes)
 #                situacao: regular | pending | suspended | canceled | deceased
 #                CND:      regular | irregular | suspended
@@ -284,7 +284,7 @@ CENARIOS = {
                 consultas=3, vinculo=("Comercio ABC", CLT, "2020-04-01", 5000, True),
                 banco=(35, "varejo", 5000), interno=(0.88, 0)),
     28: cenario("complexo", 760, 6000, 0.25, 0.20, 0.95,
-                "tres pre-aprovacoes ativas do mesmo tipo; vale a de maior valor como piso",
+                "tres pre-aprovacoes ativas: dado de contexto, nao altera a pontuacao",
                 consultas=2, vinculo=("Comercio ABC", CLT, "2018-01-01", 6000, True),
                 fluxo=(6100, 4800, 0.08, 0, True), banco=(70, "varejo", [5000, 12000, 35000]),
                 interno=(0.95, 0)),
@@ -419,6 +419,16 @@ def _fluxo_atual(fluxo):
     _, entrada, saida, volatilidade, dias_negativo, recorrente = max(
         _fluxo_lista(fluxo), key=lambda f: f[0])
     return entrada, saida, volatilidade, dias_negativo, recorrente
+
+
+def _atrasos_biro(c):
+    """Late payments among the 12 the bureau history holds."""
+    return round((1 - c["pontual"]) * 12)
+
+
+def _fora_do_prazo(pontual_interno):
+    """Late installments among the 12 internal ones."""
+    return 12 - round(pontual_interno * 12)
 
 
 def renda_considerada(c):
@@ -599,7 +609,7 @@ def biro():
             score_id = add("credit_scores", {
                 "person_id": person_id, "score": score_valor, "score_date": dia(score_data),
                 "score_model": "serasa_v3",
-                "score_reason": c["nota"],
+                "score_reason": "historico de pagamento, uso de credito, idade do credito e consultas",
                 "payment_history": int(c["pontual"] * 40), "credit_usage": int((1 - c["utilizacao"]) * 25),
                 "credit_age": 10 + person_id % 15, "credit_mix": 8 + person_id % 10,
                 "recent_inquiries": max(0, 15 - c["consultas"] * 2),
@@ -658,8 +668,8 @@ def biro():
             "monthly_payment": round(limite * c["utilizacao"] * 0.15, 2),
             "payment_due_day": 1 + person_id % 27, "number_of_payments": None,
             "remaining_payments": None,
-            "payment_status": "current" if c["pontual"] >= 0.95 else "late" if c["pontual"] < 0.8 else "current",
-            "days_late": 0 if c["pontual"] >= 0.9 else 15,
+            "payment_status": "late" if c["pontual"] < 0.8 else "current",
+            "days_late": 15 if c["pontual"] < 0.8 else 0,
             "highest_days_late": int((1 - c["pontual"]) * 90),
             "times_late_30_days": int((1 - c["pontual"]) * 8),
             "times_late_60_days": int((1 - c["pontual"]) * 3),
@@ -668,7 +678,7 @@ def biro():
         })
 
         # doze meses de historico, com os atrasos distribuidos conforme a pontualidade
-        atrasos = round((1 - c["pontual"]) * 12)
+        atrasos = _atrasos_biro(c)
         for mes in range(0 if "historico_pagamento" in c["falta"] else 12):
             vencimento = HOJE - timedelta(days=30 * (12 - mes))
             atrasado = mes < atrasos
@@ -683,7 +693,7 @@ def biro():
             })
 
         for valor, em_cobranca in c["dividas"]:
-            # situacao nula (§8): a divida esta observavelmente em cobranca (por
+            # situacao nula (§7): a divida esta observavelmente em cobranca (por
             # isso in_collection fica true), mas nao da para saber se foi
             # quitada - so o status (que e o campo de situacao) fica nulo.
             # in_collection e nao-ponteiro no Go (bureau/entities/debt.go),
@@ -762,7 +772,7 @@ def biro():
             "assessment_type": "credit", "risk_score": score_atual or 0,
             "risk_level": "low" if (score_atual or 0) >= 700 else "medium" if (score_atual or 0) >= 500 else "high",
             "risk_factors": json.dumps(fatores, ensure_ascii=False),
-            "recommendation": c["nota"], "model_version": "v3",
+            "recommendation": "ver fatores de risco", "model_version": "v3",
         })
 
     # metadados das fontes consultadas: liga cada pessoa a duas fontes existentes
@@ -963,7 +973,7 @@ def cadastro_interno():
         # decide quantas parcelas sairam do prazo e com que gravidade
         pontual_interno, atraso = c["interno"] if c["interno"] else (c["pontual"], 0)
         if pontual_interno != "vazio":
-            fora_do_prazo = 12 - round(pontual_interno * 12)
+            fora_do_prazo = _fora_do_prazo(pontual_interno)
             # ate 30 dias e atraso; acima disso a instituicao trata como perda
             situacao = "missed" if atraso > 30 else "late"
             for mes in range(12):
@@ -974,15 +984,14 @@ def cadastro_interno():
                     "person_id": person_id, "contracted_product_id": produto,
                     "reference_month": dia(vencimento.replace(day=1)), "due_date": dia(vencimento),
                     "payment_date": None if atrasado and situacao == "missed"
-                                    else dia(vencimento, atraso if atrasado else 0),
+                                    else dia(vencimento, max(atraso, 5) if atrasado else 0),
                     "amount_due": 29.9,
                     "amount_paid": 0.0 if atrasado and situacao == "missed" else 29.9,
                     "status": situacao if atrasado else "on_time",
-                    "days_late": atraso if atrasado else 0,
+                    "days_late": max(atraso, 5) if atrasado else 0,
                 })
 
-        # havendo mais de um valor pre-aprovado, uma linha por entrada; §7 usa
-        # sempre a de maior valor aprovado ativo
+        # havendo mais de um valor pre-aprovado, uma linha por entrada
         valido = c["pre_aprovado_valido"]
         for valor_pre in _lista(limite):
             add("pre_approved_limits", {
@@ -1092,10 +1101,14 @@ def validacao_cadastral():
         status = ("irregular" if impeditivo or situacao in ("pending", "suspended")
                   or c["triagem"] == "irregular"
                   else "attention" if pep else "regular")
+        motivos = ((["consta em lista restritiva"] if sancoes else [])
+                   + ([f"situacao {situacao} na Receita Federal"] if situacao != "regular" else [])
+                   + (["divergencia na triagem KYC"] if c["triagem"] == "irregular" else [])
+                   + (["pessoa exposta politicamente"] if pep else []))
         add("compliance_checks", {
             "person_id": person_id, "check_type": "kyc_full", "check_date": dia("2026-08-10"),
             "status": status,
-            "details": json.dumps({"motivo": c["nota"]}, ensure_ascii=False) if status != "regular" else None,
+            "details": json.dumps({"motivo": "; ".join(motivos)}, ensure_ascii=False) if status != "regular" else None,
             "is_pep": pep,
             "pep_details": "Contrato vigente com orgao publico" if pep else None,
             "on_sanctions_list": sancoes,
@@ -1126,12 +1139,17 @@ def avalia(c):
     score_atual = _score_atual(c["score"])
     vinculo_principal = _vinc_principal(c["vinculo"])
     fluxo_atual = _fluxo_atual(c["fluxo"])
-    # situacao nula em negativacao e tratada como ativa (conservador, §8)
+    # situacao nula em negativacao e tratada como ativa (conservador, §7)
     negativas_ativas = [v for v, st, _ in c["negativacoes"] if st == "active" or st is None]
     consentido = c["consentimento"] == "granted"
     situacao, cnd, pep, sancoes = c["receita"]
     pontual_interno, atraso_interno = c["interno"] if c["interno"] else (c["pontual"], 0)
     sem_interno = c["relacionamento"] is False or pontual_interno == "vazio"
+    # score what the 12 generated payments show, not the knob: 0.95 cannot be
+    # written in twelfths and the data holds 11/12
+    em_dia_biro = (12 - _atrasos_biro(c)) / 12
+    if not sem_interno:
+        pontual_interno = (12 - _fora_do_prazo(pontual_interno)) / 12
 
     def marca(nome, pontos, observado, ausente=False):
         criterios[nome] = {"pontos": pontos, "observado": observado, "ausente": ausente}
@@ -1142,20 +1160,20 @@ def avalia(c):
     # ---- §3 dados minimos -------------------------------------------------
     if score_atual is None:
         return {"decisao": "ANALISE_MANUAL", "regra": "M1", "pontuacao": None,
-                "criterios": {}, "ausentes": [], "limite": None}
+                "criterios": {}, "ausentes": []}
     if renda is None:
         return {"decisao": "ANALISE_MANUAL", "regra": "M2", "pontuacao": None,
-                "criterios": {}, "ausentes": [], "limite": None}
+                "criterios": {}, "ausentes": []}
     if "cpf" in c["falta"]:
         return {"decisao": "ANALISE_MANUAL", "regra": "M3", "pontuacao": None,
-                "criterios": {}, "ausentes": [], "limite": None}
+                "criterios": {}, "ausentes": []}
     if any(st == "active" and contestada for _, st, contestada in c["negativacoes"]):
         return {"decisao": "ANALISE_MANUAL", "regra": "M4", "pontuacao": None,
-                "criterios": {}, "ausentes": [], "limite": None}
+                "criterios": {}, "ausentes": []}
 
     # ---- §4 eliminatorias, reprovacao antes de analise manual --------------
     receita_recorrente = round(fluxo_atual[0] * 0.85, 2) if fluxo_atual[4] else 0.0
-    # situacao nula em divida e tratada como nao quitada (conservador, §8)
+    # situacao nula em divida e tratada como nao quitada (conservador, §7)
     divida_cobranca = sum(round(v * 1.08, 2) for v, cobranca in c["dividas"] if cobranca is not False)
 
     reprova, manual = [], []
@@ -1195,7 +1213,7 @@ def avalia(c):
     if reprova or manual:
         vencedora = reprova[0] if reprova else manual[0]
         return {"decisao": "REPROVADO" if reprova else "ANALISE_MANUAL", "regra": vencedora,
-                "pontuacao": None, "criterios": {}, "ausentes": [], "limite": None}
+                "pontuacao": None, "criterios": {}, "ausentes": []}
 
     # ---- §5 scorecard ------------------------------------------------------
     total = 0
@@ -1203,7 +1221,6 @@ def avalia(c):
                    f"score {score_atual}")
 
     if "dti" in c["falta"]:
-        dti_efetivo = 0.50
         total += marca("C2", 0, "comprometimento indeterminavel", ausente=True)
     elif "dti_informado" in c["falta"]:
         # indice nulo, mas parcela mensal informada: cai no fallback da
@@ -1214,15 +1231,14 @@ def avalia(c):
                        else 4 if dti_efetivo <= 0.50 else 0,
                        f"comprometimento {dti_efetivo:.2f} (calculado por parcelas / renda)")
     else:
-        dti_efetivo = c["dti"]
         total += marca("C2", 11 if c["dti"] <= 0.30 else 8 if c["dti"] <= 0.40 else 4 if c["dti"] <= 0.50 else 0,
                        f"comprometimento {c['dti']:.2f}")
 
     if "historico_pagamento" in c["falta"]:
         total += marca("C3", 4, "sem pagamentos no periodo", ausente=True)
     else:
-        total += marca("C3", _faixa(c["pontual"], [(0.95, 11), (0.85, 8), (0.70, 4)]),
-                       f"{c['pontual']:.1%} em dia")
+        total += marca("C3", _faixa(em_dia_biro, [(0.95, 11), (0.85, 8), (0.70, 4)]),
+                       f"{em_dia_biro:.1%} em dia")
 
     total += marca("C4", 9 if not negativas_ativas
                    else (5 if sum(negativas_ativas) <= 1000 else 2) if len(negativas_ativas) == 1
@@ -1243,7 +1259,6 @@ def avalia(c):
         total += marca("C7", 3, "sem consentimento ativo", ausente=True)
         total += marca("C8", 2, "sem consentimento ativo", ausente=True)
         total += marca("C9", 1, "sem consentimento ativo", ausente=True)
-        fluxo_liquido = None
     else:
         entrada, saida, _, dias_negativo, _ = fluxo_atual
         fluxo_liquido = entrada - saida
@@ -1289,7 +1304,9 @@ def avalia(c):
         total += marca("C14", 4 if cnd == "regular" else 2 if cnd == "suspended" else 0,
                        f"CND {cnd}")
 
-    if not vinculo_principal or c["esocial"] == "ausente":
+    # never validated means no eSocial rows either (validacao_cadastral skips the
+    # person), so the agent sees an empty list: 0 points, not missing data
+    if not vinculo_principal or c["esocial"] == "ausente" or c["cadastral"] == "ausente":
         total += marca("C15", 0, "sem registro no eSocial")
     elif c["esocial"] == "encerrado":
         total += marca("C15", 1, "vinculo encerrado no eSocial")
@@ -1304,22 +1321,8 @@ def avalia(c):
     if degradou:
         decisao = "APROVADO_COM_RESSALVAS"
 
-    # ---- §7 limite ---------------------------------------------------------
-    limite = None
-    if decisao in ("APROVADO", "APROVADO_COM_RESSALVAS"):
-        fator = 3.0 if decisao == "APROVADO" else 1.5
-        limite = renda * fator * (1 - dti_efetivo)
-        if fluxo_liquido and fluxo_liquido > 0:
-            limite = min(limite, fluxo_liquido * 12)
-        # havendo mais de uma pre-aprovacao ativa, usa-se a de maior valor
-        pre_lista = _lista(c["banco"][2])
-        pre = max(pre_lista) if pre_lista else None
-        if decisao == "APROVADO" and pre and c["pre_aprovado_valido"]:
-            limite = max(limite, float(pre))
-        limite = int(limite // 100) * 100
-
     return {"decisao": decisao, "regra": None, "pontuacao": total, "criterios": criterios,
-            "ausentes": ausentes, "limite": limite, "degradou": degradou}
+            "ausentes": ausentes, "degradou": degradou}
 
 
 def gabarito():
@@ -1335,8 +1338,7 @@ def gabarito():
         contagem[r["decisao"]] = contagem.get(r["decisao"], 0) + 1
         faixas[c["faixa"]] = faixas.get(c["faixa"], 0) + 1
         pontos = "-" if r["pontuacao"] is None else str(r["pontuacao"])
-        limite = "-" if r["limite"] is None else f"R$ {r['limite']:,.0f}".replace(",", ".")
-        detalhe.append((person_id, c, r, pontos, limite))
+        detalhe.append((person_id, c, r, pontos))
 
     linhas += ["## Distribuicao", "",
                "| Faixa | Cenarios | %  |", "|---|---|---|"]
@@ -1348,14 +1350,21 @@ def gabarito():
         linhas.append(f"| `{decisao}` | {n} |")
 
     linhas += ["", "## Por cenario", "",
-               "| # | Faixa | O que exercita | Decisao | Pontos | Regra | Limite | Criterios sem dado |",
-               "|---|---|---|---|---|---|---|---|"]
-    for person_id, c, r, pontos, limite in detalhe:
+               "| # | Faixa | O que exercita | Decisao | Pontos | Regra | Criterios sem dado |",
+               "|---|---|---|---|---|---|---|"]
+    for person_id, c, r, pontos in detalhe:
         ausentes = ", ".join(r["ausentes"]) or "-"
         linhas.append(f"| {person_id} | {c['faixa']} | {c['nota']} | `{r['decisao']}` | "
-                      f"{pontos} | {r['regra'] or '-'} | {limite} | {ausentes} |")
+                      f"{pontos} | {r['regra'] or '-'} | {ausentes} |")
     linhas.append("")
     (ROOT / "docs" / "gabarito_cenarios.md").write_text("\n".join(linhas))
+    # same answer key as JSON, with points per criterion, for analyze_metrics.py
+    machine_readable = {
+        str(person_id): {"decisao": r["decisao"], "regra": r["regra"], "pontuacao": r["pontuacao"],
+                         "criterios": {k: v["pontos"] for k, v in r["criterios"].items()},
+                         "criterios_sem_dado": r["ausentes"]}
+        for person_id, _, r, _ in detalhe}
+    (ROOT / "docs" / "gabarito_cenarios.json").write_text(json.dumps(machine_readable, indent=1) + "\n")
     return contagem, faixas
 
 
@@ -1382,7 +1391,7 @@ def main():
     contagem, faixas = gabarito()
     print("cenarios por faixa:", faixas)
     print("decisao esperada:", contagem)
-    print("gabarito: docs/gabarito_cenarios.md")
+    print("gabarito: docs/gabarito_cenarios.md e docs/gabarito_cenarios.json")
     print("rode agora: python3 generate_cadastro.py")
 
 

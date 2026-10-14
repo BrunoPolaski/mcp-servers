@@ -10,7 +10,7 @@
     "risk_score": 842,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "assalariado de carreira, quatro fontes concordantes",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -24,7 +24,7 @@
     "risk_score": 831,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "aposentado do INSS com consignado em dia, margem preservada",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -38,7 +38,7 @@
     "risk_score": 810,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "servidor com dois vinculos vigentes; vale o de maior salario",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -52,7 +52,7 @@
     "risk_score": 512,
     "risk_level": "medium",
     "risk_factors": "[\"multiple_recent_inquiries\"]",
-    "recommendation": "alerta de fraude grave e ativo",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -66,7 +66,7 @@
     "risk_score": 241,
     "risk_level": "high",
     "risk_factors": "[\"active_delinquency\", \"high_utilization\", \"high_debt_to_income\", \"multiple_recent_inquiries\"]",
-    "recommendation": "score critico, abaixo do piso da politica",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -80,7 +80,7 @@
     "risk_score": 680,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "pensao por morte movimentada apos obito do titular: severidade decide por K10",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -94,7 +94,7 @@
     "risk_score": 812,
     "risk_level": "low",
     "risk_factors": "[\"high_utilization\", \"high_debt_to_income\"]",
-    "recommendation": "biro otimo e comportamento interno pessimo: fontes discordam",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -108,7 +108,7 @@
     "risk_score": 612,
     "risk_level": "medium",
     "risk_factors": "[\"high_debt_to_income\"]",
-    "recommendation": "vinculo declarado no biro sem contrapartida no eSocial",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -122,7 +122,7 @@
     "risk_score": 596,
     "risk_level": "medium",
     "risk_factors": "[\"settled_delinquency\", \"high_debt_to_income\", \"multiple_recent_inquiries\"]",
-    "recommendation": "fluxo de caixa do open finance desmente a renda declarada",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -136,7 +136,7 @@
     "risk_score": 767,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "inadimplencia interna acima de noventa dias com biro intacto",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -150,7 +150,7 @@
     "risk_score": 828,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "pessoa exposta politicamente com perfil de credito excelente",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -164,7 +164,7 @@
     "risk_score": 601,
     "risk_level": "medium",
     "risk_factors": "[\"high_debt_to_income\"]",
-    "recommendation": "cliente nunca passou por validacao cadastral",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -178,7 +178,7 @@
     "risk_score": 596,
     "risk_level": "medium",
     "risk_factors": "[\"high_debt_to_income\"]",
-    "recommendation": "consentimento de open finance revogado",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -192,7 +192,7 @@
     "risk_score": 648,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "nao-cliente da instituicao, sem historico interno",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -206,7 +206,7 @@
     "risk_score": 592,
     "risk_level": "medium",
     "risk_factors": "[\"high_debt_to_income\"]",
-    "recommendation": "sem historico de pagamento no biro",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -220,7 +220,7 @@
     "risk_score": 588,
     "risk_level": "medium",
     "risk_factors": "[\"high_debt_to_income\", \"multiple_recent_inquiries\"]",
-    "recommendation": "sem renda declarada, sem estimativa e sem vinculo vigente",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -234,7 +234,7 @@
     "risk_score": 0,
     "risk_level": "high",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "biro sem score calculado",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -248,7 +248,7 @@
     "risk_score": 604,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "sem comprometimento informado e sem parcelas mensais para calcular",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -262,7 +262,7 @@
     "risk_score": 700,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "tres criterios exatamente no limite superior da faixa",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -276,7 +276,7 @@
     "risk_score": 699,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "os mesmos criterios um passo abaixo do limite",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -290,7 +290,7 @@
     "risk_score": 662,
     "risk_level": "medium",
     "risk_factors": "[\"active_delinquency\"]",
-    "recommendation": "negativacao ativa e contestada pelo cliente",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -304,7 +304,7 @@
     "risk_score": 788,
     "risk_level": "low",
     "risk_factors": "[\"high_utilization\", \"high_debt_to_income\", \"multiple_recent_inquiries\"]",
-    "recommendation": "as mesmas dividas, agora acima do teto",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -318,7 +318,7 @@
     "risk_score": 650,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "CPF ausente no cadastro, aciona M3",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -332,7 +332,7 @@
     "risk_score": 600,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "fraude em apuracao e CPF pendente simultaneos, vence a de menor numero",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -346,7 +346,7 @@
     "risk_score": 560,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "dois scores de biro com datas diferentes; vale o mais recente",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -360,7 +360,7 @@
     "risk_score": 680,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "documento antigo cancelado, validacao mais recente regular nao reprova",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -374,7 +374,7 @@
     "risk_score": 590,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "duas analises de fluxo de caixa em datas distintas; vale a mais recente",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -388,7 +388,7 @@
     "risk_score": 760,
     "risk_level": "low",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "tres pre-aprovacoes ativas do mesmo tipo; vale a de maior valor como piso",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -402,7 +402,7 @@
     "risk_score": 560,
     "risk_level": "medium",
     "risk_factors": "[\"clean_history\", \"stable_income\"]",
-    "recommendation": "trabalhador informal vivendo de Pix; C2 cai no fallback parcelas / renda",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   },
   {
@@ -416,7 +416,7 @@
     "risk_score": 660,
     "risk_level": "medium",
     "risk_factors": "[\"settled_delinquency\", \"high_debt_to_income\"]",
-    "recommendation": "superendividamento regularizado: negativacoes quitadas e dividas renegociadas fora de cobranca (Lei 14.181/2021)",
+    "recommendation": "ver fatores de risco",
     "model_version": "v3"
   }
 ]
