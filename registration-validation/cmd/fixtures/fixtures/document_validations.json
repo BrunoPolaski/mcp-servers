@@ -363,7 +363,7 @@
     "deleted_at": null,
     "person_id": 23,
     "validation_date": "2026-08-10T00:00:00Z",
-    "document_number": "91007056673",
+    "document_number": "",
     "document_type": "cpf",
     "receita_federal_status": "regular",
     "is_valid": true,

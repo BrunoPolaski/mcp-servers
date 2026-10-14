@@ -1433,11 +1433,11 @@
     "contracted_product_id": 13,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 97,
@@ -1598,11 +1598,11 @@
     "contracted_product_id": 15,
     "reference_month": "2026-07-01T00:00:00Z",
     "due_date": "2026-07-02T00:00:00Z",
-    "payment_date": "2026-07-02T00:00:00Z",
+    "payment_date": "2026-07-07T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 108,
@@ -1613,11 +1613,11 @@
     "contracted_product_id": 15,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 109,
@@ -2333,11 +2333,11 @@
     "contracted_product_id": 21,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 157,
@@ -2513,11 +2513,11 @@
     "contracted_product_id": 23,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 169,
@@ -2678,11 +2678,11 @@
     "contracted_product_id": 25,
     "reference_month": "2026-07-01T00:00:00Z",
     "due_date": "2026-07-02T00:00:00Z",
-    "payment_date": "2026-07-02T00:00:00Z",
+    "payment_date": "2026-07-07T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 180,
@@ -2693,11 +2693,11 @@
     "contracted_product_id": 25,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 181,
@@ -2873,11 +2873,11 @@
     "contracted_product_id": 27,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 193,
@@ -3053,11 +3053,11 @@
     "contracted_product_id": 29,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 205,
@@ -3233,11 +3233,11 @@
     "contracted_product_id": 31,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 217,
@@ -3413,11 +3413,11 @@
     "contracted_product_id": 33,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 229,
@@ -3593,11 +3593,11 @@
     "contracted_product_id": 35,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 241,
@@ -3773,11 +3773,11 @@
     "contracted_product_id": 37,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 253,
@@ -3953,11 +3953,11 @@
     "contracted_product_id": 39,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 265,
@@ -4118,11 +4118,11 @@
     "contracted_product_id": 41,
     "reference_month": "2026-07-01T00:00:00Z",
     "due_date": "2026-07-02T00:00:00Z",
-    "payment_date": "2026-07-02T00:00:00Z",
+    "payment_date": "2026-07-07T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 276,
@@ -4133,11 +4133,11 @@
     "contracted_product_id": 41,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 277,
@@ -4298,11 +4298,11 @@
     "contracted_product_id": 43,
     "reference_month": "2026-07-01T00:00:00Z",
     "due_date": "2026-07-02T00:00:00Z",
-    "payment_date": "2026-07-02T00:00:00Z",
+    "payment_date": "2026-07-07T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 288,
@@ -4313,11 +4313,11 @@
     "contracted_product_id": 43,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 289,
@@ -4493,11 +4493,11 @@
     "contracted_product_id": 45,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 301,
@@ -4673,11 +4673,11 @@
     "contracted_product_id": 47,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 313,
@@ -4853,11 +4853,11 @@
     "contracted_product_id": 49,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 325,
@@ -5003,11 +5003,11 @@
     "contracted_product_id": 50,
     "reference_month": "2026-06-01T00:00:00Z",
     "due_date": "2026-06-02T00:00:00Z",
-    "payment_date": "2026-06-02T00:00:00Z",
+    "payment_date": "2026-06-07T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 335,
@@ -5018,11 +5018,11 @@
     "contracted_product_id": 50,
     "reference_month": "2026-07-01T00:00:00Z",
     "due_date": "2026-07-02T00:00:00Z",
-    "payment_date": "2026-07-02T00:00:00Z",
+    "payment_date": "2026-07-07T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 336,
@@ -5033,11 +5033,11 @@
     "contracted_product_id": 50,
     "reference_month": "2026-08-01T00:00:00Z",
     "due_date": "2026-08-01T00:00:00Z",
-    "payment_date": "2026-08-01T00:00:00Z",
+    "payment_date": "2026-08-06T00:00:00Z",
     "amount_due": 29.9,
     "amount_paid": 29.9,
     "status": "late",
-    "days_late": 0
+    "days_late": 5
   },
   {
     "id": 337,
