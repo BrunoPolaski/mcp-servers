@@ -1,0 +1,20 @@
+{
+ "mcpServers": {
+  "bureau": {
+   "type": "http",
+   "url": "http://localhost:8081/mcp"
+  },
+  "open-finance": {
+   "type": "http",
+   "url": "http://localhost:8082/mcp"
+  },
+  "internal-registry": {
+   "type": "http",
+   "url": "http://localhost:8083/mcp"
+  },
+  "registration-validation": {
+   "type": "http",
+   "url": "http://localhost:8084/mcp"
+  }
+ }
+}

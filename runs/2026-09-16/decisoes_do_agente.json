@@ -1,0 +1,182 @@
+{
+ "1": {
+  "decisao": "APROVADO",
+  "pontuacao": 100,
+  "regra": null,
+  "limite": 40000
+ },
+ "2": {
+  "decisao": "APROVADO",
+  "pontuacao": 100,
+  "regra": null,
+  "limite": 10000
+ },
+ "3": {
+  "decisao": "APROVADO",
+  "pontuacao": 100,
+  "regra": null,
+  "limite": 22800
+ },
+ "4": {
+  "decisao": "REPROVADO",
+  "pontuacao": null,
+  "regra": "K1",
+  "limite": null
+ },
+ "5": {
+  "decisao": "REPROVADO",
+  "pontuacao": null,
+  "regra": "K4",
+  "limite": null
+ },
+ "6": {
+  "decisao": "REPROVADO",
+  "pontuacao": null,
+  "regra": "K10",
+  "limite": null
+ },
+ "7": {
+  "decisao": "APROVADO",
+  "pontuacao": 78,
+  "regra": null,
+  "limite": 15000
+ },
+ "8": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 65,
+  "regra": null,
+  "limite": 4800
+ },
+ "9": {
+  "decisao": "ANALISE_MANUAL",
+  "pontuacao": null,
+  "regra": "K8",
+  "limite": null
+ },
+ "10": {
+  "decisao": "REPROVADO",
+  "pontuacao": null,
+  "regra": "K9",
+  "limite": null
+ },
+ "11": {
+  "decisao": "ANALISE_MANUAL",
+  "pontuacao": null,
+  "regra": "K13",
+  "limite": null
+ },
+ "12": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 63,
+  "regra": null,
+  "limite": 5600
+ },
+ "13": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 59,
+  "regra": null,
+  "limite": 4700
+ },
+ "14": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 67,
+  "regra": null,
+  "limite": 6500
+ },
+ "15": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 63,
+  "regra": null,
+  "limite": 3800
+ },
+ "16": {
+  "decisao": "ANALISE_MANUAL",
+  "pontuacao": null,
+  "regra": "M2",
+  "limite": null
+ },
+ "17": {
+  "decisao": "ANALISE_MANUAL",
+  "pontuacao": null,
+  "regra": "M1",
+  "limite": null
+ },
+ "18": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 63,
+  "regra": null,
+  "limite": 3600
+ },
+ "19": {
+  "decisao": "APROVADO",
+  "pontuacao": 92,
+  "regra": null,
+  "limite": 12600
+ },
+ "20": {
+  "decisao": "APROVADO",
+  "pontuacao": 76,
+  "regra": null,
+  "limite": 12400
+ },
+ "21": {
+  "decisao": "ANALISE_MANUAL",
+  "pontuacao": null,
+  "regra": "M4",
+  "limite": null
+ },
+ "22": {
+  "decisao": "REPROVADO",
+  "pontuacao": null,
+  "regra": "K7",
+  "limite": null
+ },
+ "23": {
+  "decisao": "ANALISE_MANUAL",
+  "pontuacao": null,
+  "regra": "M3",
+  "limite": null
+ },
+ "24": {
+  "decisao": "ANALISE_MANUAL",
+  "pontuacao": null,
+  "regra": "K2",
+  "limite": null
+ },
+ "25": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 65,
+  "regra": null,
+  "limite": 4200
+ },
+ "26": {
+  "decisao": "APROVADO",
+  "pontuacao": 76,
+  "regra": null,
+  "limite": 10800
+ },
+ "27": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 64,
+  "regra": null,
+  "limite": 3600
+ },
+ "28": {
+  "decisao": "APROVADO",
+  "pontuacao": 91,
+  "regra": null,
+  "limite": 35000
+ },
+ "29": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 64,
+  "regra": null,
+  "limite": 3400
+ },
+ "30": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "pontuacao": 67,
+  "regra": null,
+  "limite": 3000
+ }
+}
