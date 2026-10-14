@@ -1,19 +1,37 @@
 package tools
 
 import (
+	"context"
+
+	"github.com/BrunoPolaski/go-rest-err/rest_err"
+	"github.com/BrunoPolaski/registration-validation/internal/core/entities"
+	"github.com/BrunoPolaski/registration-validation/internal/infra/controllers/dto"
 	"github.com/BrunoPolaski/registration-validation/internal/interfaces/http/middlewares"
 	"github.com/BrunoPolaski/registration-validation/internal/services"
 	"github.com/mark3labs/mcp-go/mcp"
 	"github.com/mark3labs/mcp-go/server"
 )
 
+type PersonService interface {
+	GetById(ctx context.Context, id uint) (*entities.Person, *rest_err.RestErr)
+	GetByDocument(ctx context.Context, document string) (*entities.Person, *rest_err.RestErr)
+	GetAll(ctx context.Context, limit, offset int, params map[string]any) (*dto.PaginatedResponse[dto.PersonDTO], *rest_err.RestErr)
+}
+
+type RegistrationValidationService interface {
+	GetDocumentValidations(ctx context.Context, ref services.CustomerRef, documentType string) (*dto.DocumentValidationsResultDTO, *rest_err.RestErr)
+	GetFiscalRegularities(ctx context.Context, ref services.CustomerRef) (*dto.FiscalRegularitiesResultDTO, *rest_err.RestErr)
+	GetEmploymentLinks(ctx context.Context, ref services.CustomerRef, status string) (*dto.EmploymentLinkValidationsResultDTO, *rest_err.RestErr)
+	GetComplianceChecks(ctx context.Context, ref services.CustomerRef, checkType string) (*dto.ComplianceChecksResultDTO, *rest_err.RestErr)
+}
+
 type Server struct {
 	userService    *services.UserService
 	addressService *services.AddressService
 	analystService *services.AnalystService
-	personService  *services.PersonService
+	personService  PersonService
 
-	registrationValidationService *services.RegistrationValidationService
+	registrationValidationService RegistrationValidationService
 }
 
 func NewMCPServer(
