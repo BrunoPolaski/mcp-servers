@@ -1,7 +1,9 @@
 # Agente de Análise de Crédito — Instruções
 
-> **Política:** 1.3 · **Vigência:** 2026-09-10 · **Moeda:** BRL
-> Substitui a 1.2. Cobre os **quatro** servidores MCP em operação.
+> **Política:** 1.3.1 · **Vigência:** 2026-09-27 · **Moeda:** BRL
+> Substitui a 1.3. Cobre os **quatro** servidores MCP em operação.
+> A 1.3.1 acrescenta à 1.3 apenas a regra 7 das instruções gerais (§1)
+> (data da análise como referência de tempo).
 
 ---
 
