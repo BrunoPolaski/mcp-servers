@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+	"net/http"
 	"time"
 
 	"github.com/BrunoPolaski/internal-registry/internal/infra/controllers/dto"
@@ -13,6 +14,15 @@ import (
 
 // source identifica esta fonte de dados nos metadados e nos logs.
 const source = "internal-registry"
+
+type runIDKey struct{}
+
+func WithRunID(ctx context.Context, r *http.Request) context.Context {
+	if id := r.Header.Get("X-Run-Id"); id != "" {
+		return context.WithValue(ctx, runIDKey{}, id)
+	}
+	return ctx
+}
 
 type traceable interface {
 	SetMetadata(dto.ResponseMetadata)
@@ -39,6 +49,10 @@ func traced[T interface {
 			zap.String("transaction_id", transactionID),
 			zap.Any("arguments", request.GetArguments()),
 			zap.Int64("duration_ms", time.Since(start).Milliseconds()),
+		}
+
+		if runID, ok := ctx.Value(runIDKey{}).(string); ok {
+			tags = append(tags, zap.String("run_id", runID))
 		}
 
 		var zero T

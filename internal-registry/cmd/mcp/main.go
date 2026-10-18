@@ -7,6 +7,7 @@ import (
 
 	"github.com/BrunoPolaski/internal-registry/internal/infra/thirdparty/logger"
 	internal_mcp "github.com/BrunoPolaski/internal-registry/internal/interfaces/mcp"
+	"github.com/BrunoPolaski/internal-registry/internal/interfaces/mcp/tools"
 	"github.com/joho/godotenv"
 	"github.com/mark3labs/mcp-go/server"
 	"go.uber.org/zap"
@@ -53,6 +54,7 @@ func main() {
 	httpServer := server.NewStreamableHTTPServer(
 		mcpServer,
 		server.WithHeartbeatInterval(30*time.Second),
+		server.WithHTTPContextFunc(tools.WithRunID),
 	)
 
 	logger.Info("Starting MCP server",
