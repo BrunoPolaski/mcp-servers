@@ -106,16 +106,19 @@ def assign_sessions(registros, resultados):
 
     A record carrying `run_id` (the X-Run-Id header of the session, see
     run_evaluation.py) belongs to the session with that run_id, so sessions may
-    overlap in time. A record without it, from a run made before the tag
-    existed, belongs to the session whose time window contains it; those
-    sessions ran one at a time. This is sturdier than client_key: an agent that
+    overlap in time, and each repetition of a scenario is its own analysis. A
+    record without it, from a run made before the tag existed, belongs to the
+    untagged session whose time window contains it; those sessions ran one at a
+    time. An untagged record in a tagged run (a server image built before the
+    tag) matches no window and is dropped, so it shows up as missing calls
+    instead of calls in the wrong session. This is sturdier than client_key: an agent that
     looks a client up by id in one server and by CPF in another still yields
     one analysis. Records that match no session (a pilot run, a manual check)
     are dropped.
     """
     windows = [(datetime.fromisoformat(r["started_at"]), datetime.fromisoformat(r["ended_at"]), r["scenario"])
-               for r in resultados]
-    by_run_id = {r["run_id"]: r["scenario"] for r in resultados if r.get("run_id")}
+               for r in resultados if not r.get("run_id")]
+    by_run_id = {r["run_id"]: f'{r["scenario"]}:{r["run_id"]}' for r in resultados if r.get("run_id")}
     kept = []
     for r in registros:
         if r.get("run_id"):
@@ -379,6 +382,10 @@ def main(argv=None):
     if args.results:
         with open(args.results, encoding="utf-8") as fh:
             resultados = [json.loads(linha) for linha in fh if linha.strip()]
+        run_ids = [r["run_id"] for r in resultados if r.get("run_id")]
+        repetidos = sorted({x for x in run_ids if run_ids.count(x) > 1})
+        if repetidos:
+            raise SystemExit(f"run_id repetido em {args.results}: {', '.join(repetidos)}; use outro --rep ao retomar uma rodada")
         registros = assign_sessions(registros, resultados)
         host = host_stats(resultados)
         if args.gabarito:
@@ -455,7 +462,19 @@ def selftest():
     sessoes = assign_sessions(sobrepostas, [{"scenario": 5, "run_id": "5-1", **janela},
                                             {"scenario": 7, "run_id": "7-1", **janela}])
     assert sorted((r["cliente"], r["source"]) for r in sessoes) == [
-        ("cenario:5", "bureau"), ("cenario:5", "open-finance"), ("cenario:7", "bureau")], sessoes
+        ("cenario:5:5-1", "bureau"), ("cenario:5:5-1", "open-finance"), ("cenario:7:7-1", "bureau")], sessoes
+    assert aggregate(sessoes)["n_analises"] == 2
+
+    # repetitions of one scenario stay apart, and an untagged record in a tagged
+    # run is dropped instead of landing in whichever window contains it
+    repeticoes = parse_log_lines([
+        '{"level":"info","message":"mcp tool call","time":"2026-10-20T10:00:05.000-0300","run_id":"5-1","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":5}}',
+        '{"level":"info","message":"mcp tool call","time":"2026-10-20T10:00:06.000-0300","run_id":"5-2","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":5}}',
+        '{"level":"info","message":"mcp tool call","time":"2026-10-20T10:00:07.000-0300","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":7}}',
+    ])
+    sessoes = assign_sessions(repeticoes, [{"scenario": 5, "run_id": "5-1", **janela},
+                                           {"scenario": 5, "run_id": "5-2", **janela}])
+    assert sorted(r["cliente"] for r in sessoes) == ["cenario:5:5-1", "cenario:5:5-2"], sessoes
     assert aggregate(sessoes)["n_analises"] == 2
 
     todos = {f"C{i}": 1 for i in range(1, 16)}
