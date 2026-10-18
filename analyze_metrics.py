@@ -16,12 +16,12 @@ markdown, as tres dimensoes que a metodologia deriva dos logs:
 The fourth dimension, policy adherence, comes from the structured block the
 agent emits at the end of each analysis (policy §8, item 6). run_evaluation.py
 collects those blocks, with each session's time window and host-side stats, in
-resultados.jsonl; pass it with --results and the JSON answer key with
+results.jsonl; pass it with --results and the JSON answer key with
 --gabarito.
 
 Uso:
     python3 analyze_metrics.py logs/*.jsonl --gabarito docs/gabarito_cenarios.json \
-            --results runs/2026-09-27/resultados.jsonl
+            --results runs/2026-09-27-final/results.jsonl
     # so os logs, sem aderencia (agrupa por cliente, ver abaixo)
     cat logs.jsonl | python3 analyze_metrics.py
 
@@ -107,7 +107,7 @@ def assign_sessions(registros, resultados):
     in another still yields one analysis. Records outside every window (a pilot
     run, a manual check) are dropped.
     """
-    windows = [(datetime.fromisoformat(r["inicio"]), datetime.fromisoformat(r["fim"]), r["cenario"])
+    windows = [(datetime.fromisoformat(r["started_at"]), datetime.fromisoformat(r["ended_at"]), r["scenario"])
                for r in resultados]
     kept = []
     for r in registros:
@@ -178,14 +178,14 @@ def _media(xs):
 # --------------------------------------------------------------------------- host
 def host_stats(resultados):
     """End-to-end cost of each analysis as the host saw it: time, turns, tokens."""
-    duracoes = [r["duracao_ms"] / 1000 for r in resultados if r.get("duracao_ms")]
-    turnos = [r["turnos"] for r in resultados if r.get("turnos")]
-    usos = [r["uso"] for r in resultados if r.get("uso")]
+    duracoes = [r["duration_ms"] / 1000 for r in resultados if r.get("duration_ms")]
+    turnos = [r["turns"] for r in resultados if r.get("turns")]
+    usos = [r["usage"] for r in resultados if r.get("usage")]
     entrada = [u["inputTokens"] + u["cacheCreationInputTokens"] + u["cacheReadInputTokens"] for u in usos]
     return {
         "sessoes": len(resultados),
-        "erros": sum(1 for r in resultados if r.get("erro")),
-        "modelos": sorted({m for r in resultados for m in r.get("modelos") or []}),
+        "erros": sum(1 for r in resultados if r.get("error")),
+        "modelos": sorted({m for r in resultados for m in r.get("models") or []}),
         "tempo_total_s": sum(duracoes),
         "tempo_medio_s": _media(duracoes),
         "tempo_mediano_s": statistics.median(duracoes) if duracoes else None,
@@ -308,7 +308,7 @@ def render(ag, aderencia=None, host=None):
 
     L += ["", "## Aderencia a politica", ""]
     if aderencia is None:
-        L += ["> Sem resultados. Passe --results (resultados.jsonl de run_evaluation.py) "
+        L += ["> Sem resultados. Passe --results (results.jsonl de run_evaluation.py) "
               "e --gabarito (docs/gabarito_cenarios.json) para apurar esta dimensao."]
     else:
         a = aderencia
@@ -355,7 +355,7 @@ def main(argv=None):
     p = argparse.ArgumentParser(description="Consolida metricas dos logs dos servidores MCP.")
     p.add_argument("logs", nargs="*", help="arquivos de log (glob); vazio le do stdin")
     p.add_argument("--gabarito", help="docs/gabarito_cenarios.json, para aderencia")
-    p.add_argument("--results", help="resultados.jsonl de run_evaluation.py: blocos, janelas e custo no host")
+    p.add_argument("--results", help="results.jsonl de run_evaluation.py: blocos, janelas e custo no host")
     p.add_argument("--since", help="descarta registros com time (ISO8601) anterior a este")
     p.add_argument("--until", help="descarta registros com time (ISO8601) posterior a este")
     p.add_argument("--selftest", action="store_true", help="roda a autoverificacao e sai")
@@ -374,7 +374,7 @@ def main(argv=None):
         if args.gabarito:
             with open(args.gabarito, encoding="utf-8") as fh:
                 gabarito = json.load(fh)
-            blocos = {str(r["cenario"]): r["bloco"] for r in resultados if r.get("bloco")}
+            blocos = {str(r["scenario"]): r["block"] for r in resultados if r.get("block")}
             aderencia = compare_adherence(gabarito, blocos)
     print(render(aggregate(registros), aderencia, host))
     return 0
@@ -425,9 +425,9 @@ def selftest():
         '{"level":"info","message":"mcp tool call","time":"2026-09-27T10:00:09.000-0300","source":"open-finance","tool":"get_customer_by_document","duration_ms":5,"arguments":{"document":"123"}}',
         '{"level":"info","message":"mcp tool call","time":"2026-09-27T09:00:00.000-0300","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":1}}',
     ])
-    resultados = [{"cenario": 23, "inicio": "2026-09-27T10:00:00-03:00", "fim": "2026-09-27T10:01:00-03:00",
-                   "duracao_ms": 60000, "turnos": 8, "erro": False, "modelos": ["claude-opus-5-5"],
-                   "uso": {"inputTokens": 10, "cacheCreationInputTokens": 100,
+    resultados = [{"scenario": 23, "started_at": "2026-09-27T10:00:00-03:00", "ended_at": "2026-09-27T10:01:00-03:00",
+                   "duration_ms": 60000, "turns": 8, "error": False, "models": ["claude-opus-5-5"],
+                   "usage": {"inputTokens": 10, "cacheCreationInputTokens": 100,
                            "cacheReadInputTokens": 1000, "outputTokens": 50}}]
     por_sessao = aggregate(assign_sessions(sessao, resultados))
     assert por_sessao["n_analises"] == 1 and por_sessao["total_chamadas"] == 2, por_sessao

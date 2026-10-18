@@ -7,16 +7,16 @@ project settings, hooks or CLAUDE.md, and an empty working directory. The agent
 cannot see the answer key, the generator or a previous session.
 
 Sessions run one at a time, so every MCP log record falls inside exactly one
-session window [inicio, fim], which is how analyze_metrics.py groups them.
+session window [started_at, ended_at], which is how analyze_metrics.py groups them.
 
-Writes to <out>/:
-  resultados.jsonl       one line per scenario: the structured block the agent
+Writes to <out>/ (layout and naming in runs/README.md):
+  results.jsonl          one line per scenario: the structured block the agent
                          emitted (policy §8, item 6) plus host-side stats
   transcripts/NN.jsonl   raw stream-json of each session
 
 Usage (servers up on :8081-8084):
-    python3 run_evaluation.py --out runs/2026-09-27
-    python3 run_evaluation.py --out runs/pilot --scenarios 1 23
+    python3 run_evaluation.py --out runs/2026-09-27-final | tee runs/2026-09-27-final/progress.txt
+    python3 run_evaluation.py --out runs/2026-10-20-pilot --scenarios 1 23
 """
 
 import argparse
@@ -63,25 +63,25 @@ def run(n, model, out):
            "--tools", "", "--allowedTools", ",".join(f"mcp__{s}" for s in SERVERS),
            "--setting-sources", "", "--disable-slash-commands", "--no-session-persistence",
            "--output-format", "stream-json", "--verbose"]
-    inicio = datetime.now().astimezone()
+    started_at = datetime.now().astimezone()
     proc = subprocess.run(cmd, cwd=out / "workdir", stdin=subprocess.DEVNULL, capture_output=True,
                           text=True, timeout=1800)
-    fim = datetime.now().astimezone()
+    ended_at = datetime.now().astimezone()
     (out / "transcripts" / f"{n:02d}.jsonl").write_text(proc.stdout + proc.stderr)
     res = result_event(proc.stdout)
     return {
-        "cenario": n,
-        "inicio": inicio.isoformat(),
-        "fim": fim.isoformat(),
-        "duracao_ms": res.get("duration_ms"),
-        "duracao_api_ms": res.get("duration_api_ms"),
-        "turnos": res.get("num_turns"),
+        "scenario": n,
+        "started_at": started_at.isoformat(),
+        "ended_at": ended_at.isoformat(),
+        "duration_ms": res.get("duration_ms"),
+        "api_duration_ms": res.get("duration_api_ms"),
+        "turns": res.get("num_turns"),
         # the host also calls a small model for housekeeping; count only the
         # tokens of the model that ran the analysis
-        "uso": (res.get("modelUsage") or {}).get(model),
-        "modelos": sorted(res.get("modelUsage") or {}),
-        "erro": bool(res.get("is_error", True)) or proc.returncode != 0,
-        "bloco": last_block(res.get("result")),
+        "usage": (res.get("modelUsage") or {}).get(model),
+        "models": sorted(res.get("modelUsage") or {}),
+        "error": bool(res.get("is_error", True)) or proc.returncode != 0,
+        "block": last_block(res.get("result")),
     }
 
 
@@ -98,15 +98,15 @@ def main():
     (out / "mcp.json").write_text(json.dumps({"mcpServers": {
         name: {"type": "http", "url": f"http://localhost:{port}/mcp"} for name, port in SERVERS.items()}}, indent=1))
 
-    with open(out / "resultados.jsonl", "a", encoding="utf-8") as fh:
+    with open(out / "results.jsonl", "a", encoding="utf-8") as fh:
         for n in args.scenarios:
             r = run(n, args.model, out)
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
             fh.flush()
-            b = r["bloco"] or {}
-            print(f"cenario {n:2d}: {b.get('decisao', 'SEM BLOCO')} {b.get('regra') or ''} "
+            b = r["block"] or {}
+            print(f"scenario {n:2d}: {b.get('decisao', 'NO BLOCK')} {b.get('regra') or ''} "
                   f"{b.get('pontuacao') if b.get('pontuacao') is not None else ''} "
-                  f"({(r['duracao_ms'] or 0) / 1000:.0f}s, {r['turnos']} turnos{', ERRO' if r['erro'] else ''})",
+                  f"({(r['duration_ms'] or 0) / 1000:.0f}s, {r['turns']} turns{', ERROR' if r['error'] else ''})",
                   flush=True)
 
 
