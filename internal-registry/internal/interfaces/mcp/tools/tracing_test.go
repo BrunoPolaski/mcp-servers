@@ -2,6 +2,7 @@ package tools
 
 import (
 	"context"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"os"
@@ -60,6 +61,21 @@ func TestTracedOmitsRunIDWithoutHeader(t *testing.T) {
 	}
 }
 
+func TestTracedLogsRunIDOnError(t *testing.T) {
+	r := httptest.NewRequest(http.MethodPost, "/mcp", nil)
+	r.Header.Set("X-Run-Id", "5-1")
+	ctx := WithRunID(context.Background(), r)
+	handler := traced(func(context.Context, mcp.CallToolRequest, mcp.CallToolParams) (*dto.PersonDTO, error) {
+		return nil, errors.New("boom")
+	})
+
+	out := captureLog(t, func() { handler(ctx, requestWith(nil), mcp.CallToolParams{}) })
+
+	if !strings.Contains(out, `"run_id":"5-1"`) {
+		t.Errorf("error log has no run_id 5-1: %s", out)
+	}
+}
+
 func callTraced(ctx context.Context) {
 	handler := traced(func(context.Context, mcp.CallToolRequest, mcp.CallToolParams) (*dto.PersonDTO, error) {
 		return &dto.PersonDTO{}, nil
@@ -73,6 +89,7 @@ func captureLog(t *testing.T, fn func()) string {
 	if err != nil {
 		t.Fatal(err)
 	}
+	defer f.Close()
 	stdout := os.Stdout
 	os.Stdout = f
 	logger.Init()
