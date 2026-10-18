@@ -35,7 +35,8 @@ Lower case, words joined by `-`. The date is the day the round started.
 
 ```
 <YYYY-MM-DD>-<round>/
-  mcp.json          MCP servers the host connected to
+  mcp/<run_id>.json MCP servers the host connected to, with the session's X-Run-Id header
+                    (rounds before run_id have a single mcp.json without it)
   results.jsonl     one line per session (keys below)
   progress.txt      console output of run_evaluation.py
   metrics.md        report from analyze_metrics.py
@@ -49,6 +50,7 @@ Lower case, words joined by `-`. The date is the day the round started.
 | Key | Meaning |
 |---|---|
 | `scenario` | Scenario number |
+| `run_id` | `<scenario>-<rep>`, sent as the `X-Run-Id` header on every MCP request of the session and logged by the servers as `run_id`. Absent in rounds before it existed |
 | `started_at`, `ended_at` | Session window, ISO 8601 with offset |
 | `duration_ms`, `api_duration_ms` | Session time as reported by the host |
 | `turns` | Agent turns |
@@ -66,5 +68,8 @@ python3 analyze_metrics.py $d/logs/*.jsonl --gabarito docs/gabarito_cenarios.jso
         --results $d/results.jsonl > $d/metrics.md
 ```
 
-Sessions must run one at a time: `analyze_metrics.py` groups server traces by
-session window.
+Each session tags its MCP requests with `X-Run-Id`, and `analyze_metrics.py`
+groups server traces by that `run_id`, so sessions may overlap in time. Traces
+without `run_id` (the three rounds above) are grouped by session window, which
+assumes sessions ran one at a time. `run_evaluation.py` itself still runs
+sessions sequentially; `--rep` sets the repetition part of the run id.

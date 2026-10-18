@@ -6,8 +6,9 @@ four MCP servers as tools: no built-in tools (so no file access), no user or
 project settings, hooks or CLAUDE.md, and an empty working directory. The agent
 cannot see the answer key, the generator or a previous session.
 
-Sessions run one at a time, so every MCP log record falls inside exactly one
-session window [started_at, ended_at], which is how analyze_metrics.py groups them.
+Sessions run one at a time, but each one tags every MCP request with an
+X-Run-Id header ("<scenario>-<rep>", written to results.jsonl as run_id). The
+servers copy it into their traces, which is how analyze_metrics.py groups them.
 
 Writes to <out>/ (layout and naming in runs/README.md):
   results.jsonl          one line per scenario: the structured block the agent
@@ -56,10 +57,15 @@ def result_event(stream):
     return {}
 
 
-def run(n, model, out):
+def run(n, rep, model, out):
+    run_id = f"{n}-{rep}"
+    mcp_config = out / "mcp" / f"{run_id}.json"
+    mcp_config.write_text(json.dumps({"mcpServers": {
+        name: {"type": "http", "url": f"http://localhost:{port}/mcp", "headers": {"X-Run-Id": run_id}}
+        for name, port in SERVERS.items()}}, indent=1))
     cmd = ["claude", "-p", PROMPT.format(n=n), "--model", model,
            "--system-prompt-file", str(ROOT / "docs" / "instructions.md"),
-           "--mcp-config", str(out / "mcp.json"), "--strict-mcp-config",
+           "--mcp-config", str(mcp_config), "--strict-mcp-config",
            "--tools", "", "--allowedTools", ",".join(f"mcp__{s}" for s in SERVERS),
            "--setting-sources", "", "--disable-slash-commands", "--no-session-persistence",
            "--output-format", "stream-json", "--verbose"]
@@ -71,6 +77,7 @@ def run(n, model, out):
     res = result_event(proc.stdout)
     return {
         "scenario": n,
+        "run_id": run_id,
         "started_at": started_at.isoformat(),
         "ended_at": ended_at.isoformat(),
         "duration_ms": res.get("duration_ms"),
@@ -89,18 +96,18 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--out", required=True, type=Path)
     p.add_argument("--scenarios", nargs="*", type=int, default=list(range(1, 31)))
+    p.add_argument("--rep", type=int, default=1, help="repetition number, part of the run_id")
     p.add_argument("--model", default="claude-opus-5-5")
     args = p.parse_args()
 
     out = args.out.resolve()
     (out / "workdir").mkdir(parents=True, exist_ok=True)
     (out / "transcripts").mkdir(exist_ok=True)
-    (out / "mcp.json").write_text(json.dumps({"mcpServers": {
-        name: {"type": "http", "url": f"http://localhost:{port}/mcp"} for name, port in SERVERS.items()}}, indent=1))
+    (out / "mcp").mkdir(exist_ok=True)
 
     with open(out / "results.jsonl", "a", encoding="utf-8") as fh:
         for n in args.scenarios:
-            r = run(n, args.model, out)
+            r = run(n, args.rep, args.model, out)
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
             fh.flush()
             b = r["block"] or {}

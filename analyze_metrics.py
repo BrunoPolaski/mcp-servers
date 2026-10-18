@@ -25,8 +25,9 @@ Uso:
     # so os logs, sem aderencia (agrupa por cliente, ver abaixo)
     cat logs.jsonl | python3 analyze_metrics.py
 
-With --results, an analysis is the set of log records inside one agent session
-window, and records outside every window are dropped. Without it, an analysis
+With --results, an analysis is the set of log records tagged with the run_id of
+one agent session; records without run_id (older rounds) fall back to the
+session time window. Records matching no session are dropped. Without it, an analysis
 is the set of calls about the same client, grouped by the `id` or `document`
 passed to the tool; listing calls, with no client, count as general cost.
 
@@ -80,6 +81,7 @@ def parse_log_lines(lines, since=None, until=None):
             "sucesso": obj.get("level") != "error",
             "cliente": client_key(obj.get("arguments")),
             "time": t,
+            "run_id": obj.get("run_id"),
         })
     return registros
 
@@ -100,21 +102,29 @@ def client_key(arguments):
 
 
 def assign_sessions(registros, resultados):
-    """Attributes each log record to the agent session whose window contains it.
+    """Attributes each log record to an agent session.
 
-    Sessions run one at a time, so windows never overlap. This is sturdier than
-    client_key: an agent that looks a client up by id in one server and by CPF
-    in another still yields one analysis. Records outside every window (a pilot
-    run, a manual check) are dropped.
+    A record carrying `run_id` (the X-Run-Id header of the session, see
+    run_evaluation.py) belongs to the session with that run_id, so sessions may
+    overlap in time. A record without it, from a run made before the tag
+    existed, belongs to the session whose time window contains it; those
+    sessions ran one at a time. This is sturdier than client_key: an agent that
+    looks a client up by id in one server and by CPF in another still yields
+    one analysis. Records that match no session (a pilot run, a manual check)
+    are dropped.
     """
     windows = [(datetime.fromisoformat(r["started_at"]), datetime.fromisoformat(r["ended_at"]), r["scenario"])
                for r in resultados]
+    by_run_id = {r["run_id"]: r["scenario"] for r in resultados if r.get("run_id")}
     kept = []
     for r in registros:
-        if not r["time"]:
-            continue
-        t = datetime.fromisoformat(r["time"])
-        cenario = next((n for start, end, n in windows if start <= t <= end), None)
+        if r.get("run_id"):
+            cenario = by_run_id.get(r["run_id"])
+        elif r["time"]:
+            t = datetime.fromisoformat(r["time"])
+            cenario = next((n for start, end, n in windows if start <= t <= end), None)
+        else:
+            cenario = None
         if cenario is not None:
             kept.append({**r, "cliente": f"cenario:{cenario}"})
     return kept
@@ -434,6 +444,19 @@ def selftest():
     assert por_sessao["media_fontes_por_analise"] == 2
     h = host_stats(resultados)
     assert h["tempo_medio_s"] == 60.0 and h["tokens_entrada_medio"] == 1110 and h["erros"] == 0
+
+    sobrepostas = parse_log_lines([
+        '{"level":"info","message":"mcp tool call","time":"2026-10-20T10:00:05.000-0300","run_id":"5-1","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":5}}',
+        '{"level":"info","message":"mcp tool call","time":"2026-10-20T10:00:06.000-0300","run_id":"7-1","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":7}}',
+        '{"level":"info","message":"mcp tool call","time":"2026-10-20T10:00:07.000-0300","run_id":"5-1","source":"open-finance","tool":"get_cash_flow_analysis","duration_ms":5,"arguments":{"id":5}}',
+        '{"level":"info","message":"mcp tool call","time":"2026-10-20T10:00:08.000-0300","run_id":"9-1","source":"bureau","tool":"get_customer_by_id","duration_ms":5,"arguments":{"id":9}}',
+    ])
+    janela = {"started_at": "2026-10-20T10:00:00-03:00", "ended_at": "2026-10-20T10:02:00-03:00"}
+    sessoes = assign_sessions(sobrepostas, [{"scenario": 5, "run_id": "5-1", **janela},
+                                            {"scenario": 7, "run_id": "7-1", **janela}])
+    assert sorted((r["cliente"], r["source"]) for r in sessoes) == [
+        ("cenario:5", "bureau"), ("cenario:5", "open-finance"), ("cenario:7", "bureau")], sessoes
+    assert aggregate(sessoes)["n_analises"] == 2
 
     todos = {f"C{i}": 1 for i in range(1, 16)}
     gabarito = {
