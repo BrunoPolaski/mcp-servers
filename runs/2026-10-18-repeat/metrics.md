@@ -42,9 +42,11 @@ Nenhuma falha registrada.
 | Conformidade da decisao | 150/150 | 100.0% | 97.5% a 100.0% |
 | Concordancia na regra de encerramento | 150/150 | 100.0% | 97.5% a 100.0% |
 | Pontuacao total exata (casos pontuados) | 90/90 | 100.0% | 95.9% a 100.0% |
-| Criterios exatos (casos pontuados x 15) | 1350/1350 | 100.0% | 99.7% a 100.0% |
+| Criterios exatos (casos pontuados x 15) | 1350/1350 | 100.0% | - |
 | Registro de dados ausentes identico (casos pontuados) | 90/90 | 100.0% | 95.9% a 100.0% |
 | Inferencia sobre dado ausente (casos com dado ausente) | 0/25 | 0.0% | 0.0% a 13.3% |
+
+> O intervalo trata cada sessao como independente; sessoes do mesmo cenario nao sao, entao ele e otimista. Criterios da mesma sessao sao ainda menos independentes e ficam sem intervalo.
 
 | # | Sessoes | Decisao | Regra | Pontos | Inferencia | Obtido |
 |---|---|---|---|---|---|---|
