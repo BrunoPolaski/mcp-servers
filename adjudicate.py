@@ -86,18 +86,18 @@ def records_from_transcript(path):
     return merged
 
 
-LIST_TOOLS = {"get_internal_payment_records": "internal_payment_records",
+MERGED_TOOLS = {"get_internal_payment_records": "internal_payment_records",
               "get_customer_by_id": None, "get_customer_by_document": None}
 
 
 def merge(target, payload):
     tool = payload["metadata"].get("tool")
-    if tool not in LIST_TOOLS:
+    if tool not in MERGED_TOOLS:
         return
     for key, value in payload.items():
-        if key == "metadata" or (LIST_TOOLS[tool] and key != "items"):
+        if key == "metadata" or (MERGED_TOOLS[tool] and key != "items"):
             continue
-        key = LIST_TOOLS[tool] or key
+        key = MERGED_TOOLS[tool] or key
         if isinstance(value, list):
             rows = target.setdefault(key, [])
             rows.extend(v for v in value if v not in rows)
