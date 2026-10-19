@@ -40,7 +40,8 @@ Lower case, words joined by `-`. The date is the day the round started.
   results.jsonl     one line per session (keys below)
   progress.txt      console output of run_evaluation.py
   metrics.md        report from analyze_metrics.py
-  transcripts/NN.jsonl   raw stream-json of session NN (scenario number, 2 digits)
+  transcripts/NN-R.jsonl raw stream-json of session NN-R (scenario, 2 digits; repetition)
+                    (rounds before run_id have NN.jsonl)
   logs/<server>.jsonl    server traces, one file per MCP server (not versioned)
   workdir/          empty working directory of the sessions (not versioned)
 ```
