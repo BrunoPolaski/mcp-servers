@@ -77,11 +77,11 @@ python3 analyze_metrics.py $d/logs/*.jsonl --gabarito docs/gabarito_cenarios.jso
 
 Each session tags its MCP requests with `X-Run-Id`, and `analyze_metrics.py`
 groups server traces by that `run_id`, so sessions may overlap in time. Traces
-without `run_id` (the three rounds above) are grouped by session window, which
-assumes sessions ran one at a time. `run_evaluation.py` itself still runs
-sessions sequentially; `--rep` sets the repetition part of the run id.
+without `run_id` (the three 2026-09 rounds) are grouped by session window, which
+assumes sessions ran one at a time. `run_evaluation.py` runs `--workers`
+sessions at a time; `--reps` sets the repetition part of the run id.
 
 The two `ablation-18` folders have no `metrics.md`. Both configurations ran at
 the same time with the same run_ids, so the server logs cannot be split
-between them. Their adherence comes from `results.jsonl` alone. Sessions from
-2026-10-19 on also record `policy` and `prompt` in `results.jsonl`.
+between them. Their adherence comes from `results.jsonl` alone. Rounds after the
+two ablations also record `policy` and `prompt` in `results.jsonl`.
