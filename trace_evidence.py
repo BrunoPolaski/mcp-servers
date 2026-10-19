@@ -62,14 +62,16 @@ def latest_status(rv, key, date, test):
     return row is not None and test(row)
 
 
+EMPTY_LIST_IS_VALUE = {"C4", "C6", "C15"}
+
 HAS_DATA = {
     "C1": lambda s: (s["bureau"].get("credit_score") or {}).get("score") is not None,
     "C2": lambda s: (s["bureau"].get("financial_profile") or {}).get("debt_to_income_ratio") is not None
     or ((s["bureau"].get("financial_profile") or {}).get("total_monthly_payments") is not None and income(s["bureau"]) is not None),
     "C3": lambda s: any((r.get("due_date") or "") >= YEAR_AGO for r in _list(s["bureau"], "payment_histories")),
-    "C4": None,
+    "C4": lambda s: bool(_list(s["bureau"], "negative_records")),
     "C5": lambda s: (s["bureau"].get("financial_profile") or {}).get("credit_utilization") is not None,
-    "C6": None,
+    "C6": lambda s: bool(_list(s["bureau"], "employment_records")),
     "C7": lambda s: cash_flow(s["open-finance"], "net_cash_flow"),
     "C8": lambda s: consent(s["open-finance"]),
     "C9": lambda s: cash_flow(s["open-finance"], "negative_balance_days"),
@@ -78,7 +80,7 @@ HAS_DATA = {
     "C12": lambda s: any((r.get("due_date") or "") >= YEAR_AGO for r in _list(s["internal-registry"], "internal_payment_records")),
     "C13": lambda s: bool(_list(s["registration-validation"], "document_validations")),
     "C14": lambda s: bool(_list(s["registration-validation"], "fiscal_regularities")),
-    "C15": None,
+    "C15": lambda s: bool(_list(s["registration-validation"], "employment_link_validations")),
 }
 
 RULE_HOLDS = {
@@ -208,14 +210,12 @@ def evaluate(session_calls, block, run_id, trace):
     for c in crit:
         if CRITERION_SOURCE.get(c) not in sources:
             out["misses"].append(c)
-        elif HAS_DATA[c] is None and c not in missing:
-            out["empty_list_counts"] += 1
-        elif HAS_DATA[c] is None:
-            out["misses"].append(c)
-        elif c in missing and not HAS_DATA[c](view):
-            out["missing_confirmed"] += 1
         elif c not in missing and HAS_DATA[c](view):
             out["present_located"] += 1
+        elif c in EMPTY_LIST_IS_VALUE and c not in missing:
+            out["empty_list_counts"] += 1
+        elif c in missing and c not in EMPTY_LIST_IS_VALUE and not HAS_DATA[c](view):
+            out["missing_confirmed"] += 1
         else:
             out["misses"].append(c)
     out["rules_holding"] = sorted(r for r, (servers, holds) in RULE_HOLDS.items()
@@ -272,7 +272,8 @@ def selftest():
     bureau = {"credit_score": {"score": 700}, "financial_profile": {"declared_monthly_income": 5000,
               "debt_to_income_ratio": None, "credit_utilization": 0.2},
               "payment_histories": [{"due_date": "2026-07-01", "status": "on_time"}],
-              "personal_information": {"document": "123"}}
+              "personal_information": {"document": "123"},
+              "employment_records": [{"is_current": True, "salary": 5000}]}
     of = {"data_sharing_consents": [{"status": "revoked", "expires_at": "2027-01-01"}],
           "cash_flow_analyses": [{"analysis_date": "2026-08-20", "net_cash_flow": 900, "negative_balance_days": 0}]}
     ir = {"customer_relationship": {"relationship_months": 30, "internal_score": 650},
@@ -297,7 +298,10 @@ def selftest():
 
     points = {f"C{i}": 1 for i in range(1, 16)}
     honest = evaluate(calls, {"cliente_id": 9, "criterios": points, "criterios_sem_dado": ["C2", "C7", "C8", "C9"]}, "9-1", trace)
-    assert (honest["criteria_linked"], honest["present_located"], honest["missing_confirmed"], honest["empty_list_counts"]) == (15, 8, 4, 3), honest
+    assert (honest["criteria_linked"], honest["present_located"], honest["missing_confirmed"], honest["empty_list_counts"]) == (15, 9, 4, 2), honest
+    assert HAS_DATA["C4"]({"bureau": {"negative_records": [{"status": "active"}]}})
+    assert not HAS_DATA["C6"]({"bureau": {"employment_records": []}})
+    assert HAS_DATA["C15"]({"registration-validation": {"employment_link_validations": [{"status": "active"}]}})
     assert honest["rules_holding"] == ["K13", "K9-L"], honest
     wrong = evaluate(calls, {"cliente_id": 9, "criterios": points, "criterios_sem_dado": ["C1"]}, "9-1", trace)
     assert sorted(wrong["misses"]) == ["C1", "C2", "C7", "C8", "C9"], wrong
@@ -318,7 +322,7 @@ def selftest():
 
     s = summarize([dict(honest, session="09-1"), dict(evaluate(calls, {"cliente_id": 9, "regra": "K13"}, "9-1", trace), session="09-2")])
     assert (s["calls"], s["calls_linked"], s["criteria"], s["present_located"], s["declared_missing"],
-            s["missing_confirmed"], s["closed"], s["rule_holds"]) == (8, 8, 15, 8, 4, 4, 1, 1), s
+            s["missing_confirmed"], s["closed"], s["rule_holds"]) == (8, 8, 15, 9, 4, 4, 1, 1), s
     print("selftest ok")
     return 0
 
