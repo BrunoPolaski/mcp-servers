@@ -13,6 +13,8 @@ the policy codes (`APROVADO`, `K1`, `C3`) and the `metrics.md` report.
 | `2026-09-16-preliminary` | Earlier run on the four servers, before the evaluation set and policy text were finalized; decisions transcribed to `agent_decisions.json` | 1.3, earlier text | 30 |
 | `2026-09-27-exploratory` | First full run; exposed flaws in the answer key and policy | 1.3 | 30 |
 | `2026-09-27-final` | Final round reported in the thesis and article | 1.3.1 | 30 |
+| `2026-10-18-pilot` | Two scenarios, two repetitions, 4 sessions at a time; checked log grouping by run_id before the repeated round | 1.3.1 | 1, 18 |
+| `2026-10-18-repeat` | The final configuration repeated 5 times per scenario, 30 sessions at a time (run_id `<scenario>-<1..5>`) | 1.3.1 | 30 × 5 |
 
 The `metrics.md` of the exploratory round was generated with the answer key of
 that time. Regenerating it with the current `docs/gabarito_cenarios.json` changes
@@ -28,6 +30,7 @@ the expected-score column.
 - `final`: a frozen run reported in the thesis;
 - `holdout`: a frozen run on scenarios never used before;
 - `repeat-<k>`: the k-th repetition of a frozen configuration.
+- `repeat`: several repetitions of a frozen configuration in one folder, told apart by run_id.
 
 Lower case, words joined by `-`. The date is the day the round started.
 
