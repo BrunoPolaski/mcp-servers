@@ -46,6 +46,7 @@ Lower case, words joined by `-`. The date is the day the round started.
   results.jsonl     one line per session (keys below)
   progress.txt      console output of run_evaluation.py
   metrics.md        report from analyze_metrics.py
+  adjudication.md   origin of each agent/key divergence, from adjudicate.py (only rounds with divergences)
   transcripts/NN-R.jsonl raw stream-json of session NN-R (scenario, 2 digits; repetition)
                     (rounds before run_id have NN.jsonl)
   logs/<server>.jsonl    server traces, one file per MCP server (not versioned)
@@ -73,7 +74,18 @@ d=runs/$(date +%F)-final
 python3 run_evaluation.py --out $d | tee $d/progress.txt
 python3 analyze_metrics.py $d/logs/*.jsonl --gabarito docs/gabarito_cenarios.json \
         --results $d/results.jsonl > $d/metrics.md
+python3 adjudicate.py $d --gabarito docs/gabarito_cenarios.json > $d/adjudication.md
 ```
+
+`adjudicate.py` recomputes each diverging criterion (C2, C3 and C12 so far) from
+the raw records the servers returned in the transcripts, without importing the
+generator. Same value as the agent: the key is wrong (`gabarito`). Same as the
+key: the agent is wrong (`agente`). Neither, or a different value under each
+reference date the policy allows (session date and the records' date when the
+prompt gives no analysis date): the policy is wrong (`politica`). Without
+`--gabarito` it takes the divergences from the round's `metrics.md`, which keeps
+the key of that time. `--date` sets the analysis date for rounds whose
+`results.jsonl` does not record the prompt.
 
 Each session tags its MCP requests with `X-Run-Id`, and `analyze_metrics.py`
 groups server traces by that `run_id`, so sessions may overlap in time. Traces
