@@ -15,6 +15,8 @@ the policy codes (`APROVADO`, `K1`, `C3`) and the `metrics.md` report.
 | `2026-09-27-final` | Final round reported in the thesis and article | 1.3.1 | 30 |
 | `2026-10-18-pilot` | Two scenarios, two repetitions, 4 sessions at a time; checked log grouping by run_id before the repeated round | 1.3.1 | 1, 18 |
 | `2026-10-18-repeat` | The final configuration repeated 5 times per scenario, 30 sessions at a time (run_id `<scenario>-<1..5>`) | 1.3.1 | 30 × 5 |
+| `2026-10-19-ablation-18-a` | Scenario 18, 10 sessions: policy 1.3 (`policy.md`, the final policy without rule 7) and a prompt without the analysis date | 1.3 | 18 × 10 |
+| `2026-10-19-ablation-18-b` | Scenario 18, 10 sessions with the final configuration, run at the same time as `-a` | 1.3.1 | 18 × 10 |
 
 The `metrics.md` of the exploratory round was generated with the answer key of
 that time. Regenerating it with the current `docs/gabarito_cenarios.json` changes
@@ -31,6 +33,7 @@ the expected-score column.
 - `holdout`: a frozen run on scenarios never used before;
 - `repeat-<k>`: the k-th repetition of a frozen configuration.
 - `repeat`: several repetitions of a frozen configuration in one folder, told apart by run_id.
+- `ablation-<scenario>-<config>`: one scenario repeated under configurations that differ in a single input.
 
 Lower case, words joined by `-`. The date is the day the round started.
 

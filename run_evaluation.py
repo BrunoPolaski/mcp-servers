@@ -59,14 +59,14 @@ def result_event(stream):
     return {}
 
 
-def run(n, rep, model, out):
+def run(n, rep, model, out, policy=ROOT / "docs" / "instructions.md", prompt=PROMPT):
     run_id = f"{n}-{rep}"
     mcp_config = out / "mcp" / f"{run_id}.json"
     mcp_config.write_text(json.dumps({"mcpServers": {
         name: {"type": "http", "url": f"http://localhost:{port}/mcp", "headers": {"X-Run-Id": run_id}}
         for name, port in SERVERS.items()}}, indent=1))
-    cmd = ["claude", "-p", PROMPT.format(n=n), "--model", model,
-           "--system-prompt-file", str(ROOT / "docs" / "instructions.md"),
+    cmd = ["claude", "-p", prompt.format(n=n), "--model", model,
+           "--system-prompt-file", str(policy),
            "--mcp-config", str(mcp_config), "--strict-mcp-config",
            "--tools", "", "--allowedTools", ",".join(f"mcp__{s}" for s in SERVERS),
            "--setting-sources", "", "--disable-slash-commands", "--no-session-persistence",
@@ -104,6 +104,8 @@ def main():
     p.add_argument("--reps", nargs="*", type=int, default=[1], help="repetition numbers, part of the run_id")
     p.add_argument("--workers", type=int, default=1, help="sessions running at the same time")
     p.add_argument("--model", default="claude-opus-5-5")
+    p.add_argument("--policy", type=Path, default=ROOT / "docs" / "instructions.md", help="system prompt file")
+    p.add_argument("--prompt", default=PROMPT, help="user prompt; {n} is the scenario number")
     args = p.parse_args()
 
     out = args.out.resolve()
@@ -113,7 +115,7 @@ def main():
 
     jobs = [(n, rep) for rep in args.reps for n in args.scenarios]
     with open(out / "results.jsonl", "a", encoding="utf-8") as fh, ThreadPoolExecutor(args.workers) as pool:
-        for future in as_completed([pool.submit(run, n, rep, args.model, out) for n, rep in jobs]):
+        for future in as_completed([pool.submit(run, n, rep, args.model, out, args.policy.resolve(), args.prompt) for n, rep in jobs]):
             r = future.result()
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
             fh.flush()
