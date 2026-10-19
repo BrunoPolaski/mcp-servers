@@ -1,0 +1,4 @@
+run   1-1: APROVADO  100 (23s, 5 turns)
+run   1-2: APROVADO  100 (27s, 5 turns)
+run  18-2: APROVADO_COM_RESSALVAS  63 (29s, 5 turns)
+run  18-1: APROVADO_COM_RESSALVAS  63 (39s, 5 turns)
