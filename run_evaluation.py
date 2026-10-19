@@ -14,11 +14,12 @@ Writes to <out>/ (layout and naming in runs/README.md):
   results.jsonl          one line per session: the structured block the agent
                          emitted (policy §8, item 6) plus host-side stats
   transcripts/NN-R.jsonl raw stream-json of each session (scenario NN, repetition R)
+  workdir/<run_id>/      empty working directory of each session
 
 Usage (servers up on :8081-8084):
     python3 run_evaluation.py --out runs/2026-09-27-final | tee runs/2026-09-27-final/progress.txt
     python3 run_evaluation.py --out runs/2026-10-20-pilot --scenarios 1 23
-    python3 run_evaluation.py --out runs/2026-10-18-repeat-1 --reps 1 2 3 4 5 --workers 30
+    python3 run_evaluation.py --out runs/2026-10-18-repeat --reps 1 2 3 4 5 --workers 30
 """
 
 import argparse
@@ -71,18 +72,23 @@ def run(n, rep, model, out, policy=ROOT / "docs" / "instructions.md", prompt=PRO
            "--tools", "", "--allowedTools", ",".join(f"mcp__{s}" for s in SERVERS),
            "--setting-sources", "", "--disable-slash-commands", "--no-session-persistence",
            "--output-format", "stream-json", "--verbose"]
+    workdir = out / "workdir" / run_id
+    workdir.mkdir(parents=True, exist_ok=True)
     started_at = datetime.now().astimezone()
     try:
-        proc = subprocess.run(cmd, cwd=out / "workdir", stdin=subprocess.DEVNULL, capture_output=True,
+        proc = subprocess.run(cmd, cwd=workdir, stdin=subprocess.DEVNULL, capture_output=True,
                               text=True, timeout=1800)
     except subprocess.TimeoutExpired as e:
-        proc = subprocess.CompletedProcess(cmd, -1, "", f"timeout after {e.timeout}s")
+        partial = e.stdout.decode(errors="replace") if isinstance(e.stdout, bytes) else e.stdout or ""
+        proc = subprocess.CompletedProcess(cmd, -1, partial, f"timeout after {e.timeout}s")
     ended_at = datetime.now().astimezone()
     (out / "transcripts" / f"{n:02d}-{rep}.jsonl").write_text(proc.stdout + proc.stderr)
     res = result_event(proc.stdout)
     return {
         "scenario": n,
         "run_id": run_id,
+        "policy": str(policy.relative_to(ROOT)) if policy.is_relative_to(ROOT) else str(policy),
+        "prompt": prompt.format(n=n),
         "started_at": started_at.isoformat(),
         "ended_at": ended_at.isoformat(),
         "duration_ms": res.get("duration_ms"),
@@ -100,8 +106,8 @@ def run(n, rep, model, out, policy=ROOT / "docs" / "instructions.md", prompt=PRO
 def main():
     p = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     p.add_argument("--out", required=True, type=Path)
-    p.add_argument("--scenarios", nargs="*", type=int, default=list(range(1, 31)))
-    p.add_argument("--reps", nargs="*", type=int, default=[1], help="repetition numbers, part of the run_id")
+    p.add_argument("--scenarios", nargs="+", type=int, default=list(range(1, 31)))
+    p.add_argument("--reps", nargs="+", type=int, default=[1], help="repetition numbers, part of the run_id")
     p.add_argument("--workers", type=int, default=1, help="sessions running at the same time")
     p.add_argument("--model", default="claude-opus-5-5")
     p.add_argument("--policy", type=Path, default=ROOT / "docs" / "instructions.md", help="system prompt file")
@@ -109,14 +115,20 @@ def main():
     args = p.parse_args()
 
     out = args.out.resolve()
-    (out / "workdir").mkdir(parents=True, exist_ok=True)
-    (out / "transcripts").mkdir(exist_ok=True)
+    (out / "transcripts").mkdir(parents=True, exist_ok=True)
     (out / "mcp").mkdir(exist_ok=True)
 
     jobs = [(n, rep) for rep in args.reps for n in args.scenarios]
     with open(out / "results.jsonl", "a", encoding="utf-8") as fh, ThreadPoolExecutor(args.workers) as pool:
-        for future in as_completed([pool.submit(run, n, rep, args.model, out, args.policy.resolve(), args.prompt) for n, rep in jobs]):
-            r = future.result()
+        futures = {pool.submit(run, n, rep, args.model, out, args.policy.resolve(), args.prompt): (n, rep)
+                   for n, rep in jobs}
+        for future in as_completed(futures):
+            try:
+                r = future.result()
+            except Exception as e:
+                n, rep = futures[future]
+                print(f"run {n}-{rep}: FAILED ({e!r}), not written to results.jsonl", flush=True)
+                continue
             fh.write(json.dumps(r, ensure_ascii=False) + "\n")
             fh.flush()
             b = r["block"] or {}
