@@ -273,8 +273,9 @@ def wilson(k, n, z=1.96):
 def compare_repetitions(gabarito, resultados):
     """Agreement rates over every session, for rounds with several repetitions per scenario.
 
-    A session without a block counts as a miss. Inference is a session that
-    scored as present a criterion the answer key treats as missing.
+    A session without a block counts as a miss. Inference is a session with a
+    block that left out of criterios_sem_dado a criterion the answer key
+    treats as missing, i.e. scored it from a value the data did not have.
     """
     total = {m: [0, 0] for m in ("decisao", "regra", "pontuacao", "criterios", "ausentes", "inferencia")}
     por_cenario = {}
@@ -293,7 +294,7 @@ def compare_repetitions(gabarito, resultados):
                    "regra": bool(obt) and (obt.get("regra") or None) == esp["regra"]}
         if esp["pontuacao"] is not None:
             acertos["pontuacao"] = obt.get("pontuacao") == esp["pontuacao"]
-            acertos["ausentes"] = sorted(obt.get("criterios_sem_dado") or []) == sorted(esp["criterios_sem_dado"])
+            acertos["ausentes"] = bool(obt) and sorted(obt.get("criterios_sem_dado") or []) == sorted(esp["criterios_sem_dado"])
             obtidos = obt.get("criterios") or {}
             ok = sum(obtidos.get(k) == v for k, v in esp["criterios"].items())
             total["criterios"][0] += ok
@@ -378,7 +379,11 @@ def render(ag, aderencia=None, host=None, repeticoes=None):
         L += ["| Metrica | Acertos | Taxa | IC 95% (Wilson) |", "|---|---|---|---|"]
         for m, rotulo in rotulos.items():
             k, n, lo, hi = repeticoes["total"][m]
-            L.append(f"| {rotulo} | {k}/{n} | {_pct(k / n if n else None)} | {_pct(lo)} a {_pct(hi)} |")
+            ic = "-" if m == "criterios" else f"{_pct(lo)} a {_pct(hi)}"
+            L.append(f"| {rotulo} | {k}/{n} | {_pct(k / n if n else None)} | {ic} |")
+        L += ["", "> O intervalo trata cada sessao como independente; sessoes do mesmo cenario "
+              "nao sao, entao ele e otimista. Criterios da mesma sessao sao ainda menos "
+              "independentes e ficam sem intervalo."]
         L += ["", "| # | Sessoes | Decisao | Regra | Pontos | Inferencia | Obtido |", "|---|---|---|---|---|---|---|"]
         for cenario in sorted(repeticoes["por_cenario"], key=int):
             c = repeticoes["por_cenario"][cenario]
@@ -574,6 +579,8 @@ def selftest():
     assert rep["total"]["pontuacao"][:2] == (1, 2)
     assert rep["total"]["criterios"][:2] == (29, 30)
     assert rep["total"]["inferencia"][:2] == (1, 2)               # a 2a sessao pontuou C5 como presente
+    sem_bloco = compare_repetitions({"9": {**gabarito["1"], "criterios_sem_dado": []}}, [{"scenario": 9, "block": None}])
+    assert sem_bloco["total"]["ausentes"][:2] == (0, 1), sem_bloco   # sem bloco nao acerta ausentes
     assert rep["por_cenario"]["2"]["obtidas"] == {"sem bloco": 1}
     lo, hi = wilson(150, 150)
     assert hi == 1.0 and 0.97 < lo < 0.98, lo                    # 150/150 nao da 100% de limite inferior
