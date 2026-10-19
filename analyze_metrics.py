@@ -38,6 +38,7 @@ Autoverificacao (nao precisa dos servidores):
 import argparse
 import glob
 import json
+import math
 import statistics
 import sys
 from datetime import datetime
@@ -259,6 +260,55 @@ def compare_adherence(gabarito, blocos):
     }
 
 
+def wilson(k, n, z=1.96):
+    """95% Wilson interval for k successes in n trials; (None, None) if n == 0."""
+    if not n:
+        return None, None
+    p = k / n
+    centro = (p + z * z / (2 * n)) / (1 + z * z / n)
+    meia = z * math.sqrt(p * (1 - p) / n + z * z / (4 * n * n)) / (1 + z * z / n)
+    return max(0.0, centro - meia), min(1.0, centro + meia)
+
+
+def compare_repetitions(gabarito, resultados):
+    """Agreement rates over every session, for rounds with several repetitions per scenario.
+
+    A session without a block counts as a miss. Inference is a session with a
+    block that left out of criterios_sem_dado a criterion the answer key
+    treats as missing, i.e. scored it from a value the data did not have.
+    """
+    total = {m: [0, 0] for m in ("decisao", "regra", "pontuacao", "criterios", "ausentes", "inferencia")}
+    por_cenario = {}
+    for r in resultados:
+        cenario = str(r["scenario"])
+        esp = gabarito.get(cenario)
+        if esp is None:
+            continue
+        obt = r.get("block") or {}
+        c = por_cenario.setdefault(cenario, {"n": 0, "decisao": 0, "regra": 0, "pontuacao": 0,
+                                             "inferencia": 0, "obtidas": {}})
+        c["n"] += 1
+        chave = obt.get("decisao", "sem bloco") + (f" / {obt['regra']}" if obt.get("regra") else "")
+        c["obtidas"][chave] = c["obtidas"].get(chave, 0) + 1
+        acertos = {"decisao": obt.get("decisao") == esp["decisao"],
+                   "regra": bool(obt) and (obt.get("regra") or None) == esp["regra"]}
+        if esp["pontuacao"] is not None:
+            acertos["pontuacao"] = obt.get("pontuacao") == esp["pontuacao"]
+            acertos["ausentes"] = bool(obt) and sorted(obt.get("criterios_sem_dado") or []) == sorted(esp["criterios_sem_dado"])
+            obtidos = obt.get("criterios") or {}
+            ok = sum(obtidos.get(k) == v for k, v in esp["criterios"].items())
+            total["criterios"][0] += ok
+            total["criterios"][1] += len(esp["criterios"])
+        if obt and esp["criterios_sem_dado"]:
+            acertos["inferencia"] = bool(set(esp["criterios_sem_dado"]) - set(obt.get("criterios_sem_dado") or []))
+        for m, v in acertos.items():
+            total[m][0] += v
+            total[m][1] += 1
+            if m in c:
+                c[m] += v
+    return {"total": {m: (k, n, *wilson(k, n)) for m, (k, n) in total.items()}, "por_cenario": por_cenario}
+
+
 # --------------------------------------------------------------------------- saida
 def _pct(x):
     return "-" if x is None else f"{x * 100:.1f}%"
@@ -272,7 +322,7 @@ def _criterio_key(c):
     return int(c[1:])
 
 
-def render(ag, aderencia=None, host=None):
+def render(ag, aderencia=None, host=None, repeticoes=None):
     L = ["# Metricas de avaliacao", ""]
 
     L += ["## Viabilidade tecnica", "",
@@ -320,7 +370,27 @@ def render(ag, aderencia=None, host=None):
               "o tempo de raciocinio do agente esta no host, nao aqui."]
 
     L += ["", "## Aderencia a politica", ""]
-    if aderencia is None:
+    if repeticoes is not None:
+        rotulos = {"decisao": "Conformidade da decisao", "regra": "Concordancia na regra de encerramento",
+                   "pontuacao": "Pontuacao total exata (casos pontuados)",
+                   "criterios": "Criterios exatos (casos pontuados x 15)",
+                   "ausentes": "Registro de dados ausentes identico (casos pontuados)",
+                   "inferencia": "Inferencia sobre dado ausente (casos com dado ausente)"}
+        L += ["| Metrica | Acertos | Taxa | IC 95% (Wilson) |", "|---|---|---|---|"]
+        for m, rotulo in rotulos.items():
+            k, n, lo, hi = repeticoes["total"][m]
+            ic = "-" if m == "criterios" else f"{_pct(lo)} a {_pct(hi)}"
+            L.append(f"| {rotulo} | {k}/{n} | {_pct(k / n if n else None)} | {ic} |")
+        L += ["", "> O intervalo trata cada sessao como independente; sessoes do mesmo cenario "
+              "nao sao, entao ele e otimista. Criterios da mesma sessao sao ainda menos "
+              "independentes e ficam sem intervalo."]
+        L += ["", "| # | Sessoes | Decisao | Regra | Pontos | Inferencia | Obtido |", "|---|---|---|---|---|---|---|"]
+        for cenario in sorted(repeticoes["por_cenario"], key=int):
+            c = repeticoes["por_cenario"][cenario]
+            obtidas = ", ".join(f"{d} ({n})" for d, n in sorted(c["obtidas"].items(), key=lambda x: -x[1]))
+            L.append(f"| {cenario} | {c['n']} | {c['decisao']} | {c['regra']} | {c['pontuacao']} | "
+                     f"{c['inferencia']} | {obtidas} |")
+    elif aderencia is None:
         L += ["> Sem resultados. Passe --results (results.jsonl de run_evaluation.py) "
               "e --gabarito (docs/gabarito_cenarios.json) para apurar esta dimensao."]
     else:
@@ -378,7 +448,7 @@ def main(argv=None):
         return selftest()
 
     registros = load_logs(args.logs, args.since, args.until)
-    aderencia = host = None
+    aderencia = host = repeticoes = None
     if args.results:
         with open(args.results, encoding="utf-8") as fh:
             resultados = [json.loads(linha) for linha in fh if linha.strip()]
@@ -391,9 +461,13 @@ def main(argv=None):
         if args.gabarito:
             with open(args.gabarito, encoding="utf-8") as fh:
                 gabarito = json.load(fh)
-            blocos = {str(r["scenario"]): r["block"] for r in resultados if r.get("block")}
-            aderencia = compare_adherence(gabarito, blocos)
-    print(render(aggregate(registros), aderencia, host))
+            cenarios = [r["scenario"] for r in resultados]
+            if len(cenarios) > len(set(cenarios)):
+                repeticoes = compare_repetitions(gabarito, resultados)
+            else:
+                blocos = {str(r["scenario"]): r["block"] for r in resultados if r.get("block")}
+                aderencia = compare_adherence(gabarito, blocos)
+    print(render(aggregate(registros), aderencia, host, repeticoes))
     return 0
 
 
@@ -495,6 +569,23 @@ def selftest():
     assert ad["divergencias_por_criterio"] == {"C3": [("1", 1, 0)]}
     assert ad["registro_ausentes"] == 1.0
     assert compare_adherence(gabarito, {})["respondidos"] == 0
+
+    resultados = [{"scenario": 1, "block": blocos["1"]},
+                  {"scenario": 1, "block": {**gabarito["1"], "criterios_sem_dado": []}},
+                  {"scenario": 2, "block": None}]
+    rep = compare_repetitions(gabarito, resultados)
+    assert rep["total"]["decisao"][:2] == (2, 3), rep["total"]   # sessao sem bloco conta como erro
+    assert rep["total"]["regra"][:2] == (2, 3)
+    assert rep["total"]["pontuacao"][:2] == (1, 2)
+    assert rep["total"]["criterios"][:2] == (29, 30)
+    assert rep["total"]["inferencia"][:2] == (1, 2)               # a 2a sessao pontuou C5 como presente
+    sem_bloco = compare_repetitions({"9": {**gabarito["1"], "criterios_sem_dado": []}}, [{"scenario": 9, "block": None}])
+    assert sem_bloco["total"]["ausentes"][:2] == (0, 1), sem_bloco   # sem bloco nao acerta ausentes
+    assert rep["por_cenario"]["2"]["obtidas"] == {"sem bloco": 1}
+    lo, hi = wilson(150, 150)
+    assert hi == 1.0 and 0.97 < lo < 0.98, lo                    # 150/150 nao da 100% de limite inferior
+    assert wilson(0, 0) == (None, None)
+    assert "IC 95% (Wilson)" in render(ag, None, h, rep)
 
     # render nao pode estourar em nenhum dos modos
     assert "Viabilidade tecnica" in render(ag, None)

@@ -13,6 +13,10 @@ the policy codes (`APROVADO`, `K1`, `C3`) and the `metrics.md` report.
 | `2026-09-16-preliminary` | Earlier run on the four servers, before the evaluation set and policy text were finalized; decisions transcribed to `agent_decisions.json` | 1.3, earlier text | 30 |
 | `2026-09-27-exploratory` | First full run; exposed flaws in the answer key and policy | 1.3 | 30 |
 | `2026-09-27-final` | Final round reported in the thesis and article | 1.3.1 | 30 |
+| `2026-10-18-pilot` | Two scenarios, two repetitions, 4 sessions at a time; checked log grouping by run_id before the repeated round | 1.3.1 | 1, 18 |
+| `2026-10-18-repeat` | The final configuration repeated 5 times per scenario, 30 sessions at a time (run_id `<scenario>-<1..5>`) | 1.3.1 | 30 × 5 |
+| `2026-10-19-ablation-18-a` | Scenario 18, 10 sessions: policy 1.3 (`policy.md`, the final policy without rule 7) and the prompt `Analise o cliente de identificador 18.`, with no analysis date. Without the date, time windows count from the day the session runs (2026-10-19) | 1.3 | 18 × 10 |
+| `2026-10-19-ablation-18-b` | Scenario 18, 10 sessions with the final configuration, run at the same time as `-a` | 1.3.1 | 18 × 10 |
 
 The `metrics.md` of the exploratory round was generated with the answer key of
 that time. Regenerating it with the current `docs/gabarito_cenarios.json` changes
@@ -28,6 +32,8 @@ the expected-score column.
 - `final`: a frozen run reported in the thesis;
 - `holdout`: a frozen run on scenarios never used before;
 - `repeat-<k>`: the k-th repetition of a frozen configuration.
+- `repeat`: several repetitions of a frozen configuration in one folder, told apart by run_id.
+- `ablation-<scenario>-<config>`: one scenario repeated under configurations that differ only in the inputs named in the table above.
 
 Lower case, words joined by `-`. The date is the day the round started.
 
@@ -40,9 +46,10 @@ Lower case, words joined by `-`. The date is the day the round started.
   results.jsonl     one line per session (keys below)
   progress.txt      console output of run_evaluation.py
   metrics.md        report from analyze_metrics.py
-  transcripts/NN.jsonl   raw stream-json of session NN (scenario number, 2 digits)
+  transcripts/NN-R.jsonl raw stream-json of session NN-R (scenario, 2 digits; repetition)
+                    (rounds before run_id have NN.jsonl)
   logs/<server>.jsonl    server traces, one file per MCP server (not versioned)
-  workdir/          empty working directory of the sessions (not versioned)
+  workdir/          empty working directory of the sessions, one subfolder per run_id from 2026-10-18 on (not versioned)
 ```
 
 ## `results.jsonl` keys
@@ -70,6 +77,11 @@ python3 analyze_metrics.py $d/logs/*.jsonl --gabarito docs/gabarito_cenarios.jso
 
 Each session tags its MCP requests with `X-Run-Id`, and `analyze_metrics.py`
 groups server traces by that `run_id`, so sessions may overlap in time. Traces
-without `run_id` (the three rounds above) are grouped by session window, which
-assumes sessions ran one at a time. `run_evaluation.py` itself still runs
-sessions sequentially; `--rep` sets the repetition part of the run id.
+without `run_id` (the three 2026-09 rounds) are grouped by session window, which
+assumes sessions ran one at a time. `run_evaluation.py` runs `--workers`
+sessions at a time; `--reps` sets the repetition part of the run id.
+
+The two `ablation-18` folders have no `metrics.md`. Both configurations ran at
+the same time with the same run_ids, so the server logs cannot be split
+between them. Their adherence comes from `results.jsonl` alone. Rounds after the
+two ablations also record `policy` and `prompt` in `results.jsonl`.

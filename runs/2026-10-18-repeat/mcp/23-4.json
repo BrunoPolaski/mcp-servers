@@ -1,0 +1,32 @@
+{
+ "mcpServers": {
+  "bureau": {
+   "type": "http",
+   "url": "http://localhost:8081/mcp",
+   "headers": {
+    "X-Run-Id": "23-4"
+   }
+  },
+  "open-finance": {
+   "type": "http",
+   "url": "http://localhost:8082/mcp",
+   "headers": {
+    "X-Run-Id": "23-4"
+   }
+  },
+  "internal-registry": {
+   "type": "http",
+   "url": "http://localhost:8083/mcp",
+   "headers": {
+    "X-Run-Id": "23-4"
+   }
+  },
+  "registration-validation": {
+   "type": "http",
+   "url": "http://localhost:8084/mcp",
+   "headers": {
+    "X-Run-Id": "23-4"
+   }
+  }
+ }
+}
