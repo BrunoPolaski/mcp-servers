@@ -82,10 +82,29 @@ def records_from_transcript(path):
                 continue
             if not isinstance(payload, dict) or "metadata" not in payload:
                 continue
-            target = merged.setdefault(payload["metadata"].get("source"), {})
-            for key, value in payload.items():
-                target.setdefault(key, value)
+            merge(merged.setdefault(payload["metadata"].get("source"), {}), payload)
     return merged
+
+
+LIST_TOOLS = {"get_internal_payment_records": "internal_payment_records",
+              "get_customer_by_id": None, "get_customer_by_document": None}
+
+
+def merge(target, payload):
+    tool = payload["metadata"].get("tool")
+    if tool not in LIST_TOOLS:
+        return
+    for key, value in payload.items():
+        if key == "metadata" or (LIST_TOOLS[tool] and key != "items"):
+            continue
+        key = LIST_TOOLS[tool] or key
+        if isinstance(value, list):
+            rows = target.setdefault(key, [])
+            rows.extend(v for v in value if v not in rows)
+        elif target.get(key) is None:
+            target[key] = value
+        elif value is not None and target[key] != value:
+            raise ValueError(f"{payload['metadata'].get('source')}: responses disagree on {key}")
 
 
 def reference_dates(session, records, fixed):
@@ -189,6 +208,19 @@ def selftest():
     session = {"started_at": "2026-09-27T23:00:00-03:00"}
     assert reference_dates(session, {"bureau": {"created_at": "2026-08-31 00:00:00"}}, None) == [date(2026, 8, 31), date(2026, 9, 27)]
     assert reference_dates({**session, "prompt": "Data da análise: 31/08/2026."}, {}, None) == [date(2026, 8, 31)]
+    meta = {"source": "internal-registry", "tool": "get_customer_by_id"}
+    row = {"id": 1, "due_date": "2026-08-05", "status": "on_time"}
+    late = {"id": 2, "due_date": "2026-07-05", "status": "late"}
+    merged = {}
+    merge(merged, {"metadata": meta, "id": 7, "internal_payment_records": [row]})
+    merge(merged, {"metadata": {**meta, "tool": "get_internal_payment_records"}, "items": [row, late]})
+    merge(merged, {"metadata": {**meta, "tool": "get_pre_approved_limits"}, "items": [{"id": 9}]})
+    assert merged == {"id": 7, "internal_payment_records": [row, late]}
+    try:
+        merge(merged, {"metadata": meta, "id": 8})
+        raise AssertionError("conflicting responses accepted")
+    except ValueError:
+        pass
     print("selftest ok")
     return 0
 
