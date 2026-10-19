@@ -6,30 +6,111 @@ import os
 import statistics
 import sys
 
+ANALYSIS_DATE = "2026-08-31"
+YEAR_AGO = "2025-08-31"
+SIX_MONTHS_AGO = "2026-02-28"
+
 CRITERION_SOURCE = {f"C{i}": "bureau" for i in range(1, 7)}
 CRITERION_SOURCE |= {f"C{i}": "open-finance" for i in range(7, 10)}
 CRITERION_SOURCE |= {f"C{i}": "internal-registry" for i in range(10, 13)}
 CRITERION_SOURCE |= {f"C{i}": "registration-validation" for i in range(13, 16)}
 
-RULE_EVIDENCE = {
-    "K1": {"bureau": "fraud_alerts"},
-    "K2": {"bureau": "fraud_alerts"},
-    "K3": {"bureau": None},
-    "K4": {"bureau": "credit_score"},
-    "K5": {"bureau": "negative_records"},
-    "K6": {"bureau": "negative_records"},
-    "K7": {"bureau": "debts"},
-    "K8": {"bureau": "financial_profile", "open-finance": "recurring_transactions"},
-    "K9": {"internal-registry": "internal_payment_records"},
-    "K9-L": {"internal-registry": "internal_payment_records"},
-    "K10": {"registration-validation": "document_validations"},
-    "K11": {"registration-validation": "document_validations"},
-    "K12": {"registration-validation": "compliance_checks"},
-    "K13": {"registration-validation": "compliance_checks"},
-    "M1": {"bureau": None},
-    "M2": {"bureau": "financial_profile"},
-    "M3": {"bureau": "personal_information"},
-    "M4": {"bureau": "negative_records"},
+
+def _list(p, key):
+    return p.get(key) or []
+
+
+def _latest(p, key, date):
+    rows = _list(p, key)
+    return max(rows, key=lambda r: r.get(date) or "") if rows else None
+
+
+def income(b):
+    fp = b.get("financial_profile") or {}
+    for key in ("declared_monthly_income", "estimated_monthly_income"):
+        if fp.get(key) is not None:
+            return fp[key]
+    salaries = [e["salary"] for e in _list(b, "employment_records") if e.get("is_current") and e.get("salary") is not None]
+    return max(salaries) if salaries else None
+
+
+def consent(of):
+    return any(c.get("status") == "granted" and (c.get("expires_at") or "9") > ANALYSIS_DATE
+               for c in _list(of, "data_sharing_consents"))
+
+
+def cash_flow(of, field):
+    row = _latest(of, "cash_flow_analyses", "analysis_date")
+    return consent(of) and row is not None and row.get(field) is not None
+
+
+def recurring_income(of):
+    return sum(r.get("amount") or 0 for r in _list(of, "recurring_transactions")
+               if r.get("transaction_type") == "income" and r.get("is_active"))
+
+
+def active_negatives(b):
+    return [r.get("amount") or 0 for r in _list(b, "negative_records") if r.get("status") in ("active", None)]
+
+
+def unpaid_internal(ir):
+    return [r for r in _list(ir, "internal_payment_records") if r.get("payment_date") is None and (r.get("days_late") or 0) > 0]
+
+
+def latest_status(rv, key, date, test):
+    row = _latest(rv, key, date)
+    return row is not None and test(row)
+
+
+HAS_DATA = {
+    "C1": lambda s: (s["bureau"].get("credit_score") or {}).get("score") is not None,
+    "C2": lambda s: (s["bureau"].get("financial_profile") or {}).get("debt_to_income_ratio") is not None
+    or ((s["bureau"].get("financial_profile") or {}).get("total_monthly_payments") is not None and income(s["bureau"]) is not None),
+    "C3": lambda s: any((r.get("due_date") or "") >= YEAR_AGO for r in _list(s["bureau"], "payment_histories")),
+    "C4": None,
+    "C5": lambda s: (s["bureau"].get("financial_profile") or {}).get("credit_utilization") is not None,
+    "C6": None,
+    "C7": lambda s: cash_flow(s["open-finance"], "net_cash_flow"),
+    "C8": lambda s: consent(s["open-finance"]),
+    "C9": lambda s: cash_flow(s["open-finance"], "negative_balance_days"),
+    "C10": lambda s: s["internal-registry"].get("customer_relationship") is not None,
+    "C11": lambda s: (s["internal-registry"].get("customer_relationship") or {}).get("internal_score") is not None,
+    "C12": lambda s: any((r.get("due_date") or "") >= YEAR_AGO for r in _list(s["internal-registry"], "internal_payment_records")),
+    "C13": lambda s: bool(_list(s["registration-validation"], "document_validations")),
+    "C14": lambda s: bool(_list(s["registration-validation"], "fiscal_regularities")),
+    "C15": None,
+}
+
+RULE_HOLDS = {
+    "K1": (("bureau",), lambda s: any(a.get("status") == "active" and a.get("severity") in ("high", "critical")
+                                      for a in _list(s["bureau"], "fraud_alerts"))),
+    "K2": (("bureau",), lambda s: any(a.get("status") in ("active", "investigating") for a in _list(s["bureau"], "fraud_alerts"))),
+    "K4": (("bureau",), lambda s: ((s["bureau"].get("credit_score") or {}).get("score") or 1000) < 300),
+    "K5": (("bureau",), lambda s: len(active_negatives(s["bureau"])) >= 3),
+    "K6": (("bureau",), lambda s: income(s["bureau"]) is not None and sum(active_negatives(s["bureau"])) > 5 * income(s["bureau"])),
+    "K7": (("bureau",), lambda s: income(s["bureau"]) is not None and sum(
+        d.get("current_amount") or 0 for d in _list(s["bureau"], "debts")
+        if d.get("in_collection") is not False and d.get("status") not in ("paid", "settled")) > 10 * income(s["bureau"])),
+    "K8": (("bureau", "open-finance"), lambda s: consent(s["open-finance"]) and recurring_income(s["open-finance"]) > 0
+           and (income(s["bureau"]) or 0) > 2 * recurring_income(s["open-finance"])),
+    "K9": (("internal-registry",), lambda s: any(r["days_late"] > 90 for r in unpaid_internal(s["internal-registry"]))),
+    "K9-L": (("internal-registry",), lambda s: any(r["days_late"] <= 90 and (r.get("due_date") or "") >= SIX_MONTHS_AGO
+                                                   for r in unpaid_internal(s["internal-registry"]))),
+    "K10": (("registration-validation",), lambda s: latest_status(
+        s["registration-validation"], "document_validations", "validation_date",
+        lambda r: r.get("is_valid") is False or r.get("receita_federal_status") in ("canceled", "deceased"))),
+    "K11": (("registration-validation",), lambda s: latest_status(
+        s["registration-validation"], "document_validations", "validation_date",
+        lambda r: r.get("receita_federal_status") in ("pending", "suspended"))),
+    "K12": (("registration-validation",), lambda s: latest_status(
+        s["registration-validation"], "compliance_checks", "check_date", lambda r: bool(r.get("on_sanctions_list")))),
+    "K13": (("registration-validation",), lambda s: latest_status(
+        s["registration-validation"], "compliance_checks", "check_date",
+        lambda r: bool(r.get("is_pep")) or r.get("status") == "irregular")),
+    "M1": (("bureau",), lambda s: (s["bureau"].get("credit_score") or {}).get("score") is None),
+    "M2": (("bureau",), lambda s: income(s["bureau"]) is None),
+    "M3": (("bureau",), lambda s: not (s["bureau"].get("personal_information") or {}).get("document")),
+    "M4": (("bureau",), lambda s: any(r.get("status") == "active" and r.get("is_disputed") for r in _list(s["bureau"], "negative_records"))),
 }
 
 
@@ -86,23 +167,60 @@ def link(call, run_id, trace):
     return payload
 
 
+def client_of(call, payload):
+    args = call["arguments"]
+    for value in (args.get("id"), args.get("customer_id"), payload.get("id"), payload.get("customer_id")):
+        if value is not None:
+            return value
+    return None
+
+
 def evaluate(session_calls, block, run_id, trace):
-    linked = {}
+    client = block.get("cliente_id")
+    sources, linked, on_client = {}, 0, 0
     for call in session_calls:
         payload = link(call, run_id, trace)
-        if payload is not None and call["tool"] == "get_customer_by_id":
-            linked.setdefault(call["server"], payload)
-    rule = block.get("regra")
-    if rule:
-        needs = RULE_EVIDENCE.get(rule, {})
-        ok = bool(needs) and all(s in linked and (k is None or k in linked[s]) for s, k in needs.items())
-        return {"rule": rule, "rule_ok": ok, "rule_calls": len(needs),
-                "criteria": 0, "criteria_ok": 0, "calls": len(session_calls)}
+        if payload is None:
+            continue
+        linked += 1
+        if client_of(call, payload) != client:
+            continue
+        on_client += 1
+        if call["tool"] == "get_customer_by_id":
+            sources.setdefault(call["server"], {}).update(payload)
+    out = {"calls": len(session_calls), "calls_linked": linked, "calls_on_client": on_client,
+           "rule": block.get("regra"), "misses": []}
+    view = {s: sources.get(s, {}) for s in ("bureau", "open-finance", "internal-registry", "registration-validation")}
+    if out["rule"]:
+        servers, holds = RULE_HOLDS.get(out["rule"], ((), None))
+        out["rule_linked"] = bool(holds) and all(s in sources for s in servers)
+        out["rule_holds"] = out["rule_linked"] and holds(view)
+        out["rule_calls"] = len(servers)
+        if not out["rule_holds"]:
+            out["misses"].append(out["rule"])
+        return out
     crit = block.get("criterios") or {}
-    return {"rule": None, "criteria": len(crit),
-            "criteria_ok": sum(CRITERION_SOURCE.get(c) in linked for c in crit),
-            "evidence_calls": len({CRITERION_SOURCE[c] for c in crit if c in CRITERION_SOURCE}),
-            "calls": len(session_calls)}
+    missing = set(block.get("criterios_sem_dado") or [])
+    out["criteria"] = len(crit)
+    out["criteria_linked"] = sum(CRITERION_SOURCE.get(c) in sources for c in crit)
+    out["declared_missing"] = len(missing & set(crit))
+    out["present_located"] = out["missing_confirmed"] = out["empty_list_counts"] = 0
+    for c in crit:
+        if CRITERION_SOURCE.get(c) not in sources:
+            out["misses"].append(c)
+        elif HAS_DATA[c] is None and c not in missing:
+            out["empty_list_counts"] += 1
+        elif HAS_DATA[c] is None:
+            out["misses"].append(c)
+        elif c in missing and not HAS_DATA[c](view):
+            out["missing_confirmed"] += 1
+        elif c not in missing and HAS_DATA[c](view):
+            out["present_located"] += 1
+        else:
+            out["misses"].append(c)
+    out["rules_holding"] = sorted(r for r, (servers, holds) in RULE_HOLDS.items()
+                                  if all(s in sources for s in servers) and holds(view))
+    return out
 
 
 def run(round_dir):
@@ -117,57 +235,90 @@ def run(round_dir):
             r = json.loads(line)
             name = f"{r['scenario']:02d}" + (f"-{r['run_id'].split('-', 1)[1]}" if r.get("run_id") else "")
             with open(os.path.join(round_dir, "transcripts", f"{name}.jsonl")) as t:
-                rows.append(evaluate(transcript_calls(t), r.get("block") or {}, r.get("run_id"), trace))
+                row = evaluate(transcript_calls(t), r.get("block") or {}, r.get("run_id"), trace)
+            rows.append(dict(row, session=name))
     return rows
 
 
 def summarize(rows):
-    scored = [r for r in rows if r["rule"] is None and r["criteria"]]
+    scored = [r for r in rows if not r["rule"] and r.get("criteria")]
     closed = [r for r in rows if r["rule"]]
+    total = lambda rs, k: sum(r[k] for r in rs)
+    calls = [r["calls"] for r in rows]
     return {
         "sessions": len(rows),
+        "calls": sum(calls),
+        "calls_linked": total(rows, "calls_linked"),
+        "calls_on_client": total(rows, "calls_on_client"),
+        "calls_per_session": {"mean": statistics.mean(calls), "min": min(calls), "max": max(calls)} if rows else None,
         "scored": len(scored),
-        "criteria": sum(r["criteria"] for r in scored),
-        "criteria_ok": sum(r["criteria_ok"] for r in scored),
-        "evidence_calls_per_scored": statistics.mean(r["evidence_calls"] for r in scored) if scored else None,
-        "calls_per_session": statistics.mean(r["calls"] for r in rows) if rows else None,
+        "criteria": total(scored, "criteria"),
+        "criteria_linked": total(scored, "criteria_linked"),
+        "reported_present": total(scored, "criteria") - total(scored, "declared_missing"),
+        "present_located": total(scored, "present_located"),
+        "empty_list_counts": total(scored, "empty_list_counts"),
+        "declared_missing": total(scored, "declared_missing"),
+        "missing_confirmed": total(scored, "missing_confirmed"),
+        "scored_with_rule_holding": [(r["session"], r["rules_holding"]) for r in scored if r["rules_holding"]],
         "closed": len(closed),
-        "closed_ok": sum(r["rule_ok"] for r in closed),
+        "rule_linked": sum(r["rule_linked"] for r in closed),
+        "rule_holds": sum(r["rule_holds"] for r in closed),
         "rule_calls": sorted({r["rule_calls"] for r in closed}),
+        "misses": [(r["session"], r["misses"]) for r in rows if r["misses"]],
     }
 
 
 def selftest():
-    payload = lambda src, tid, **kw: json.dumps({"metadata": {"source": src, "transaction_id": tid}, **kw})
-    texts = {s: payload(s, f"t{i}") for i, s in enumerate(["bureau", "open-finance", "internal-registry"])}
-    texts["registration-validation"] = payload("registration-validation", "t3", compliance_checks=[])
-    trace_lines = []
-    for i, (src, text) in enumerate(texts.items()):
-        args = {"id": 9} if src != "internal-registry" else {"id": 8}
+    bureau = {"credit_score": {"score": 700}, "financial_profile": {"declared_monthly_income": 5000,
+              "debt_to_income_ratio": None, "credit_utilization": 0.2},
+              "payment_histories": [{"due_date": "2026-07-01", "status": "on_time"}],
+              "personal_information": {"document": "123"}}
+    of = {"data_sharing_consents": [{"status": "revoked", "expires_at": "2027-01-01"}],
+          "cash_flow_analyses": [{"analysis_date": "2026-08-20", "net_cash_flow": 900, "negative_balance_days": 0}]}
+    ir = {"customer_relationship": {"relationship_months": 30, "internal_score": 650},
+          "internal_payment_records": [{"due_date": "2026-05-05", "payment_date": None, "days_late": 40}]}
+    rv = {"document_validations": [{"validation_date": "2026-08-10", "is_valid": True, "receita_federal_status": "regular"}],
+          "fiscal_regularities": [{"check_date": "2026-08-10"}],
+          "compliance_checks": [{"check_date": "2026-08-10", "is_pep": True, "on_sanctions_list": False}]}
+    payloads = {"bureau": bureau, "open-finance": of, "internal-registry": ir, "registration-validation": rv}
+    trace_lines, transcript = ["not json"], []
+    for i, (src, body) in enumerate(payloads.items()):
+        text = json.dumps({"metadata": {"source": src, "transaction_id": f"t{i}"}, "id": 9, **body})
         trace_lines.append(json.dumps({"message": "mcp tool call", "source": src, "tool": "get_customer_by_id",
-                                       "transaction_id": f"t{i}", "arguments": args, "run_id": "9-1"}))
+                                       "transaction_id": f"t{i}", "arguments": {"id": 9}, "run_id": "9-1"}))
         trace_lines.append(json.dumps({"message": "[MCP RESPONSE]", "result": {"content": [{"type": "text", "text": text}]}}))
-    trace_lines.append("not json")
-    trace = load_trace(trace_lines)
-    transcript = []
-    for i, (src, text) in enumerate(texts.items()):
         transcript.append(json.dumps({"message": {"content": [
             {"type": "tool_use", "id": f"u{i}", "name": f"mcp__{src}__get_customer_by_id", "input": {"id": 9}}]}}))
         transcript.append(json.dumps({"message": {"content": [
             {"type": "tool_result", "tool_use_id": f"u{i}", "content": [{"type": "text", "text": text}]}]}}))
+    trace = load_trace(trace_lines)
     calls = transcript_calls(transcript)
     assert len(calls) == 4
-    scored = evaluate(calls, {"criterios": {f"C{i}": 1 for i in range(1, 16)}}, "9-1", trace)
-    assert scored["criteria_ok"] == 12 and scored["evidence_calls"] == 4, scored
-    assert evaluate(calls, {"criterios": {"C1": 1}}, "9-2", trace)["criteria_ok"] == 0
-    assert evaluate(calls, {"regra": "K13"}, "9-1", trace)["rule_ok"] is True
-    assert evaluate(calls, {"regra": "K10"}, "9-1", trace)["rule_ok"] is False
-    assert evaluate(calls, {"regra": "K9"}, "9-1", trace)["rule_ok"] is False
+
+    points = {f"C{i}": 1 for i in range(1, 16)}
+    honest = evaluate(calls, {"cliente_id": 9, "criterios": points, "criterios_sem_dado": ["C2", "C7", "C8", "C9"]}, "9-1", trace)
+    assert (honest["criteria_linked"], honest["present_located"], honest["missing_confirmed"], honest["empty_list_counts"]) == (15, 8, 4, 3), honest
+    assert honest["rules_holding"] == ["K13", "K9-L"], honest
+    wrong = evaluate(calls, {"cliente_id": 9, "criterios": points, "criterios_sem_dado": ["C1"]}, "9-1", trace)
+    assert sorted(wrong["misses"]) == ["C1", "C2", "C7", "C8", "C9"], wrong
+    assert "C4" in evaluate(calls, {"cliente_id": 9, "criterios": points, "criterios_sem_dado": ["C4"]}, "9-1", trace)["misses"]
+    assert evaluate(calls, {"cliente_id": 8, "criterios": points}, "9-1", trace)["criteria_linked"] == 0
+    assert evaluate(calls, {"cliente_id": 9, "criterios": points}, "9-2", trace)["calls_linked"] == 0
+
+    assert evaluate(calls, {"cliente_id": 9, "regra": "K13"}, "9-1", trace)["rule_holds"] is True
+    for false_rule in ("K1", "K4", "K8", "K9", "K10", "M1", "M2", "M3"):
+        r = evaluate(calls, {"cliente_id": 9, "regra": false_rule}, "9-1", trace)
+        assert r["rule_linked"] and not r["rule_holds"], (false_rule, r)
+    assert evaluate(calls, {"cliente_id": 9, "regra": "K3"}, "9-1", trace)["rule_linked"] is False
+
     tampered = [dict(c) for c in calls]
-    tampered[0]["text"] = payload("bureau", "t0", extra=1)
-    assert evaluate(tampered, {"criterios": {"C1": 1}}, "9-1", trace)["criteria_ok"] == 0
-    s = summarize([scored, evaluate(calls, {"regra": "K13"}, "9-1", trace)])
-    assert (s["criteria"], s["criteria_ok"], s["closed"], s["closed_ok"]) == (15, 12, 1, 1), s
+    tampered[0]["text"] = tampered[0]["text"].replace("700", "100")
+    t = evaluate(tampered, {"cliente_id": 9, "regra": "K4"}, "9-1", trace)
+    assert t["calls_linked"] == 3 and not t["rule_holds"], t
+
+    s = summarize([dict(honest, session="09-1"), dict(evaluate(calls, {"cliente_id": 9, "regra": "K13"}, "9-1", trace), session="09-2")])
+    assert (s["calls"], s["calls_linked"], s["criteria"], s["present_located"], s["declared_missing"],
+            s["missing_confirmed"], s["closed"], s["rule_holds"]) == (8, 8, 15, 8, 4, 4, 1, 1), s
     print("selftest ok")
     return 0
 
