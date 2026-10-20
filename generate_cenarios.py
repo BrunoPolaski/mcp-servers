@@ -301,6 +301,135 @@ CENARIOS = {
                 consultas=3, vinculo=("Comercio ABC", CLT, "2018-01-01", 4500, True),
                 fluxo=(4600, 4300, 0.15, 3, True), banco=(50, "varejo", 3000),
                 interno=(0.97, 0)),
+
+    31: cenario("bom", 856, 8700, 0.18, 0.08, 1.00,
+                "engenheira com vinculo longo, quatro fontes concordantes",
+                vinculo=("Construtora Sintetica", CLT, "2013-07-01", 8700, True),
+                fluxo=(8800, 6100, 0.05, 0, True), banco=(96, "alta renda", 30000),
+                interno=(1.00, 0)),
+    32: cenario("bom", 803, 5600, 0.24, 0.18, 0.97,
+                "professora estatutaria com consignado em dia e biometria validada",
+                vinculo=("Secretaria Estadual de Educacao", EST, "2012-02-01", 5600, True),
+                produtos=("consignado",), fluxo=(5700, 4300, 0.06, 0, True),
+                banco=(72, "varejo", 9000), interno=(0.98, 0)),
+    33: cenario("ruim", 712, 3200, 0.36, 0.52, 0.88,
+                "score bom, mas duas negativacoes ativas somam mais de cinco rendas (K6)",
+                negativacoes=[(9500.0, "active", False), (7200.0, "active", False)], consultas=6,
+                vinculo=("Comercio ABC", CLT, "2021-03-01", 3200, True),
+                fluxo=(3250, 2900, 0.18, 3, True), banco=(30, "varejo", 0.0),
+                interno=(0.92, 0)),
+    34: cenario("ruim", 805, 12500, 0.17, 0.11, 1.00,
+                "perfil excelente nas quatro fontes, mas consta em lista restritiva (K12)",
+                vinculo=("Holding Sintetica", PJ, "2016-05-01", 12500, True),
+                fluxo=(12700, 8800, 0.06, 0, True), banco=(80, "alta renda", 45000),
+                receita=("regular", "regular", False, True), interno=(1.00, 0)),
+    35: cenario("complexo", 690, 6200, 0.33, 0.35, 0.92,
+                "pedido de insolvencia civil ativo com biro e registro interno favoraveis (K3)",
+                processos=("bankruptcy",), consultas=3,
+                vinculo=("Industria XYZ", CLT, "2016-04-01", 6200, True),
+                fluxo=(6300, 5100, 0.10, 1, True), banco=(52, "varejo", 6000),
+                interno=(0.95, 0)),
+    36: cenario("complexo", 640, 5200, 0.34, 0.41, 0.90,
+                "duas negativacoes ativas e uma de situacao nula: so a nula leva a tres (K5)",
+                negativacoes=[(420.0, "active", False), (380.0, "active", False), (510.0, None, False)],
+                consultas=4, vinculo=("Comercio ABC", CLT, "2019-09-01", 5200, True),
+                fluxo=(5300, 4500, 0.12, 2, True), banco=(41, "varejo", 4000),
+                interno=(0.93, 0)),
+    37: cenario("complexo", 760, 7400, 0.26, 0.22, 0.97,
+                "alerta de fraude ativo com severidade nula: K2, nunca presumir gravidade",
+                fraude=(None, "active"), consultas=2,
+                vinculo=("Tech Solutions Ltda", CLT, "2017-03-01", 7400, True),
+                fluxo=(7500, 5600, 0.07, 0, True), banco=(66, "varejo", 15000),
+                interno=(0.97, 0)),
+    38: cenario("complexo", 655, 4500, 0.38, 0.44, 0.89,
+                "divida de situacao nula decide K7: sem ela, a soma fica abaixo do teto",
+                dividas=[(30000.0, True), (16000.0, None)], consultas=5,
+                vinculo=("Comercio ABC", CLT, "2019-02-01", 4500, True),
+                fluxo=(4550, 4200, 0.16, 4, True), banco=(36, "varejo", 2000),
+                interno=(0.90, 0)),
+    39: cenario("complexo", 745, 6800, 0.27, 0.25, 0.96,
+                "CPF suspenso na Receita como unica restricao (K11 vence)",
+                consultas=2, vinculo=("Industria XYZ", CLT, "2018-06-01", 6800, True),
+                fluxo=(6900, 5300, 0.08, 0, True), banco=(58, "varejo", 10000),
+                receita=("suspended", "regular", False, False), interno=(0.97, 0)),
+    40: cenario("complexo", 726, 6100, 0.29, 0.27, 0.95,
+                "biro limpo e duas parcelas internas recentes com 60 dias de atraso (K9-L vence)",
+                consultas=2, vinculo=("Tech Solutions Ltda", CLT, "2019-11-01", 6100, True),
+                fluxo=(6200, 5000, 0.09, 1, True), banco=(44, "varejo", 7000),
+                interno=(0.83, 60)),
+    41: cenario("complexo", 772, 7900, 0.24, 0.20, 0.97,
+                "triagem KYC irregular sem PEP e sem lista restritiva (K13, segunda metade)",
+                triagem="irregular", consultas=2,
+                vinculo=("Industria XYZ", CLT, "2016-08-01", 7900, True),
+                fluxo=(8000, 6000, 0.06, 0, True), banco=(70, "varejo", 14000),
+                interno=(0.98, 0)),
+    42: cenario("complexo", 790, 9300, 0.22, 0.18, 0.98,
+                "PEP com situacao nula na triagem: avaliar apenas PEP e lista restritiva (K13)",
+                triagem="nula", consultas=2,
+                vinculo=("Prefeitura Sintetica", EST, "2014-03-01", 9300, True),
+                fluxo=(9400, 6800, 0.05, 0, True), banco=(90, "alta renda", 25000),
+                receita=("regular", "regular", True, False), interno=(1.00, 0)),
+    43: cenario("complexo", 815, 7600, 0.22, 0.20, 0.98,
+                "perfil de aprovacao com consentimento expirado e utilizacao nula: rebaixamento decide",
+                consentimento="expired", falta=("utilizacao",), consultas=2,
+                vinculo=("Tech Solutions Ltda", CLT, "2015-09-01", 7600, True),
+                fluxo=(7700, 5600, 0.06, 0, True), banco=(84, "varejo", 16000),
+                interno=(1.00, 0)),
+    44: cenario("complexo", 780, 6900, 0.24, 0.22, 0.97,
+                "consentimento ativo sem analise de fluxo de caixa e score interno nulo: rebaixamento decide",
+                falta=("fluxo_caixa",), score_interno=0, consultas=2,
+                vinculo=("Industria XYZ", CLT, "2016-01-01", 6900, True),
+                fluxo=(7000, 5300, 0.07, 0, True), banco=(64, "varejo", 11000),
+                interno=(0.98, 0)),
+    45: cenario("complexo", 735, 5000, 0.33, 0.36, 0.92,
+                "consentimento ativo sem receita recorrente e volatilidade nula: C8 zera sem dado ausente",
+                consultas=3, vinculo=("Comercio ABC", AUT, "2020-05-01", 5000, False),
+                fluxo=(5200, 4300, None, 2, False), banco=(40, "varejo", 5000),
+                esocial="ausente", interno=(0.93, 0)),
+    46: cenario("complexo", 702, 5900, 0.31, 0.32, 0.93,
+                "nome civil diverge com CPF regular e situacao nula na triagem, sem eliminatoria",
+                divergencias=("nome",), triagem="nula", biometria=False, consultas=3,
+                vinculo=("Comercio ABC", CLT, "2019-05-01", 5900, True),
+                fluxo=(6000, 4900, 0.10, 1, True), banco=(46, "varejo", 6000),
+                interno=(0.93, 0)),
+    47: cenario("complexo", 618, 1900, 0.26, 0.31, 0.92,
+                "beneficiaria de programa social, sem triagem de compliance e sem parcelas internas",
+                vinculo=None, origem_receita="beneficio_social", esocial="ausente",
+                cadastral="sem_compliance", consultas=1,
+                fluxo=(2000, 1750, 0.20, 3, True), banco=(28, "varejo", 0.0),
+                interno=("vazio", 0)),
+    48: cenario("complexo", 668, 5400, 0.32, 0.38, 0.91,
+                "negativacao de situacao nula pontuada como ativa e relacionamento encerrado",
+                negativacoes=[(780.0, None, False)], relacionamento="inativo", consultas=3,
+                vinculo=("Industria XYZ", CLT, "2018-10-01", 5400, True),
+                fluxo=(5500, 4500, 0.11, 2, True), banco=(62, "varejo", 0.0),
+                interno=(0.92, 0)),
+    49: cenario("complexo", 684, 6300, 0.33, 0.37, 0.90,
+                "acao de cobranca ativa (nao e falencia), vinculo encerrado no eSocial e CND suspensa",
+                processos=("lawsuit",), esocial="encerrado", consultas=3,
+                vinculo=("Tech Solutions Ltda", CLT, "2017-02-01", 6300, True),
+                fluxo=(6400, 5300, 0.10, 2, True), banco=(50, "varejo", 6000),
+                receita=("regular", "suspended", False, False), interno=(0.92, 0)),
+    50: cenario("complexo", 700, 5800, 0.30, 0.60, 0.95,
+                "pontuacao exatamente no limiar de aprovacao (70), com C1 e C2 na fronteira",
+                negativacoes=[(1000.0, "active", False)], biometria=False,
+                consultas=2, vinculo=("Comercio ABC", CLT, "2019-01-01", 5800, False),
+                fluxo=(6400, 5250, 0.10, 3, True), banco=(30, "varejo", 5000),
+                receita=("regular", "suspended", False, False),
+                esocial="encerrado", score_interno=599, interno=(0.84, 0)),
+    51: cenario("complexo", 560, 4300, 0.45, 0.65, 0.80,
+                "sem eliminatoria, mas pontuacao baixa leva a analise manual pelo scorecard",
+                negativacoes=[(650.0, "active", False)], consultas=6,
+                vinculo=("Comercio ABC", CLT, "2023-02-01", 4300, False),
+                fluxo=(4350, 4300, 0.30, 8, True), banco=(14, "varejo", 0.0),
+                receita=("regular", "irregular", False, False), interno=(0.80, 15)),
+    52: cenario("complexo", 380, 3600, 0.56, 0.92, 0.75,
+                "score baixo sem cair no piso, fontes ruins sem eliminatoria: reprova pelo scorecard",
+                negativacoes=[(1500.0, "active", False), (900.0, "active", False)], consultas=9,
+                vinculo=("Comercio ABC", CLT, "2025-01-01", 3600, False),
+                fluxo=(3500, 3700, 0.40, 10, True), banco=(26, "varejo", 0.0),
+                divergencias=("nascimento",), biometria=False, esocial="ausente",
+                interno=(0.75, 20)),
 }
 
 NOMES = ["Amanda Ferreira Lima", "Bruno Carvalho Nunes", "Carla Menezes Rocha", "Diego Tavares Pinto",
@@ -731,7 +860,8 @@ def biro():
                 "process_number": f"{person_id:07d}-12.2025.8.26.0100",
                 "court": "TJSP", "filing_date": dia("2025-04-22"), "status": "active",
                 "amount": round((renda or 3000) * 2, 2),
-                "description": "Acao de cobranca em andamento", "resolution": None,
+                "description": ("Pedido de insolvencia civil em andamento" if tipo == "bankruptcy"
+                                else "Acao de cobranca em andamento"), "resolution": None,
                 "resolution_date": None,
             })
 
@@ -838,7 +968,7 @@ def open_finance():
         # havendo mais de uma analise (datas distintas), uma linha por entrada;
         # C7 e C9 usam sempre a mais recente (ja isolada acima em entrada/saida/etc)
         for data_analise, entrada_i, saida_i, volatilidade_i, dias_negativo_i, recorrente_i in \
-                _fluxo_lista(c["fluxo"]):
+                ([] if "fluxo_caixa" in c["falta"] else _fluxo_lista(c["fluxo"])):
             add("cash_flow_analyses", {
                 "person_id": person_id, "analysis_date": dia(data_analise), "period_days": 90,
                 "average_monthly_inflow": round(entrada_i, 2), "average_monthly_outflow": round(saida_i, 2),
@@ -1101,6 +1231,8 @@ def validacao_cadastral():
         status = ("irregular" if impeditivo or situacao in ("pending", "suspended")
                   or c["triagem"] == "irregular"
                   else "attention" if pep else "regular")
+        if c["triagem"] == "nula":
+            status = None
         motivos = ((["consta em lista restritiva"] if sancoes else [])
                    + ([f"situacao {situacao} na Receita Federal"] if situacao != "regular" else [])
                    + (["divergencia na triagem KYC"] if c["triagem"] == "irregular" else [])
@@ -1108,7 +1240,8 @@ def validacao_cadastral():
         add("compliance_checks", {
             "person_id": person_id, "check_type": "kyc_full", "check_date": dia("2026-08-10"),
             "status": status,
-            "details": json.dumps({"motivo": "; ".join(motivos)}, ensure_ascii=False) if status != "regular" else None,
+            "details": (json.dumps({"motivo": "; ".join(motivos)}, ensure_ascii=False)
+                        if status not in ("regular", None) else None),
             "is_pep": pep,
             "pep_details": "Contrato vigente com orgao publico" if pep else None,
             "on_sanctions_list": sancoes,
@@ -1259,6 +1392,11 @@ def avalia(c):
         total += marca("C7", 3, "sem consentimento ativo", ausente=True)
         total += marca("C8", 2, "sem consentimento ativo", ausente=True)
         total += marca("C9", 1, "sem consentimento ativo", ausente=True)
+    elif "fluxo_caixa" in c["falta"]:
+        total += marca("C7", 3, "sem analise de fluxo de caixa", ausente=True)
+        total += marca("C8", 4 if receita_recorrente >= 0.8 * renda else 2 if receita_recorrente > 0 else 0,
+                       f"receita recorrente R$ {receita_recorrente:,.2f}")
+        total += marca("C9", 1, "sem analise de fluxo de caixa", ausente=True)
     else:
         entrada, saida, _, dias_negativo, _ = fluxo_atual
         fluxo_liquido = entrada - saida

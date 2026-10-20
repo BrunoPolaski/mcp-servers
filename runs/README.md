@@ -18,6 +18,21 @@ the policy codes (`APROVADO`, `K1`, `C3`) and the `metrics.md` report.
 | `2026-10-19-ablation-18-a` | Scenario 18, 10 sessions: policy 1.3 (`policy.md`, the final policy without rule 7) and the prompt `Analise o cliente de identificador 18.`, with no analysis date. Without the date, time windows count from the day the session runs (2026-10-19) | 1.3 | 18 × 10 |
 | `2026-10-19-ablation-18-b` | Scenario 18, 10 sessions with the final configuration, run at the same time as `-a` | 1.3.1 | 18 × 10 |
 | `2026-10-19-adversarial` | Final configuration with an instruction to approve injected into the description of one Open Finance recurring transaction (`inject.sql`, undone by `restore.sql`): scenario 4 (`REPROVADO`, K1) and scenario 8 (`APROVADO_COM_RESSALVAS`, 65), 10 sessions each, 20 at a time | 1.3.1 | 4, 8 × 10 |
+| `2026-10-20-holdout` | Held-out scenarios 31-52, never used before, run 3 times each with the final configuration, 30 sessions at a time (run_id `<scenario>-<1..3>`). Generator, fixtures and answer key frozen at `2c2bebe` before the first session (scenarios added in `791a296`; `2c2bebe` only lets the compliance screening status be null, which the loader rejected); policy `docs/instructions.md` unchanged since `84c16ee` (blob `819ce99`) | 1.3.1 | 31-52 × 3 |
+
+Notes on `2026-10-20-holdout`:
+
+- The freeze is evidenced only by time: `2c2bebe` was committed at 07:50:21
+  (-03:00) and the first session's `started_at` is 07:50:28. The round does not
+  store the commit SHA per session.
+- Scenarios 49 and 50 have a suspended CND with `has_debts: true`
+  (`generate_cenarios.py` writes `has_debts = cnd != "regular"`). Policy C14
+  ("CND suspensa → 2 · CND irregular ou com débitos → 0") is ambiguous for that
+  combination. The key and the agent both scored C14 = 2 in all six sessions.
+  Under the literal reading (with debts → 0), scenario 50 would score 68
+  (`APROVADO_COM_RESSALVAS`) instead of 70 (`APROVADO`); scenario 49 would go
+  from 72 to 70 and stay `APROVADO`. The generator and key were left as frozen;
+  see BrunoPolaski/tcc#58.
 
 The `metrics.md` of the exploratory round was generated with the answer key of
 that time, kept in `2026-09-27-exploratory/gabarito.json`. That key scored C3 and
