@@ -1,14 +1,17 @@
 #!/usr/bin/env python3
-"""Gera os 30 cenarios de avaliacao nas quatro fontes.
+"""Gera os cenarios de avaliacao nas quatro fontes.
 
-Distribuicao deliberada, calcada na realidade de uma carteira: casos limpos e
-casos obviamente reprovaveis sao raros; a maior parte exige leitura conjunta
-das quatro fontes, que frequentemente discordam entre si.
+Distribuicao escolhida por projeto, para concentrar a avaliacao nos casos que
+exigem leitura conjunta das quatro fontes, que frequentemente discordam entre
+si; casos limpos e casos obviamente reprovaveis entram em poucos exemplares.
 
   bom (1-3)        10%  historico alinhado nas quatro fontes, aprovacao direta
   ruim (4-6)       10%  regra eliminatoria evidente, reprovacao direta
   complexo (7-30)  80%  sinais conflitantes, dados faltantes, valores em cima
                         das fronteiras de faixa e de decisao
+
+Os cenarios 31 a 52 formam o conjunto reservado (runs/2026-10-20-holdout),
+congelado antes da execucao para cobrir as regras sem cenario em 1-30.
 
 Cada cenario e declarado uma unica vez em CENARIOS e derivado dali para as
 quatro fontes, de modo que elas contem a mesma historia - inclusive quando a
