@@ -515,5 +515,362 @@
    "C15": 3
   },
   "criterios_sem_dado": []
+ },
+ "31": {
+  "decisao": "APROVADO",
+  "regra": null,
+  "pontuacao": 100,
+  "criterios": {
+   "C1": 22,
+   "C2": 11,
+   "C3": 11,
+   "C4": 9,
+   "C5": 3,
+   "C6": 2,
+   "C7": 7,
+   "C8": 4,
+   "C9": 4,
+   "C10": 5,
+   "C11": 5,
+   "C12": 5,
+   "C13": 5,
+   "C14": 4,
+   "C15": 3
+  },
+  "criterios_sem_dado": []
+ },
+ "32": {
+  "decisao": "APROVADO",
+  "regra": null,
+  "pontuacao": 100,
+  "criterios": {
+   "C1": 22,
+   "C2": 11,
+   "C3": 11,
+   "C4": 9,
+   "C5": 3,
+   "C6": 2,
+   "C7": 7,
+   "C8": 4,
+   "C9": 4,
+   "C10": 5,
+   "C11": 5,
+   "C12": 5,
+   "C13": 5,
+   "C14": 4,
+   "C15": 3
+  },
+  "criterios_sem_dado": []
+ },
+ "33": {
+  "decisao": "REPROVADO",
+  "regra": "K6",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "34": {
+  "decisao": "REPROVADO",
+  "regra": "K12",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "35": {
+  "decisao": "REPROVADO",
+  "regra": "K3",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "36": {
+  "decisao": "REPROVADO",
+  "regra": "K5",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "37": {
+  "decisao": "ANALISE_MANUAL",
+  "regra": "K2",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "38": {
+  "decisao": "REPROVADO",
+  "regra": "K7",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "39": {
+  "decisao": "ANALISE_MANUAL",
+  "regra": "K11",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "40": {
+  "decisao": "ANALISE_MANUAL",
+  "regra": "K9-L",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "41": {
+  "decisao": "ANALISE_MANUAL",
+  "regra": "K13",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "42": {
+  "decisao": "ANALISE_MANUAL",
+  "regra": "K13",
+  "pontuacao": null,
+  "criterios": {},
+  "criterios_sem_dado": []
+ },
+ "43": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "regra": null,
+  "pontuacao": 89,
+  "criterios": {
+   "C1": 22,
+   "C2": 11,
+   "C3": 11,
+   "C4": 9,
+   "C5": 1,
+   "C6": 2,
+   "C7": 3,
+   "C8": 2,
+   "C9": 1,
+   "C10": 5,
+   "C11": 5,
+   "C12": 5,
+   "C13": 5,
+   "C14": 4,
+   "C15": 3
+  },
+  "criterios_sem_dado": [
+   "C5",
+   "C7",
+   "C8",
+   "C9"
+  ]
+ },
+ "44": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "regra": null,
+  "pontuacao": 87,
+  "criterios": {
+   "C1": 19,
+   "C2": 11,
+   "C3": 11,
+   "C4": 9,
+   "C5": 3,
+   "C6": 2,
+   "C7": 3,
+   "C8": 4,
+   "C9": 1,
+   "C10": 5,
+   "C11": 2,
+   "C12": 5,
+   "C13": 5,
+   "C14": 4,
+   "C15": 3
+  },
+  "criterios_sem_dado": [
+   "C7",
+   "C9",
+   "C11"
+  ]
+ },
+ "45": {
+  "decisao": "APROVADO",
+  "regra": null,
+  "pontuacao": 73,
+  "criterios": {
+   "C1": 19,
+   "C2": 8,
+   "C3": 8,
+   "C4": 9,
+   "C5": 2,
+   "C6": 1,
+   "C7": 5,
+   "C8": 0,
+   "C9": 2,
+   "C10": 3,
+   "C11": 3,
+   "C12": 4,
+   "C13": 5,
+   "C14": 4,
+   "C15": 0
+  },
+  "criterios_sem_dado": []
+ },
+ "46": {
+  "decisao": "APROVADO",
+  "regra": null,
+  "pontuacao": 78,
+  "criterios": {
+   "C1": 19,
+   "C2": 8,
+   "C3": 8,
+   "C4": 9,
+   "C5": 2,
+   "C6": 2,
+   "C7": 5,
+   "C8": 4,
+   "C9": 2,
+   "C10": 3,
+   "C11": 3,
+   "C12": 4,
+   "C13": 2,
+   "C14": 4,
+   "C15": 3
+  },
+  "criterios_sem_dado": []
+ },
+ "47": {
+  "decisao": "APROVADO",
+  "regra": null,
+  "pontuacao": 72,
+  "criterios": {
+   "C1": 14,
+   "C2": 11,
+   "C3": 8,
+   "C4": 9,
+   "C5": 2,
+   "C6": 0,
+   "C7": 5,
+   "C8": 4,
+   "C9": 2,
+   "C10": 3,
+   "C11": 3,
+   "C12": 2,
+   "C13": 5,
+   "C14": 4,
+   "C15": 0
+  },
+  "criterios_sem_dado": [
+   "C12"
+  ]
+ },
+ "48": {
+  "decisao": "APROVADO_COM_RESSALVAS",
+  "regra": null,
+  "pontuacao": 69,
+  "criterios": {
+   "C1": 14,
+   "C2": 8,
+   "C3": 8,
+   "C4": 5,
+   "C5": 2,
+   "C6": 2,
+   "C7": 5,
+   "C8": 4,
+   "C9": 2,
+   "C10": 0,
+   "C11": 3,
+   "C12": 4,
+   "C13": 5,
+   "C14": 4,
+   "C15": 3
+  },
+  "criterios_sem_dado": []
+ },
+ "49": {
+  "decisao": "APROVADO",
+  "regra": null,
+  "pontuacao": 72,
+  "criterios": {
+   "C1": 14,
+   "C2": 8,
+   "C3": 8,
+   "C4": 9,
+   "C5": 2,
+   "C6": 2,
+   "C7": 5,
+   "C8": 4,
+   "C9": 2,
+   "C10": 3,
+   "C11": 3,
+   "C12": 4,
+   "C13": 5,
+   "C14": 2,
+   "C15": 1
+  },
+  "criterios_sem_dado": []
+ },
+ "50": {
+  "decisao": "APROVADO",
+  "regra": null,
+  "pontuacao": 70,
+  "criterios": {
+   "C1": 19,
+   "C2": 11,
+   "C3": 8,
+   "C4": 5,
+   "C5": 1,
+   "C6": 1,
+   "C7": 5,
+   "C8": 4,
+   "C9": 2,
+   "C10": 3,
+   "C11": 2,
+   "C12": 2,
+   "C13": 4,
+   "C14": 2,
+   "C15": 1
+  },
+  "criterios_sem_dado": []
+ },
+ "51": {
+  "decisao": "ANALISE_MANUAL",
+  "regra": null,
+  "pontuacao": 46,
+  "criterios": {
+   "C1": 10,
+   "C2": 4,
+   "C3": 4,
+   "C4": 5,
+   "C5": 1,
+   "C6": 1,
+   "C7": 3,
+   "C8": 4,
+   "C9": 1,
+   "C10": 2,
+   "C11": 2,
+   "C12": 2,
+   "C13": 5,
+   "C14": 0,
+   "C15": 2
+  },
+  "criterios_sem_dado": []
+ },
+ "52": {
+  "decisao": "REPROVADO",
+  "regra": null,
+  "pontuacao": 24,
+  "criterios": {
+   "C1": 2,
+   "C2": 0,
+   "C3": 4,
+   "C4": 1,
+   "C5": 0,
+   "C6": 1,
+   "C7": 0,
+   "C8": 4,
+   "C9": 1,
+   "C10": 3,
+   "C11": 0,
+   "C12": 2,
+   "C13": 2,
+   "C14": 4,
+   "C15": 0
+  },
+  "criterios_sem_dado": []
  }
 }
