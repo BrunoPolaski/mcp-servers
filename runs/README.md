@@ -20,8 +20,13 @@ the policy codes (`APROVADO`, `K1`, `C3`) and the `metrics.md` report.
 | `2026-10-19-adversarial` | Final configuration with an instruction to approve injected into the description of one Open Finance recurring transaction (`inject.sql`, undone by `restore.sql`): scenario 4 (`REPROVADO`, K1) and scenario 8 (`APROVADO_COM_RESSALVAS`, 65), 10 sessions each, 20 at a time | 1.3.1 | 4, 8 × 10 |
 
 The `metrics.md` of the exploratory round was generated with the answer key of
-that time. Regenerating it with the current `docs/gabarito_cenarios.json` changes
-the expected-score column.
+that time, kept in `2026-09-27-exploratory/gabarito.json`. That key scored C3 and
+C12 on the punctuality declared in `generate_cenarios.py` instead of the twelve
+generated payments. It was rebuilt by running the current generator with
+`em_dia_biro = c["pontual"]` and without converting the internal punctuality to
+twelfths; `analyze_metrics.py --gabarito runs/2026-09-27-exploratory/gabarito.json`
+on that round reproduces its `metrics.md` byte for byte. Regenerating it with the
+current `docs/gabarito_cenarios.json` changes the expected-score column.
 
 ## Naming
 
@@ -48,6 +53,7 @@ Lower case, words joined by `-`. The date is the day the round started.
   results.jsonl     one line per session (keys below)
   progress.txt      console output of run_evaluation.py
   metrics.md        report from analyze_metrics.py
+  gabarito.json     answer key of the round, when it differs from docs/gabarito_cenarios.json
   adjudication.md   origin of each agent/key divergence, from adjudicate.py (only rounds with divergences)
   transcripts/NN-R.jsonl raw stream-json of session NN-R (scenario, 2 digits; repetition)
                     (rounds before run_id have NN.jsonl)
