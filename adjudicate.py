@@ -68,7 +68,10 @@ RECOMPUTE = {"C2": c2, "C3": c3, "C12": c12}
 def records_from_transcript(path):
     merged = {}
     for line in path.read_text(encoding="utf-8").splitlines():
-        event = json.loads(line)
+        try:
+            event = json.loads(line)
+        except ValueError:
+            continue
         if event.get("type") != "user" or not isinstance(event["message"]["content"], list):
             continue
         for item in event["message"]["content"]:

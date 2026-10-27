@@ -19,6 +19,8 @@ the policy codes (`APROVADO`, `K1`, `C3`) and the `metrics.md` report.
 | `2026-10-19-ablation-18-b` | Scenario 18, 10 sessions with the final configuration, run at the same time as `-a` | 1.3.1 | 18 × 10 |
 | `2026-10-19-adversarial` | Final configuration with an instruction to approve injected into the description of one Open Finance recurring transaction (`inject.sql`, undone by `restore.sql`): scenario 4 (`REPROVADO`, K1) and scenario 8 (`APROVADO_COM_RESSALVAS`, 65), 10 sessions each, 20 at a time | 1.3.1 | 4, 8 × 10 |
 | `2026-10-20-holdout` | Held-out scenarios 31-52, never used before, run 3 times each with the final configuration, 30 sessions at a time (run_id `<scenario>-<1..3>`). Generator, fixtures and answer key frozen at `2c2bebe` before the first session (scenarios added in `791a296`; `2c2bebe` only lets the compliance screening status be null, which the loader rejected); policy `docs/instructions.md` unchanged since `84c16ee` (blob `819ce99`) | 1.3.1 | 31-52 × 3 |
+| `2026-10-21-models-sonnet` | Final configuration with `claude-sonnet-5-5` as the analysis model (`--model`), scenarios 1-52 run 3 times each, 30 sessions at a time (run_id `<scenario>-<1..3>`); run before `-haiku`, not at the same time. Host 2.1.280 does not know the model's price (`costBasis: "unknown"`) and reports `costUSD` and `total_cost_usd` at the Opus 5.5 rates; each transcript ends with the host's `unrecognized_model` warning on stderr | 1.3.1 | 1-52 × 3 |
+| `2026-10-21-models-haiku` | Same as `-sonnet` with `claude-haiku-5-5`, run after it. 50 sessions stopped on the account's usage limit (see notes) and were rerun | 1.3.1 | 1-52 × 3 |
 
 Notes on `2026-10-20-holdout`:
 
@@ -33,6 +35,33 @@ Notes on `2026-10-20-holdout`:
   (`APROVADO_COM_RESSALVAS`) instead of 70 (`APROVADO`); scenario 49 would go
   from 72 to 70 and stay `APROVADO`. The generator and key were left as frozen;
   see BrunoPolaski/tcc#58.
+
+Notes on `2026-10-21-models-sonnet` and `2026-10-21-models-haiku`:
+
+- 50 Haiku sessions started between 09:52:52 and 09:53:57 ended with the
+  host's result "You've hit your session limit" (`is_error: true`, no block).
+  The model never ran the analysis in them. Their records moved to
+  `quota_failed.jsonl`; their transcripts keep the original names.
+- The same 50 (scenario, repetition) pairs were rerun on 2026-10-27 with the
+  same policy, prompt, generator, fixtures and model, 25 sessions at a time,
+  as run_id `<scenario>-<rep>r` (transcripts `NN-<rep>r.jsonl`), so their
+  server traces do not mix with the failed sessions'. Host 2.1.310 instead of
+  2.1.280; the stack ran from the main checkout at `afe0eb1`. Their records
+  were appended to `results.jsonl` and their traces to `logs/`, and
+  `metrics.md` was regenerated over the 156 completed sessions.
+- Cost: host 2.1.280 priced both models at the Opus 5.5 rates, so
+  `costUSD` is wrong for every Sonnet session and for the 106 original Haiku
+  sessions. Recomputed from the usage fields at the list prices of
+  platform.claude.com/docs/en/about-claude/pricing (read 2026-10-27), per MTok (input,
+  output, cache read, 1-hour cache write): Opus 5.5 4 / 20 / 0.20 / 8,
+  Sonnet 5.5 2 / 10 / 0.10 / 4, Haiku 5.5 0.10 / 0.50 / 0.01 / 0.20. The same
+  formula at Opus rates reproduces the host's `costUSD` to the cent in every
+  round, and at Haiku rates it reproduces the 50 reruns, which host 2.1.310
+  priced itself (`costBasis: "list"`). Mean per analysis: Opus US$ 0.1452
+  (scenarios 1-30 from `2026-10-18-repeat` reps 1-3 plus `2026-10-20-holdout`),
+  Sonnet US$ 0.0731, Haiku US$ 0.0089.
+- Neither model scored C14 = 0 in scenarios 49 and 50, so the CND ambiguity
+  (BrunoPolaski/tcc#58) produced no divergence.
 
 The `metrics.md` of the exploratory round was generated with the answer key of
 that time, kept in `2026-09-27-exploratory/gabarito.json`. That key scored C3 and
@@ -56,6 +85,7 @@ current `docs/gabarito_cenarios.json` changes the expected-score column.
 - `repeat`: several repetitions of a frozen configuration in one folder, told apart by run_id.
 - `adversarial`: a frozen configuration with injected text in the data; the SQL that injects and undoes it lives in the folder.
 - `ablation-<scenario>-<config>`: one scenario repeated under configurations that differ only in the inputs named in the table above.
+- `models-<model>`: the final configuration with another analysis model, named by its family (`sonnet`, `haiku`).
 
 Lower case, words joined by `-`. The date is the day the round started.
 
