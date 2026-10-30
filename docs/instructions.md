@@ -170,7 +170,7 @@ Notas:
 | **C11. Score interno** | 5 | score interno (0–1000) | ≥ 800 → 5 · 600–799 → 3 · 400–599 → 2 · < 400 → 0 | Sem relacionamento **ou** score interno nulo: **2 pontos** + dado ausente |
 | **C12. Pagamento interno (12 meses)** | 5 | parcelas internas dos últimos 12 meses: proporção em dia | ≥ 0,95 → 5 · 0,85–0,949 → 4 · 0,70–0,849 → 2 · < 0,70 → 0 | Sem parcelas no período (*thin internal file*): **2 pontos** + dado ausente |
 | **C13. Consistência cadastral** | 5 | validação de documento mais recente: nome confere, data de nascimento confere, biometria validada | nome e nascimento conferem **e** biometria validada → 5 · nome e nascimento conferem, sem biometria → 4 · uma divergência (nome **ou** nascimento) → 2 · ambas divergem → 0 | Documento nunca validado: **2 pontos** + dado ausente |
-| **C14. Regularidade fiscal** | 4 | certidão mais recente: situação da CND e existência de débitos | CND regular e sem débitos → 4 · CND suspensa (exigibilidade suspensa) → 2 · CND irregular **ou** com débitos → 0 | Regularidade nunca verificada: **2 pontos** + dado ausente |
+| **C14. Regularidade fiscal** | 4 | certidão mais recente: situação da CND e existência de débitos | CND regular e sem débitos → 4 · CND suspensa → 2, com ou sem débitos, porque a suspensão afasta a exigibilidade · CND irregular, ou regular com débitos → 0 | Regularidade nunca verificada: **2 pontos** + dado ausente |
 | **C15. Confirmação de vínculo no eSocial** | 3 | vínculos validados no eSocial, sua situação e confirmação na fonte | vínculo ativo confirmado → 3 · vínculo ativo não confirmado → 2 · somente vínculos encerrados → 1 · sem registro no eSocial → 0 | Lista vazia = sem vínculo no eSocial (0 pontos); **não** é dado faltante |
 
 **Total máximo:** 100 pontos.
