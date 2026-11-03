@@ -100,6 +100,7 @@ Lower case, words joined by `-`. The date is the day the round started.
   metrics.md        report from analyze_metrics.py
   gabarito.json     answer key of the round, when it differs from docs/gabarito_cenarios.json
   adjudication.md   origin of each agent/key divergence, from adjudicate.py (only rounds with divergences)
+  flags.md          manual classification of the inconsistencies the opinions flagged (final round only)
   transcripts/NN-R.jsonl raw stream-json of session NN-R (scenario, 2 digits; repetition)
                     (rounds before run_id have NN.jsonl)
   logs/<server>.jsonl    server traces, one file per MCP server (not versioned)
