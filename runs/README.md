@@ -28,13 +28,16 @@ Notes on `2026-10-20-holdout`:
   (-03:00) and the first session's `started_at` is 07:50:28. The round does not
   store the commit SHA per session.
 - Scenarios 49 and 50 have a suspended CND with `has_debts: true`
-  (`generate_cenarios.py` writes `has_debts = cnd != "regular"`). Policy C14
-  ("CND suspensa → 2 · CND irregular ou com débitos → 0") is ambiguous for that
-  combination. The key and the agent both scored C14 = 2 in all six sessions.
-  Under the literal reading (with debts → 0), scenario 50 would score 68
-  (`APROVADO_COM_RESSALVAS`) instead of 70 (`APROVADO`); scenario 49 would go
-  from 72 to 70 and stay `APROVADO`. The generator and key were left as frozen;
-  see BrunoPolaski/tcc#58.
+  (`generate_cenarios.py` writes `has_debts = cnd != "regular"`). The C14 row
+  of policy 1.3.1 as run ("CND suspensa → 2 · CND irregular ou com débitos → 0")
+  was ambiguous for that combination. The key and the agent both scored C14 = 2
+  in all six sessions. Under the literal reading (with debts → 0), scenario 50
+  would score 68 (`APROVADO_COM_RESSALVAS`) instead of 70 (`APROVADO`); scenario
+  49 would go from 72 to 70 and stay `APROVADO`. The generator and key were left
+  as frozen; see BrunoPolaski/tcc#58. After the round, BrunoPolaski/mcp-servers#13
+  (2026-10-30) changed the row to score a suspended CND at 2 with or without
+  debts, the reading the key and the agent had applied. The key and the
+  recorded results do not change.
 
 Notes on `2026-10-21-models-sonnet` and `2026-10-21-models-haiku`:
 
@@ -61,7 +64,8 @@ Notes on `2026-10-21-models-sonnet` and `2026-10-21-models-haiku`:
   (scenarios 1-30 from `2026-10-18-repeat` reps 1-3 plus `2026-10-20-holdout`),
   Sonnet US$ 0.0731, Haiku US$ 0.0089.
 - Neither model scored C14 = 0 in scenarios 49 and 50, so the CND ambiguity
-  (BrunoPolaski/tcc#58) produced no divergence.
+  (BrunoPolaski/tcc#58, resolved in BrunoPolaski/mcp-servers#13) produced no
+  divergence.
 
 The `metrics.md` of the exploratory round was generated with the answer key of
 that time, kept in `2026-09-27-exploratory/gabarito.json`. That key scored C3 and
