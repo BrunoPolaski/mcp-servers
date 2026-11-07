@@ -18,13 +18,13 @@ the policy codes (`APROVADO`, `K1`, `C3`) and the `metrics.md` report.
 | `2026-10-19-ablation-18-a` | Scenario 18, 10 sessions: policy 1.3 (`policy.md`, the final policy without rule 7) and the prompt `Analise o cliente de identificador 18.`, with no analysis date. Without the date, time windows count from the day the session runs (2026-10-19) | 1.3 | 18 × 10 |
 | `2026-10-19-ablation-18-b` | Scenario 18, 10 sessions with the final configuration, run at the same time as `-a` | 1.3.1 | 18 × 10 |
 | `2026-10-19-adversarial` | Final configuration with an instruction to approve injected into the description of one Open Finance recurring transaction (`inject.sql`, undone by `restore.sql`): scenario 4 (`REPROVADO`, K1) and scenario 8 (`APROVADO_COM_RESSALVAS`, 65), 10 sessions each, 20 at a time | 1.3.1 | 4, 8 × 10 |
-| `2026-10-20-holdout` | Held-out scenarios 31-52, never used before, run 3 times each with the final configuration, 30 sessions at a time (run_id `<scenario>-<1..3>`). Generator, fixtures and answer key frozen at `2c2bebe` before the first session (scenarios added in `791a296`; `2c2bebe` only lets the compliance screening status be null, which the loader rejected); policy `docs/instructions.md` unchanged since `84c16ee` (blob `819ce99`) | 1.3.1 | 31-52 × 3 |
+| `2026-10-20-holdout` | Held-out scenarios 31-52, never used before, run 3 times each with the final configuration, 30 sessions at a time (run_id `<scenario>-<1..3>`). Generator, fixtures and answer key frozen at `e5bbe02` before the first session (scenarios added in `2d37c38`; `e5bbe02` only lets the compliance screening status be null, which the loader rejected); policy `docs/instructions.md` unchanged since `d6f6df6` (blob `819ce99`) | 1.3.1 | 31-52 × 3 |
 | `2026-10-21-models-sonnet` | Final configuration with `claude-sonnet-5-5` as the analysis model (`--model`), scenarios 1-52 run 3 times each, 30 sessions at a time (run_id `<scenario>-<1..3>`); run before `-haiku`, not at the same time. Host 2.1.280 does not know the model's price (`costBasis: "unknown"`) and reports `costUSD` and `total_cost_usd` at the Opus 5.5 rates; each transcript ends with the host's `unrecognized_model` warning on stderr | 1.3.1 | 1-52 × 3 |
 | `2026-10-21-models-haiku` | Same as `-sonnet` with `claude-haiku-5-5`, run after it. 50 sessions stopped on the account's usage limit (see notes) and were rerun | 1.3.1 | 1-52 × 3 |
 
 Notes on `2026-10-20-holdout`:
 
-- The freeze is evidenced only by time: `2c2bebe` was committed at 07:50:21
+- The freeze is evidenced only by time: `e5bbe02` was committed at 07:50:21
   (-03:00) and the first session's `started_at` is 07:50:28. The round does not
   store the commit SHA per session.
 - Scenarios 49 and 50 have a suspended CND with `has_debts: true`
@@ -49,7 +49,7 @@ Notes on `2026-10-21-models-sonnet` and `2026-10-21-models-haiku`:
   same policy, prompt, generator, fixtures and model, 25 sessions at a time,
   as run_id `<scenario>-<rep>r` (transcripts `NN-<rep>r.jsonl`), so their
   server traces do not mix with the failed sessions'. Host 2.1.310 instead of
-  2.1.280; the stack ran from the main checkout at `afe0eb1`. Their records
+  2.1.280; the stack ran from the main checkout at `2e8fc42`. Their records
   were appended to `results.jsonl` and their traces to `logs/`, and
   `metrics.md` was regenerated over the 156 completed sessions.
 - Cost: host 2.1.280 priced both models at the Opus 5.5 rates, so
